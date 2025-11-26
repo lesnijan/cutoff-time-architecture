@@ -44,12 +44,8 @@
             height: auto;
         }
         
-        .section {
-            animation: fadeIn 0.3s ease;
-        }
-        .section.hidden-section {
-            display: none !important;
-        }
+        .section { animation: fadeIn 0.3s ease; }
+        .section.hidden-section { display: none !important; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -74,18 +70,9 @@
             font-size: 0.75rem;
             font-weight: 600;
         }
-        .badge-orange {
-            background: rgba(249, 115, 22, 0.2);
-            color: #fb923c;
-        }
-        .badge-green {
-            background: rgba(34, 197, 94, 0.2);
-            color: #4ade80;
-        }
-        .badge-purple {
-            background: rgba(168, 85, 247, 0.2);
-            color: #c084fc;
-        }
+        .badge-orange { background: rgba(249, 115, 22, 0.2); color: #fb923c; }
+        .badge-green { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+        .badge-purple { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
         
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #1e293b; }
@@ -93,21 +80,14 @@
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
         
         #loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: #0f172a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             z-index: 9999;
         }
         #loading.done { display: none; }
         .spinner {
-            width: 50px;
-            height: 50px;
+            width: 50px; height: 50px;
             border: 4px solid #1e293b;
             border-top-color: #0ea5e9;
             border-radius: 50%;
@@ -115,17 +95,39 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* Phase indicator */
-        .phase-current {
-            background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
-            animation: pulse 2s infinite;
+        /* Language switcher */
+        .lang-switch {
+            display: flex;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 8px;
+            padding: 2px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
         }
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4); }
-            50% { box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
+        .lang-btn {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #94a3b8;
+        }
+        .lang-btn.active {
+            background: #0ea5e9;
+            color: white;
+        }
+        .lang-btn:hover:not(.active) {
+            color: white;
         }
         
-        /* Glossary term */
+        /* Hide elements based on language */
+        [data-lang-content="en"] { display: none; }
+        body.lang-en [data-lang-content="pl"] { display: none; }
+        body.lang-en [data-lang-content="en"] { display: block; }
+        body.lang-en span[data-lang-content="en"],
+        body.lang-en strong[data-lang-content="en"],
+        body.lang-en p[data-lang-content="en"] { display: inline; }
+        
         .glossary-term {
             border-left: 3px solid #0ea5e9;
             padding-left: 1rem;
@@ -138,7 +140,10 @@
     <div id="loading">
         <div class="text-center">
             <div class="spinner mx-auto mb-4"></div>
-            <p class="text-slate-400">Rendering diagrams...</p>
+            <p class="text-slate-400">
+                <span data-lang-content="pl">Renderowanie diagramów...</span>
+                <span data-lang-content="en">Rendering diagrams...</span>
+            </p>
         </div>
     </div>
     
@@ -152,12 +157,22 @@
                 </div>
                 <div>
                     <h1 class="font-semibold text-white">Cutoff Time System</h1>
-                    <p class="text-xs text-slate-400">Architecture Documentation</p>
+                    <p class="text-xs text-slate-400">
+                        <span data-lang-content="pl">Dokumentacja Architektoniczna</span>
+                        <span data-lang-content="en">Architecture Documentation</span>
+                    </p>
                 </div>
             </div>
             <div class="flex items-center gap-4">
-                <span class="badge badge-orange">Faza: Koncepcja</span>
-                <span class="text-sm text-slate-400">v1.5</span>
+                <div class="lang-switch">
+                    <button onclick="setLanguage('pl')" class="lang-btn active" id="lang-pl">PL</button>
+                    <button onclick="setLanguage('en')" class="lang-btn" id="lang-en">EN</button>
+                </div>
+                <span class="badge badge-orange">
+                    <span data-lang-content="pl">Faza: Koncepcja</span>
+                    <span data-lang-content="en">Phase: Concept</span>
+                </span>
+                <span class="text-sm text-slate-400">v1.6</span>
             </div>
         </div>
     </header>
@@ -168,21 +183,25 @@
             <div class="p-4">
                 <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Start</p>
                 <button onclick="showSection('about')" class="nav-item active w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="about">
-                    📖 O Projekcie
+                    📖 <span data-lang-content="pl">O Projekcie</span><span data-lang-content="en">About</span>
                 </button>
                 <button onclick="showSection('glossary')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="glossary">
-                    📚 Słownik Pojęć
+                    📚 <span data-lang-content="pl">Słownik Pojęć</span><span data-lang-content="en">Glossary</span>
                 </button>
                 
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">Przegląd</p>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">
+                    <span data-lang-content="pl">Przegląd</span><span data-lang-content="en">Overview</span>
+                </p>
                 <button onclick="showSection('overview')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="overview">
                     🎯 Executive Summary
                 </button>
                 <button onclick="showSection('problem')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="problem">
-                    ❓ Problem Biznesowy
+                    ❓ <span data-lang-content="pl">Problem Biznesowy</span><span data-lang-content="en">Business Problem</span>
                 </button>
                 
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">Architektura</p>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">
+                    <span data-lang-content="pl">Architektura</span><span data-lang-content="en">Architecture</span>
+                </p>
                 <button onclick="showSection('c4-context')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="c4-context">
                     🏗️ C4: Context
                 </button>
@@ -193,9 +212,11 @@
                     🔀 Data Flow
                 </button>
                 
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">Algorytm</p>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">
+                    <span data-lang-content="pl">Algorytm</span><span data-lang-content="en">Algorithm</span>
+                </p>
                 <button onclick="showSection('algorithm')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="algorithm">
-                    🧮 Logika Decyzyjna
+                    🧮 <span data-lang-content="pl">Logika Decyzyjna</span><span data-lang-content="en">Decision Logic</span>
                 </button>
                 <button onclick="showSection('sequence')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="sequence">
                     📊 Sequence Diagram
@@ -204,20 +225,24 @@
                     🔄 State Machine
                 </button>
                 
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">Dane</p>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">
+                    <span data-lang-content="pl">Dane</span><span data-lang-content="en">Data</span>
+                </p>
                 <button onclick="showSection('erd')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="erd">
-                    🗄️ Model Danych ERD
+                    🗄️ <span data-lang-content="pl">Model Danych ERD</span><span data-lang-content="en">Data Model ERD</span>
                 </button>
                 <button onclick="showSection('sap-tables')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="sap-tables">
-                    📋 Tabele SAP
+                    📋 <span data-lang-content="pl">Tabele SAP</span><span data-lang-content="en">SAP Tables</span>
                 </button>
                 
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">Realizacja</p>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">
+                    <span data-lang-content="pl">Realizacja</span><span data-lang-content="en">Implementation</span>
+                </p>
                 <button onclick="showSection('timeline')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="timeline">
-                    📅 Harmonogram
+                    📅 <span data-lang-content="pl">Harmonogram</span><span data-lang-content="en">Timeline</span>
                 </button>
                 <button onclick="showSection('risks')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="risks">
-                    ⚠️ Ryzyka
+                    ⚠️ <span data-lang-content="pl">Ryzyka</span><span data-lang-content="en">Risks</span>
                 </button>
                 <button onclick="showSection('kpis')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="kpis">
                     📈 KPIs
@@ -230,36 +255,36 @@
 
                 <!-- ========== SECTION: About ========== -->
                 <section id="about" class="section">
-                    <h2 class="text-3xl font-bold text-white mb-2">O Projekcie</h2>
-                    <p class="text-slate-400 mb-8 text-lg">Czym jest ten dokument i jak z niego korzystać</p>
-                    
-                    <!-- Co to jest -->
-                    <div class="card p-6 mb-8">
-                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                            <span class="text-2xl">📄</span> Czym jest ten dokument?
-                        </h3>
-                        <p class="text-slate-300 mb-4">
-                            To jest <strong class="text-sky-400">dokumentacja architektoniczna</strong> (Architecture Documentation / Solution Design) 
-                            systemu <strong>Cutoff Time</strong> - rozwiązania do automatycznego zarządzania czasem granicznym 
-                            przyjmowania zamówień w magazynie.
-                        </p>
-                        <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
-                            <p class="text-amber-400 font-medium mb-2">⚠️ Ważne:</p>
-                            <p class="text-slate-300">
-                                To <strong>NIE jest działająca aplikacja</strong>. To zbiór diagramów, specyfikacji i planów, 
-                                które stanowią podstawę do implementacji systemu. Znajdujemy się w fazie koncepcyjnej projektu.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Gdzie jesteśmy w cyklu -->
-                    <div class="card p-6 mb-8">
-                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                            <span class="text-2xl">🗺️</span> Gdzie jesteśmy w cyklu tworzenia rozwiązania?
-                        </h3>
+                    <!-- POLISH VERSION -->
+                    <div data-lang-content="pl">
+                        <h2 class="text-3xl font-bold text-white mb-2">O Projekcie</h2>
+                        <p class="text-slate-400 mb-8 text-lg">Czym jest ten dokument i jak z niego korzystać</p>
                         
-                        <div class="diagram-container mb-6">
-                            <pre class="mermaid">
+                        <div class="card p-6 mb-8">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="text-2xl">📄</span> Czym jest ten dokument?
+                            </h3>
+                            <p class="text-slate-300 mb-4">
+                                To jest <strong class="text-sky-400">dokumentacja architektoniczna</strong> (Architecture Documentation / Solution Design) 
+                                systemu <strong>Cutoff Time</strong> - rozwiązania do automatycznego zarządzania czasem granicznym 
+                                przyjmowania zamówień w magazynie.
+                            </p>
+                            <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+                                <p class="text-amber-400 font-medium mb-2">⚠️ Ważne:</p>
+                                <p class="text-slate-300">
+                                    To <strong>NIE jest działająca aplikacja</strong>. To zbiór diagramów, specyfikacji i planów, 
+                                    które stanowią podstawę do implementacji systemu. Znajdujemy się w fazie koncepcyjnej projektu.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card p-6 mb-8">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="text-2xl">🗺️</span> Gdzie jesteśmy w cyklu tworzenia rozwiązania?
+                            </h3>
+                            
+                            <div class="diagram-container mb-6">
+                                <pre class="mermaid" data-diagram="lifecycle-pl">
 flowchart LR
     subgraph CURRENT[OBECNA FAZA]
         A[Discovery]
@@ -288,318 +313,672 @@ flowchart LR
     style D fill:#475569,stroke:#64748b
     style E fill:#475569,stroke:#64748b
     style F fill:#475569,stroke:#64748b
-                            </pre>
+                                </pre>
+                            </div>
+
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="bg-gradient-to-br from-sky-500/20 to-violet-500/20 rounded-lg p-4 border-2 border-sky-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="badge">TERAZ</span>
+                                        <span class="font-semibold text-white">Discovery + Design</span>
+                                    </div>
+                                    <ul class="text-sm text-slate-300 space-y-1">
+                                        <li>✅ Analiza wymagań biznesowych</li>
+                                        <li>✅ Specyfikacja algorytmu</li>
+                                        <li>✅ Architektura rozwiązania</li>
+                                        <li>✅ Model danych</li>
+                                        <li>✅ Plan wdrożenia</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-600">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="badge badge-orange">NASTĘPNE</span>
+                                        <span class="font-semibold text-white">Build + Test</span>
+                                    </div>
+                                    <ul class="text-sm text-slate-400 space-y-1">
+                                        <li>○ Implementacja CDS Views w HANA</li>
+                                        <li>○ Rozwój API w Python/FastAPI</li>
+                                        <li>○ Integracja z SAP BTP</li>
+                                        <li>○ Testy jednostkowe i integracyjne</li>
+                                        <li>○ Testy akceptacyjne (UAT)</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-600">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="badge badge-green">PRZYSZŁOŚĆ</span>
+                                        <span class="font-semibold text-white">Deploy + Operate</span>
+                                    </div>
+                                    <ul class="text-sm text-slate-400 space-y-1">
+                                        <li>○ Wdrożenie na produkcję</li>
+                                        <li>○ Konfiguracja monitoringu</li>
+                                        <li>○ Szkolenia użytkowników</li>
+                                        <li>○ Hypercare (wsparcie po starcie)</li>
+                                        <li>○ Ciągłe doskonalenie</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="grid md:grid-cols-3 gap-4">
-                            <div class="bg-gradient-to-br from-sky-500/20 to-violet-500/20 rounded-lg p-4 border-2 border-sky-500">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="badge">TERAZ</span>
-                                    <span class="font-semibold text-white">Discovery + Design</span>
+                        <div class="card p-6 mb-8">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="text-2xl">🎯</span> Czemu służy ta dokumentacja?
+                            </h3>
+                            
+                            <div class="grid md:grid-cols-3 gap-6">
+                                <div class="bg-slate-800/50 rounded-lg p-5 border border-slate-700">
+                                    <div class="text-3xl mb-3">💼</div>
+                                    <h4 class="font-semibold text-white mb-2">Pre-sales</h4>
+                                    <p class="text-sm text-slate-400 mb-3">
+                                        Prezentacja dla klienta pokazująca jak rozwiązanie będzie wyglądać i działać 
+                                        <strong>zanim zostanie zbudowane</strong>.
+                                    </p>
+                                    <ul class="text-xs text-slate-500 space-y-1">
+                                        <li>• Wizualizacja architektury</li>
+                                        <li>• Wycena projektu</li>
+                                        <li>• Harmonogram realizacji</li>
+                                        <li>• Analiza ryzyk</li>
+                                    </ul>
                                 </div>
-                                <ul class="text-sm text-slate-300 space-y-1">
-                                    <li>✅ Analiza wymagań biznesowych</li>
-                                    <li>✅ Specyfikacja algorytmu</li>
-                                    <li>✅ Architektura rozwiązania</li>
-                                    <li>✅ Model danych</li>
-                                    <li>✅ Plan wdrożenia</li>
-                                </ul>
+                                <div class="bg-slate-800/50 rounded-lg p-5 border border-slate-700">
+                                    <div class="text-3xl mb-3">👨‍💻</div>
+                                    <h4 class="font-semibold text-white mb-2">Podstawa do implementacji</h4>
+                                    <p class="text-sm text-slate-400 mb-3">
+                                        Developer może z tej dokumentacji <strong>rozpocząć kodowanie</strong> - 
+                                        wie co, jak i w jakiej kolejności budować.
+                                    </p>
+                                    <ul class="text-xs text-slate-500 space-y-1">
+                                        <li>• Specyfikacja algorytmu</li>
+                                        <li>• Model danych (ERD)</li>
+                                        <li>• Diagramy sekwencji</li>
+                                        <li>• Mapowanie na tabele SAP</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-slate-800/50 rounded-lg p-5 border border-slate-700">
+                                    <div class="text-3xl mb-3">🤝</div>
+                                    <h4 class="font-semibold text-white mb-2">Discovery Workshop</h4>
+                                    <p class="text-sm text-slate-400 mb-3">
+                                        Materiał do <strong>warsztatów z klientem</strong> - wspólne doprecyzowanie 
+                                        wymagań i walidacja założeń.
+                                    </p>
+                                    <ul class="text-xs text-slate-500 space-y-1">
+                                        <li>• Definicja problemu biznesowego</li>
+                                        <li>• Walidacja algorytmu z ekspertami</li>
+                                        <li>• Uzgodnienie KPIs</li>
+                                        <li>• Identyfikacja ryzyk</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-600">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="badge badge-orange">NASTĘPNE</span>
-                                    <span class="font-semibold text-white">Build + Test</span>
+                        </div>
+
+                        <div class="card p-6 mb-8">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="text-2xl">📑</span> Przewodnik po zakładkach
+                            </h3>
+                            <p class="text-slate-400 mb-6">Co znajdziesz w każdej sekcji tej dokumentacji:</p>
+                            
+                            <div class="space-y-4">
+                                <div class="border-l-4 border-sky-500 pl-4">
+                                    <h4 class="font-semibold text-sky-400 mb-2">START</h4>
+                                    <div class="grid md:grid-cols-2 gap-3 text-sm">
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📖 O Projekcie</span>
+                                            <p class="text-slate-400 mt-1">Ta strona - wprowadzenie, kontekst, jak czytać dokumentację</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📚 Słownik Pojęć</span>
+                                            <p class="text-slate-400 mt-1">Definicje kluczowych terminów: Cutoff Time, Utilization, Workload, itp.</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <ul class="text-sm text-slate-400 space-y-1">
-                                    <li>○ Implementacja CDS Views w HANA</li>
-                                    <li>○ Rozwój API w Python/FastAPI</li>
-                                    <li>○ Integracja z SAP BTP</li>
-                                    <li>○ Testy jednostkowe i integracyjne</li>
-                                    <li>○ Testy akceptacyjne (UAT)</li>
-                                </ul>
+                                
+                                <div class="border-l-4 border-emerald-500 pl-4">
+                                    <h4 class="font-semibold text-emerald-400 mb-2">PRZEGLĄD</h4>
+                                    <div class="grid md:grid-cols-2 gap-3 text-sm">
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">🎯 Executive Summary</span>
+                                            <p class="text-slate-400 mt-1">Podsumowanie dla kadry zarządzającej - problem, rozwiązanie, wartość biznesowa</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">❓ Problem Biznesowy</span>
+                                            <p class="text-slate-400 mt-1">Szczegółowy opis obecnych problemów (AS-IS) i wymagań klienta</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="border-l-4 border-violet-500 pl-4">
+                                    <h4 class="font-semibold text-violet-400 mb-2">ARCHITEKTURA</h4>
+                                    <div class="grid md:grid-cols-3 gap-3 text-sm">
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">🏗️ C4: Context</span>
+                                            <p class="text-slate-400 mt-1">Widok z lotu ptaka - system i jego otoczenie</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📦 C4: Container</span>
+                                            <p class="text-slate-400 mt-1">Komponenty systemu - API, bazy danych, cache, monitoring</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">🔀 Data Flow</span>
+                                            <p class="text-slate-400 mt-1">Przepływ danych przez system</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="border-l-4 border-amber-500 pl-4">
+                                    <h4 class="font-semibold text-amber-400 mb-2">ALGORYTM</h4>
+                                    <div class="grid md:grid-cols-3 gap-3 text-sm">
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">🧮 Logika Decyzyjna</span>
+                                            <p class="text-slate-400 mt-1">Flowchart algorytmu + wzory matematyczne</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📊 Sequence Diagram</span>
+                                            <p class="text-slate-400 mt-1">Interakcje w czasie między komponentami</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">🔄 State Machine</span>
+                                            <p class="text-slate-400 mt-1">Stany operacyjne magazynu w ciągu dnia</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="border-l-4 border-pink-500 pl-4">
+                                    <h4 class="font-semibold text-pink-400 mb-2">DANE</h4>
+                                    <div class="grid md:grid-cols-2 gap-3 text-sm">
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">🗄️ Model Danych ERD</span>
+                                            <p class="text-slate-400 mt-1">Encje, relacje, atrybuty</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📋 Tabele SAP</span>
+                                            <p class="text-slate-400 mt-1">Mapowanie na konkretne tabele SAP</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="border-l-4 border-red-500 pl-4">
+                                    <h4 class="font-semibold text-red-400 mb-2">REALIZACJA</h4>
+                                    <div class="grid md:grid-cols-3 gap-3 text-sm">
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📅 Harmonogram</span>
+                                            <p class="text-slate-400 mt-1">Gantt chart - fazy, kamienie milowe</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">⚠️ Ryzyka</span>
+                                            <p class="text-slate-400 mt-1">Risk Matrix - zagrożenia i mitygacje</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📈 KPIs</span>
+                                            <p class="text-slate-400 mt-1">Metryki sukcesu projektu</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-600">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="badge badge-green">PRZYSZŁOŚĆ</span>
-                                    <span class="font-semibold text-white">Deploy + Operate</span>
+                        </div>
+
+                        <div class="card p-6">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="text-2xl">🚀</span> Co dalej? Szczegółowy plan kolejnych faz
+                            </h3>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-gradient-to-r from-sky-500/10 to-transparent rounded-lg p-5 border-l-4 border-sky-500">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <span class="bg-sky-500 text-white px-3 py-1 rounded-full text-sm font-bold">FAZA 1</span>
+                                        <span class="font-semibold text-white">Discovery & Design</span>
+                                        <span class="badge">6 tygodni</span>
+                                        <span class="badge badge-green">W TRAKCIE</span>
+                                    </div>
+                                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <p class="text-slate-400 font-medium mb-2">Działania:</p>
+                                            <ul class="text-slate-300 space-y-1">
+                                                <li>✅ Discovery Workshop z klientem</li>
+                                                <li>✅ Analiza wymagań biznesowych</li>
+                                                <li>✅ Specyfikacja algorytmu Cutoff Time</li>
+                                                <li>✅ Architektura rozwiązania (C4)</li>
+                                                <li>○ Walidacja z ekspertami SAP</li>
+                                                <li>○ Formalne zatwierdzenie (Gate)</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <p class="text-slate-400 font-medium mb-2">Deliverables:</p>
+                                            <ul class="text-slate-300 space-y-1">
+                                                <li>📄 RES-1: Specyfikacja algorytmu</li>
+                                                <li>📄 RES-2: Architektura integracji</li>
+                                                <li>📄 RES-3: Model danych</li>
+                                                <li>📄 RES-4: Assessment narzędzi BI</li>
+                                                <li>📄 Plan projektu Fazy 2</li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
-                                <ul class="text-sm text-slate-400 space-y-1">
-                                    <li>○ Wdrożenie na produkcję</li>
-                                    <li>○ Konfiguracja monitoringu</li>
-                                    <li>○ Szkolenia użytkowników</li>
-                                    <li>○ Hypercare (wsparcie po starcie)</li>
-                                    <li>○ Ciągłe doskonalenie</li>
-                                </ul>
+                                
+                                <div class="bg-gradient-to-r from-violet-500/10 to-transparent rounded-lg p-5 border-l-4 border-violet-500">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <span class="bg-violet-500 text-white px-3 py-1 rounded-full text-sm font-bold">FAZA 2</span>
+                                        <span class="font-semibold text-white">Proof of Concept (PoC)</span>
+                                        <span class="badge">9 tygodni</span>
+                                        <span class="badge badge-orange">PLANOWANA</span>
+                                    </div>
+                                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <p class="text-slate-400 font-medium mb-2">Działania:</p>
+                                            <ul class="text-slate-300 space-y-1">
+                                                <li>○ Implementacja CDS Views w SAP HANA</li>
+                                                <li>○ Rozwój API w Python/FastAPI</li>
+                                                <li>○ Deployment na SAP BTP</li>
+                                                <li>○ Integracja z Event Mesh</li>
+                                                <li>○ Testy w środowisku QAS</li>
+                                                <li>○ Akceptacja PoC przez klienta</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <p class="text-slate-400 font-medium mb-2">Deliverables:</p>
+                                            <ul class="text-slate-300 space-y-1">
+                                                <li>💻 Działający prototyp w QAS</li>
+                                                <li>📄 Dokumentacja techniczna</li>
+                                                <li>📄 Raport z testów</li>
+                                                <li>📄 Plan wdrożenia PROD</li>
+                                                <li>📄 Materiały szkoleniowe</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-gradient-to-r from-emerald-500/10 to-transparent rounded-lg p-5 border-l-4 border-emerald-500">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <span class="bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-bold">FAZA 3</span>
+                                        <span class="font-semibold text-white">Production & Go-Live</span>
+                                        <span class="badge">5 tygodni</span>
+                                        <span class="badge badge-orange">PLANOWANA</span>
+                                    </div>
+                                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <p class="text-slate-400 font-medium mb-2">Działania:</p>
+                                            <ul class="text-slate-300 space-y-1">
+                                                <li>○ Wdrożenie na środowisko PROD</li>
+                                                <li>○ Konfiguracja monitoringu (Grafana)</li>
+                                                <li>○ Setup alertów i dashboardów</li>
+                                                <li>○ Szkolenia użytkowników końcowych</li>
+                                                <li>○ Go-Live i Hypercare</li>
+                                                <li>○ Przekazanie do utrzymania</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <p class="text-slate-400 font-medium mb-2">Deliverables:</p>
+                                            <ul class="text-slate-300 space-y-1">
+                                                <li>🚀 System produkcyjny</li>
+                                                <li>📊 Dashboardy Grafana</li>
+                                                <li>📄 Runbook operacyjny</li>
+                                                <li>📄 Dokumentacja dla support</li>
+                                                <li>📄 Raport z Go-Live</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Czemu to służy -->
-                    <div class="card p-6 mb-8">
-                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                            <span class="text-2xl">🎯</span> Czemu służy ta dokumentacja?
-                        </h3>
+                    <!-- ENGLISH VERSION -->
+                    <div data-lang-content="en">
+                        <h2 class="text-3xl font-bold text-white mb-2">About This Project</h2>
+                        <p class="text-slate-400 mb-8 text-lg">What this document is and how to use it</p>
                         
-                        <div class="grid md:grid-cols-3 gap-6">
-                            <div class="bg-slate-800/50 rounded-lg p-5 border border-slate-700">
-                                <div class="text-3xl mb-3">💼</div>
-                                <h4 class="font-semibold text-white mb-2">Pre-sales</h4>
-                                <p class="text-sm text-slate-400 mb-3">
-                                    Prezentacja dla klienta pokazująca jak rozwiązanie będzie wyglądać i działać 
-                                    <strong>zanim zostanie zbudowane</strong>.
+                        <div class="card p-6 mb-8">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="text-2xl">📄</span> What is this document?
+                            </h3>
+                            <p class="text-slate-300 mb-4">
+                                This is an <strong class="text-sky-400">architecture documentation</strong> (Solution Design) 
+                                for the <strong>Cutoff Time</strong> system - a solution for automated management of order acceptance 
+                                deadline in warehouse operations.
+                            </p>
+                            <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+                                <p class="text-amber-400 font-medium mb-2">⚠️ Important:</p>
+                                <p class="text-slate-300">
+                                    This is <strong>NOT a working application</strong>. It's a collection of diagrams, specifications and plans 
+                                    that form the foundation for system implementation. We are in the conceptual phase of the project.
                                 </p>
-                                <ul class="text-xs text-slate-500 space-y-1">
-                                    <li>• Wizualizacja architektury</li>
-                                    <li>• Wycena projektu</li>
-                                    <li>• Harmonogram realizacji</li>
-                                    <li>• Analiza ryzyk</li>
-                                </ul>
-                            </div>
-                            <div class="bg-slate-800/50 rounded-lg p-5 border border-slate-700">
-                                <div class="text-3xl mb-3">👨‍💻</div>
-                                <h4 class="font-semibold text-white mb-2">Podstawa do implementacji</h4>
-                                <p class="text-sm text-slate-400 mb-3">
-                                    Developer może z tej dokumentacji <strong>rozpocząć kodowanie</strong> - 
-                                    wie co, jak i w jakiej kolejności budować.
-                                </p>
-                                <ul class="text-xs text-slate-500 space-y-1">
-                                    <li>• Specyfikacja algorytmu</li>
-                                    <li>• Model danych (ERD)</li>
-                                    <li>• Diagramy sekwencji</li>
-                                    <li>• Mapowanie na tabele SAP</li>
-                                </ul>
-                            </div>
-                            <div class="bg-slate-800/50 rounded-lg p-5 border border-slate-700">
-                                <div class="text-3xl mb-3">🤝</div>
-                                <h4 class="font-semibold text-white mb-2">Discovery Workshop</h4>
-                                <p class="text-sm text-slate-400 mb-3">
-                                    Materiał do <strong>warsztatów z klientem</strong> - wspólne doprecyzowanie 
-                                    wymagań i walidacja założeń.
-                                </p>
-                                <ul class="text-xs text-slate-500 space-y-1">
-                                    <li>• Definicja problemu biznesowego</li>
-                                    <li>• Walidacja algorytmu z ekspertami</li>
-                                    <li>• Uzgodnienie KPIs</li>
-                                    <li>• Identyfikacja ryzyk</li>
-                                </ul>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Opis zakładek -->
-                    <div class="card p-6 mb-8">
-                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                            <span class="text-2xl">📑</span> Przewodnik po zakładkach
-                        </h3>
-                        <p class="text-slate-400 mb-6">Co znajdziesz w każdej sekcji tej dokumentacji:</p>
-                        
-                        <div class="space-y-4">
-                            <!-- START -->
-                            <div class="border-l-4 border-sky-500 pl-4">
-                                <h4 class="font-semibold text-sky-400 mb-2">START</h4>
-                                <div class="grid md:grid-cols-2 gap-3 text-sm">
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">📖 O Projekcie</span>
-                                        <p class="text-slate-400 mt-1">Ta strona - wprowadzenie, kontekst, jak czytać dokumentację</p>
-                                    </div>
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">📚 Słownik Pojęć</span>
-                                        <p class="text-slate-400 mt-1">Definicje kluczowych terminów: Cutoff Time, Utilization, Workload, itp.</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="card p-6 mb-8">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="text-2xl">🗺️</span> Where are we in the solution development cycle?
+                            </h3>
                             
-                            <!-- PRZEGLĄD -->
-                            <div class="border-l-4 border-emerald-500 pl-4">
-                                <h4 class="font-semibold text-emerald-400 mb-2">PRZEGLĄD</h4>
-                                <div class="grid md:grid-cols-2 gap-3 text-sm">
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">🎯 Executive Summary</span>
-                                        <p class="text-slate-400 mt-1">Podsumowanie dla kadry zarządzającej - problem, rozwiązanie, wartość biznesowa</p>
-                                    </div>
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">❓ Problem Biznesowy</span>
-                                        <p class="text-slate-400 mt-1">Szczegółowy opis obecnych problemów (AS-IS) i wymagań klienta</p>
-                                    </div>
-                                </div>
+                            <div class="diagram-container mb-6">
+                                <pre class="mermaid" data-diagram="lifecycle-en">
+flowchart LR
+    subgraph CURRENT[CURRENT PHASE]
+        A[Discovery]
+        B[Design]
+    end
+    
+    subgraph NEXT[NEXT PHASES]
+        C[Build]
+        D[Test]
+        E[Deploy]
+    end
+    
+    subgraph FUTURE[MAINTENANCE]
+        F[Operate]
+    end
+    
+    A -->|Requirements| B
+    B -->|Architecture| C
+    C -->|Coding| D
+    D -->|Validation| E
+    E -->|Go-Live| F
+    
+    style A fill:#0ea5e9,stroke:#38bdf8,stroke-width:3px
+    style B fill:#8b5cf6,stroke:#a78bfa,stroke-width:3px
+    style C fill:#475569,stroke:#64748b
+    style D fill:#475569,stroke:#64748b
+    style E fill:#475569,stroke:#64748b
+    style F fill:#475569,stroke:#64748b
+                                </pre>
                             </div>
-                            
-                            <!-- ARCHITEKTURA -->
-                            <div class="border-l-4 border-violet-500 pl-4">
-                                <h4 class="font-semibold text-violet-400 mb-2">ARCHITEKTURA</h4>
-                                <div class="grid md:grid-cols-3 gap-3 text-sm">
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">🏗️ C4: Context</span>
-                                        <p class="text-slate-400 mt-1">Widok z lotu ptaka - system i jego otoczenie (użytkownicy, systemy zewnętrzne)</p>
+
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="bg-gradient-to-br from-sky-500/20 to-violet-500/20 rounded-lg p-4 border-2 border-sky-500">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="badge">NOW</span>
+                                        <span class="font-semibold text-white">Discovery + Design</span>
                                     </div>
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">📦 C4: Container</span>
-                                        <p class="text-slate-400 mt-1">Komponenty systemu - API, bazy danych, cache, monitoring i ich interakcje</p>
-                                    </div>
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">🔀 Data Flow</span>
-                                        <p class="text-slate-400 mt-1">Przepływ danych - od źródeł (SAP) przez transformacje do konsumentów (UI, alerty)</p>
-                                    </div>
+                                    <ul class="text-sm text-slate-300 space-y-1">
+                                        <li>✅ Business requirements analysis</li>
+                                        <li>✅ Algorithm specification</li>
+                                        <li>✅ Solution architecture</li>
+                                        <li>✅ Data model</li>
+                                        <li>✅ Implementation plan</li>
+                                    </ul>
                                 </div>
-                            </div>
-                            
-                            <!-- ALGORYTM -->
-                            <div class="border-l-4 border-amber-500 pl-4">
-                                <h4 class="font-semibold text-amber-400 mb-2">ALGORYTM</h4>
-                                <div class="grid md:grid-cols-3 gap-3 text-sm">
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">🧮 Logika Decyzyjna</span>
-                                        <p class="text-slate-400 mt-1">Flowchart algorytmu + wzory matematyczne (Workload, Capacity, Utilization)</p>
+                                <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-600">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="badge badge-orange">NEXT</span>
+                                        <span class="font-semibold text-white">Build + Test</span>
                                     </div>
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">📊 Sequence Diagram</span>
-                                        <p class="text-slate-400 mt-1">Interakcje w czasie - kto z kim rozmawia podczas sprawdzania dostępności wysyłki</p>
-                                    </div>
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">🔄 State Machine</span>
-                                        <p class="text-slate-400 mt-1">Stany operacyjne magazynu w ciągu dnia (ACCEPTING → WARNING → CRITICAL → CLOSED)</p>
-                                    </div>
+                                    <ul class="text-sm text-slate-400 space-y-1">
+                                        <li>○ CDS Views implementation in HANA</li>
+                                        <li>○ API development in Python/FastAPI</li>
+                                        <li>○ SAP BTP integration</li>
+                                        <li>○ Unit and integration testing</li>
+                                        <li>○ User Acceptance Testing (UAT)</li>
+                                    </ul>
                                 </div>
-                            </div>
-                            
-                            <!-- DANE -->
-                            <div class="border-l-4 border-pink-500 pl-4">
-                                <h4 class="font-semibold text-pink-400 mb-2">DANE</h4>
-                                <div class="grid md:grid-cols-2 gap-3 text-sm">
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">🗄️ Model Danych ERD</span>
-                                        <p class="text-slate-400 mt-1">Entity Relationship Diagram - encje, relacje, atrybuty (Sales Order, Delivery, Task...)</p>
+                                <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-600">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="badge badge-green">FUTURE</span>
+                                        <span class="font-semibold text-white">Deploy + Operate</span>
                                     </div>
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">📋 Tabele SAP</span>
-                                        <p class="text-slate-400 mt-1">Mapowanie encji logicznych na konkretne tabele SAP (VBAK, VBAP, LIKP, LTAP...)</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- REALIZACJA -->
-                            <div class="border-l-4 border-red-500 pl-4">
-                                <h4 class="font-semibold text-red-400 mb-2">REALIZACJA</h4>
-                                <div class="grid md:grid-cols-3 gap-3 text-sm">
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">📅 Harmonogram</span>
-                                        <p class="text-slate-400 mt-1">Gantt chart - 3 fazy projektu, kamienie milowe, estymacje czasowe i kosztowe</p>
-                                    </div>
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">⚠️ Ryzyka</span>
-                                        <p class="text-slate-400 mt-1">Risk Matrix - identyfikacja zagrożeń, prawdopodobieństwo, wpływ, strategie mitygacji</p>
-                                    </div>
-                                    <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">📈 KPIs</span>
-                                        <p class="text-slate-400 mt-1">Metryki sukcesu - jak zmierzymy czy projekt się udał (Same-Day Rate, Response Time...)</p>
-                                    </div>
+                                    <ul class="text-sm text-slate-400 space-y-1">
+                                        <li>○ Production deployment</li>
+                                        <li>○ Monitoring configuration</li>
+                                        <li>○ End-user training</li>
+                                        <li>○ Hypercare support</li>
+                                        <li>○ Continuous improvement</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Kolejne kroki -->
-                    <div class="card p-6">
-                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                            <span class="text-2xl">🚀</span> Co dalej? Szczegółowy plan kolejnych faz
-                        </h3>
-                        
-                        <div class="space-y-6">
-                            <!-- FAZA 1 -->
-                            <div class="bg-gradient-to-r from-sky-500/10 to-transparent rounded-lg p-5 border-l-4 border-sky-500">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <span class="bg-sky-500 text-white px-3 py-1 rounded-full text-sm font-bold">FAZA 1</span>
-                                    <span class="font-semibold text-white">Discovery & Design</span>
-                                    <span class="badge">6 tygodni</span>
-                                    <span class="badge badge-green">W TRAKCIE</span>
+                        <div class="card p-6 mb-8">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="text-2xl">🎯</span> What is this documentation for?
+                            </h3>
+                            
+                            <div class="grid md:grid-cols-3 gap-6">
+                                <div class="bg-slate-800/50 rounded-lg p-5 border border-slate-700">
+                                    <div class="text-3xl mb-3">💼</div>
+                                    <h4 class="font-semibold text-white mb-2">Pre-sales</h4>
+                                    <p class="text-sm text-slate-400 mb-3">
+                                        Client presentation showing how the solution will look and work 
+                                        <strong>before it's built</strong>.
+                                    </p>
+                                    <ul class="text-xs text-slate-500 space-y-1">
+                                        <li>• Architecture visualization</li>
+                                        <li>• Project estimation</li>
+                                        <li>• Implementation timeline</li>
+                                        <li>• Risk analysis</li>
+                                    </ul>
                                 </div>
-                                <div class="grid md:grid-cols-2 gap-4 text-sm">
-                                    <div>
-                                        <p class="text-slate-400 font-medium mb-2">Działania:</p>
-                                        <ul class="text-slate-300 space-y-1">
-                                            <li>✅ Discovery Workshop z klientem</li>
-                                            <li>✅ Analiza wymagań biznesowych</li>
-                                            <li>✅ Specyfikacja algorytmu Cutoff Time</li>
-                                            <li>✅ Architektura rozwiązania (C4)</li>
-                                            <li>○ Walidacja z ekspertami SAP</li>
-                                            <li>○ Formalne zatwierdzenie (Gate)</li>
-                                        </ul>
+                                <div class="bg-slate-800/50 rounded-lg p-5 border border-slate-700">
+                                    <div class="text-3xl mb-3">👨‍💻</div>
+                                    <h4 class="font-semibold text-white mb-2">Implementation Basis</h4>
+                                    <p class="text-sm text-slate-400 mb-3">
+                                        Developers can <strong>start coding</strong> from this documentation - 
+                                        they know what, how and in what order to build.
+                                    </p>
+                                    <ul class="text-xs text-slate-500 space-y-1">
+                                        <li>• Algorithm specification</li>
+                                        <li>• Data model (ERD)</li>
+                                        <li>• Sequence diagrams</li>
+                                        <li>• SAP tables mapping</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-slate-800/50 rounded-lg p-5 border border-slate-700">
+                                    <div class="text-3xl mb-3">🤝</div>
+                                    <h4 class="font-semibold text-white mb-2">Discovery Workshop</h4>
+                                    <p class="text-sm text-slate-400 mb-3">
+                                        Material for <strong>client workshops</strong> - joint requirements refinement 
+                                        and assumptions validation.
+                                    </p>
+                                    <ul class="text-xs text-slate-500 space-y-1">
+                                        <li>• Business problem definition</li>
+                                        <li>• Algorithm validation with experts</li>
+                                        <li>• KPIs agreement</li>
+                                        <li>• Risk identification</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card p-6 mb-8">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="text-2xl">📑</span> Tab Guide
+                            </h3>
+                            <p class="text-slate-400 mb-6">What you'll find in each section of this documentation:</p>
+                            
+                            <div class="space-y-4">
+                                <div class="border-l-4 border-sky-500 pl-4">
+                                    <h4 class="font-semibold text-sky-400 mb-2">START</h4>
+                                    <div class="grid md:grid-cols-2 gap-3 text-sm">
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📖 About</span>
+                                            <p class="text-slate-400 mt-1">This page - introduction, context, how to read the documentation</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📚 Glossary</span>
+                                            <p class="text-slate-400 mt-1">Key term definitions: Cutoff Time, Utilization, Workload, etc.</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p class="text-slate-400 font-medium mb-2">Deliverables:</p>
-                                        <ul class="text-slate-300 space-y-1">
-                                            <li>📄 RES-1: Specyfikacja algorytmu</li>
-                                            <li>📄 RES-2: Architektura integracji</li>
-                                            <li>📄 RES-3: Model danych</li>
-                                            <li>📄 RES-4: Assessment narzędzi BI</li>
-                                            <li>📄 Plan projektu Fazy 2</li>
-                                        </ul>
+                                </div>
+                                
+                                <div class="border-l-4 border-emerald-500 pl-4">
+                                    <h4 class="font-semibold text-emerald-400 mb-2">OVERVIEW</h4>
+                                    <div class="grid md:grid-cols-2 gap-3 text-sm">
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">🎯 Executive Summary</span>
+                                            <p class="text-slate-400 mt-1">Management summary - problem, solution, business value</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">❓ Business Problem</span>
+                                            <p class="text-slate-400 mt-1">Detailed description of current problems (AS-IS) and requirements</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="border-l-4 border-violet-500 pl-4">
+                                    <h4 class="font-semibold text-violet-400 mb-2">ARCHITECTURE</h4>
+                                    <div class="grid md:grid-cols-3 gap-3 text-sm">
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">🏗️ C4: Context</span>
+                                            <p class="text-slate-400 mt-1">Bird's eye view - system and its environment</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📦 C4: Container</span>
+                                            <p class="text-slate-400 mt-1">System components - API, databases, cache, monitoring</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">🔀 Data Flow</span>
+                                            <p class="text-slate-400 mt-1">Data flow through the system</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="border-l-4 border-amber-500 pl-4">
+                                    <h4 class="font-semibold text-amber-400 mb-2">ALGORITHM</h4>
+                                    <div class="grid md:grid-cols-3 gap-3 text-sm">
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">🧮 Decision Logic</span>
+                                            <p class="text-slate-400 mt-1">Algorithm flowchart + mathematical formulas</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📊 Sequence Diagram</span>
+                                            <p class="text-slate-400 mt-1">Time-based interactions between components</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">🔄 State Machine</span>
+                                            <p class="text-slate-400 mt-1">Warehouse operational states during the day</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="border-l-4 border-pink-500 pl-4">
+                                    <h4 class="font-semibold text-pink-400 mb-2">DATA</h4>
+                                    <div class="grid md:grid-cols-2 gap-3 text-sm">
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">🗄️ Data Model ERD</span>
+                                            <p class="text-slate-400 mt-1">Entities, relationships, attributes</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📋 SAP Tables</span>
+                                            <p class="text-slate-400 mt-1">Mapping to specific SAP tables</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="border-l-4 border-red-500 pl-4">
+                                    <h4 class="font-semibold text-red-400 mb-2">IMPLEMENTATION</h4>
+                                    <div class="grid md:grid-cols-3 gap-3 text-sm">
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📅 Timeline</span>
+                                            <p class="text-slate-400 mt-1">Gantt chart - phases, milestones</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">⚠️ Risks</span>
+                                            <p class="text-slate-400 mt-1">Risk Matrix - threats and mitigations</p>
+                                        </div>
+                                        <div class="bg-slate-800/30 rounded p-3">
+                                            <span class="font-medium text-white">📈 KPIs</span>
+                                            <p class="text-slate-400 mt-1">Project success metrics</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="card p-6">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="text-2xl">🚀</span> What's next? Detailed plan for upcoming phases
+                            </h3>
                             
-                            <!-- FAZA 2 -->
-                            <div class="bg-gradient-to-r from-violet-500/10 to-transparent rounded-lg p-5 border-l-4 border-violet-500">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <span class="bg-violet-500 text-white px-3 py-1 rounded-full text-sm font-bold">FAZA 2</span>
-                                    <span class="font-semibold text-white">Proof of Concept (PoC)</span>
-                                    <span class="badge">9 tygodni</span>
-                                    <span class="badge badge-orange">PLANOWANA</span>
-                                </div>
-                                <div class="grid md:grid-cols-2 gap-4 text-sm">
-                                    <div>
-                                        <p class="text-slate-400 font-medium mb-2">Działania:</p>
-                                        <ul class="text-slate-300 space-y-1">
-                                            <li>○ Implementacja CDS Views w SAP HANA</li>
-                                            <li>○ Rozwój API w Python/FastAPI</li>
-                                            <li>○ Deployment na SAP BTP</li>
-                                            <li>○ Integracja z Event Mesh</li>
-                                            <li>○ Testy w środowisku QAS</li>
-                                            <li>○ Akceptacja PoC przez klienta</li>
-                                        </ul>
+                            <div class="space-y-6">
+                                <div class="bg-gradient-to-r from-sky-500/10 to-transparent rounded-lg p-5 border-l-4 border-sky-500">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <span class="bg-sky-500 text-white px-3 py-1 rounded-full text-sm font-bold">PHASE 1</span>
+                                        <span class="font-semibold text-white">Discovery & Design</span>
+                                        <span class="badge">6 weeks</span>
+                                        <span class="badge badge-green">IN PROGRESS</span>
                                     </div>
-                                    <div>
-                                        <p class="text-slate-400 font-medium mb-2">Deliverables:</p>
-                                        <ul class="text-slate-300 space-y-1">
-                                            <li>💻 Działający prototyp w QAS</li>
-                                            <li>📄 Dokumentacja techniczna</li>
-                                            <li>📄 Raport z testów</li>
-                                            <li>📄 Plan wdrożenia PROD</li>
-                                            <li>📄 Materiały szkoleniowe</li>
-                                        </ul>
+                                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <p class="text-slate-400 font-medium mb-2">Activities:</p>
+                                            <ul class="text-slate-300 space-y-1">
+                                                <li>✅ Discovery Workshop with client</li>
+                                                <li>✅ Business requirements analysis</li>
+                                                <li>✅ Cutoff Time algorithm specification</li>
+                                                <li>✅ Solution architecture (C4)</li>
+                                                <li>○ Validation with SAP experts</li>
+                                                <li>○ Formal approval (Gate)</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <p class="text-slate-400 font-medium mb-2">Deliverables:</p>
+                                            <ul class="text-slate-300 space-y-1">
+                                                <li>📄 RES-1: Algorithm specification</li>
+                                                <li>📄 RES-2: Integration architecture</li>
+                                                <li>📄 RES-3: Data model</li>
+                                                <li>📄 RES-4: BI tools assessment</li>
+                                                <li>📄 Phase 2 project plan</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <!-- FAZA 3 -->
-                            <div class="bg-gradient-to-r from-emerald-500/10 to-transparent rounded-lg p-5 border-l-4 border-emerald-500">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <span class="bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-bold">FAZA 3</span>
-                                    <span class="font-semibold text-white">Production & Go-Live</span>
-                                    <span class="badge">5 tygodni</span>
-                                    <span class="badge badge-orange">PLANOWANA</span>
-                                </div>
-                                <div class="grid md:grid-cols-2 gap-4 text-sm">
-                                    <div>
-                                        <p class="text-slate-400 font-medium mb-2">Działania:</p>
-                                        <ul class="text-slate-300 space-y-1">
-                                            <li>○ Wdrożenie na środowisko PROD</li>
-                                            <li>○ Konfiguracja monitoringu (Grafana)</li>
-                                            <li>○ Setup alertów i dashboardów</li>
-                                            <li>○ Szkolenia użytkowników końcowych</li>
-                                            <li>○ Go-Live i Hypercare</li>
-                                            <li>○ Przekazanie do utrzymania</li>
-                                        </ul>
+                                
+                                <div class="bg-gradient-to-r from-violet-500/10 to-transparent rounded-lg p-5 border-l-4 border-violet-500">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <span class="bg-violet-500 text-white px-3 py-1 rounded-full text-sm font-bold">PHASE 2</span>
+                                        <span class="font-semibold text-white">Proof of Concept (PoC)</span>
+                                        <span class="badge">9 weeks</span>
+                                        <span class="badge badge-orange">PLANNED</span>
                                     </div>
-                                    <div>
-                                        <p class="text-slate-400 font-medium mb-2">Deliverables:</p>
-                                        <ul class="text-slate-300 space-y-1">
-                                            <li>🚀 System produkcyjny</li>
-                                            <li>📊 Dashboardy Grafana</li>
-                                            <li>📄 Runbook operacyjny</li>
-                                            <li>📄 Dokumentacja dla support</li>
-                                            <li>📄 Raport z Go-Live</li>
-                                        </ul>
+                                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <p class="text-slate-400 font-medium mb-2">Activities:</p>
+                                            <ul class="text-slate-300 space-y-1">
+                                                <li>○ CDS Views implementation in SAP HANA</li>
+                                                <li>○ API development in Python/FastAPI</li>
+                                                <li>○ Deployment on SAP BTP</li>
+                                                <li>○ Event Mesh integration</li>
+                                                <li>○ QAS environment testing</li>
+                                                <li>○ PoC acceptance by client</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <p class="text-slate-400 font-medium mb-2">Deliverables:</p>
+                                            <ul class="text-slate-300 space-y-1">
+                                                <li>💻 Working prototype in QAS</li>
+                                                <li>📄 Technical documentation</li>
+                                                <li>📄 Test report</li>
+                                                <li>📄 PROD deployment plan</li>
+                                                <li>📄 Training materials</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-gradient-to-r from-emerald-500/10 to-transparent rounded-lg p-5 border-l-4 border-emerald-500">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <span class="bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-bold">PHASE 3</span>
+                                        <span class="font-semibold text-white">Production & Go-Live</span>
+                                        <span class="badge">5 weeks</span>
+                                        <span class="badge badge-orange">PLANNED</span>
+                                    </div>
+                                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <p class="text-slate-400 font-medium mb-2">Activities:</p>
+                                            <ul class="text-slate-300 space-y-1">
+                                                <li>○ PROD environment deployment</li>
+                                                <li>○ Monitoring configuration (Grafana)</li>
+                                                <li>○ Alerts and dashboards setup</li>
+                                                <li>○ End-user training</li>
+                                                <li>○ Go-Live and Hypercare</li>
+                                                <li>○ Handover to operations</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <p class="text-slate-400 font-medium mb-2">Deliverables:</p>
+                                            <ul class="text-slate-300 space-y-1">
+                                                <li>🚀 Production system</li>
+                                                <li>📊 Grafana dashboards</li>
+                                                <li>📄 Operations runbook</li>
+                                                <li>📄 Support documentation</li>
+                                                <li>📄 Go-Live report</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -609,158 +988,232 @@ flowchart LR
 
                 <!-- ========== SECTION: Glossary ========== -->
                 <section id="glossary" class="section">
-                    <h2 class="text-3xl font-bold text-white mb-2">Słownik Pojęć</h2>
-                    <p class="text-slate-400 mb-8 text-lg">Kluczowe terminy używane w tej dokumentacji</p>
-                    
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <!-- Kolumna 1 -->
-                        <div class="space-y-4">
-                            <h3 class="text-lg font-semibold text-sky-400 mb-4">Pojęcia biznesowe</h3>
-                            
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">Cutoff Time</h4>
-                                <p class="text-sm text-slate-400">
-                                    Godzina graniczna, do której można przyjmować zamówienia z obietnicą wysyłki "na dziś". 
-                                    Po tej godzinie nowe zamówienia realizowane są następnego dnia roboczego.
-                                </p>
+                    <!-- POLISH -->
+                    <div data-lang-content="pl">
+                        <h2 class="text-3xl font-bold text-white mb-2">Słownik Pojęć</h2>
+                        <p class="text-slate-400 mb-8 text-lg">Kluczowe terminy używane w tej dokumentacji</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-sky-400 mb-4">Pojęcia biznesowe</h3>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">Cutoff Time</h4>
+                                    <p class="text-sm text-slate-400">
+                                        Godzina graniczna, do której można przyjmować zamówienia z obietnicą wysyłki "na dziś". 
+                                        Po tej godzinie nowe zamówienia realizowane są następnego dnia roboczego.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">Same-Day Delivery</h4>
+                                    <p class="text-sm text-slate-400">
+                                        Dostawa tego samego dnia. Odsetek zamówień wysłanych w dniu ich złożenia. 
+                                        Kluczowy KPI dla operacji magazynowych.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">Workload (Obciążenie)</h4>
+                                    <p class="text-sm text-slate-400">
+                                        Suma pracochłonności wszystkich zamówień oczekujących na realizację. 
+                                        Wyrażana w jednostkach czasu lub umownych jednostkach pracy.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">Capacity (Przepustowość)</h4>
+                                    <p class="text-sm text-slate-400">
+                                        Maksymalna ilość pracy, którą magazyn może wykonać w jednostce czasu. 
+                                        Zależy od liczby pracowników, wydajności procesów i dostępności zasobów.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">Utilization (Wykorzystanie)</h4>
+                                    <p class="text-sm text-slate-400">
+                                        Stosunek aktualnego obciążenia do przepustowości, wyrażony w procentach. 
+                                        <code class="bg-slate-800 px-1 rounded">UTILIZATION = WORKLOAD / CAPACITY × 100%</code>
+                                    </p>
+                                </div>
                             </div>
                             
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">Same-Day Delivery</h4>
-                                <p class="text-sm text-slate-400">
-                                    Dostawa tego samego dnia. Odsetek zamówień wysłanych w dniu ich złożenia. 
-                                    Kluczowy KPI dla operacji magazynowych.
-                                </p>
-                            </div>
-                            
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">Workload (Obciążenie)</h4>
-                                <p class="text-sm text-slate-400">
-                                    Suma pracochłonności wszystkich zamówień oczekujących na realizację. 
-                                    Wyrażana w jednostkach czasu (np. roboczogodziny) lub umownych jednostkach pracy.
-                                </p>
-                            </div>
-                            
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">Capacity (Przepustowość)</h4>
-                                <p class="text-sm text-slate-400">
-                                    Maksymalna ilość pracy, którą magazyn może wykonać w jednostce czasu. 
-                                    Zależy od liczby pracowników, wydajności procesów i dostępności zasobów.
-                                </p>
-                            </div>
-                            
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">Utilization (Wykorzystanie)</h4>
-                                <p class="text-sm text-slate-400">
-                                    Stosunek aktualnego obciążenia do przepustowości, wyrażony w procentach. 
-                                    <code class="bg-slate-800 px-1 rounded">UTILIZATION = WORKLOAD / CAPACITY × 100%</code>
-                                </p>
-                            </div>
-                            
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">VIP Order</h4>
-                                <p class="text-sm text-slate-400">
-                                    Zamówienie o podwyższonym priorytecie (ważny klient, pilna dostawa). 
-                                    Może być realizowane nawet przy przekroczeniu standardowego Cutoff Time.
-                                </p>
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-violet-400 mb-4">Pojęcia techniczne</h3>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">SAP S/4HANA</h4>
+                                    <p class="text-sm text-slate-400">
+                                        Zintegrowany system ERP firmy SAP. Źródło danych o zamówieniach, dostawach i zasobach magazynowych.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">SAP BTP</h4>
+                                    <p class="text-sm text-slate-400">
+                                        SAP Business Technology Platform - platforma chmurowa do budowy i hostingu aplikacji.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">CDS Views</h4>
+                                    <p class="text-sm text-slate-400">
+                                        Core Data Services - warstwa semantyczna w SAP HANA. 
+                                        Definiuje widoki danych z logiką biznesową.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">C4 Model</h4>
+                                    <p class="text-sm text-slate-400">
+                                        Metoda dokumentowania architektury oprogramowania na 4 poziomach: 
+                                        Context, Container, Component, Code.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">ERD (Entity Relationship Diagram)</h4>
+                                    <p class="text-sm text-slate-400">
+                                        Diagram pokazujący encje (tabele) i relacje między nimi.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- Kolumna 2 -->
-                        <div class="space-y-4">
-                            <h3 class="text-lg font-semibold text-violet-400 mb-4">Pojęcia techniczne</h3>
-                            
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">SAP S/4HANA</h4>
-                                <p class="text-sm text-slate-400">
-                                    Zintegrowany system ERP firmy SAP. Źródło danych o zamówieniach, dostawach i zasobach magazynowych.
-                                </p>
-                            </div>
-                            
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">SAP BTP</h4>
-                                <p class="text-sm text-slate-400">
-                                    SAP Business Technology Platform - platforma chmurowa do budowy i hostingu aplikacji. 
-                                    Tutaj działa API Cutoff Time.
-                                </p>
-                            </div>
-                            
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">CDS Views</h4>
-                                <p class="text-sm text-slate-400">
-                                    Core Data Services - warstwa semantyczna w SAP HANA. 
-                                    Definiuje widoki danych z logiką biznesową (agregacje, kalkulacje).
-                                </p>
-                            </div>
-                            
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">C4 Model</h4>
-                                <p class="text-sm text-slate-400">
-                                    Metoda dokumentowania architektury oprogramowania na 4 poziomach: 
-                                    Context, Container, Component, Code. Autor: Simon Brown.
-                                </p>
-                            </div>
-                            
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">ERD (Entity Relationship Diagram)</h4>
-                                <p class="text-sm text-slate-400">
-                                    Diagram pokazujący encje (tabele) i relacje między nimi. 
-                                    Podstawa do projektowania bazy danych.
-                                </p>
-                            </div>
-                            
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">FastAPI</h4>
-                                <p class="text-sm text-slate-400">
-                                    Nowoczesny framework Python do budowy API. Wysoka wydajność, automatyczna dokumentacja OpenAPI.
-                                </p>
-                            </div>
-                            
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">Redis Cache</h4>
-                                <p class="text-sm text-slate-400">
-                                    Baza danych in-memory używana do cache'owania. Przyspiesza odpowiedzi API poprzez 
-                                    przechowywanie wyników obliczeń.
-                                </p>
+                        <div class="card p-6 mt-8">
+                            <h3 class="text-lg font-semibold text-emerald-400 mb-4">Tabele SAP - szybki słownik</h3>
+                            <div class="grid md:grid-cols-4 gap-4 text-sm">
+                                <div class="bg-slate-800/50 rounded p-3">
+                                    <code class="text-sky-400 font-bold">VBAK</code>
+                                    <p class="text-slate-400 mt-1">Nagłówek zlecenia sprzedaży</p>
+                                </div>
+                                <div class="bg-slate-800/50 rounded p-3">
+                                    <code class="text-sky-400 font-bold">VBAP</code>
+                                    <p class="text-slate-400 mt-1">Pozycje zlecenia sprzedaży</p>
+                                </div>
+                                <div class="bg-slate-800/50 rounded p-3">
+                                    <code class="text-sky-400 font-bold">LIKP</code>
+                                    <p class="text-slate-400 mt-1">Nagłówek dostawy</p>
+                                </div>
+                                <div class="bg-slate-800/50 rounded p-3">
+                                    <code class="text-sky-400 font-bold">LTAP</code>
+                                    <p class="text-slate-400 mt-1">Zlecenie przeniesienia (WM)</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Tabele SAP -->
-                    <div class="card p-6 mt-8">
-                        <h3 class="text-lg font-semibold text-emerald-400 mb-4">Tabele SAP - szybki słownik</h3>
-                        <div class="grid md:grid-cols-4 gap-4 text-sm">
-                            <div class="bg-slate-800/50 rounded p-3">
-                                <code class="text-sky-400 font-bold">VBAK</code>
-                                <p class="text-slate-400 mt-1">Nagłówek zlecenia sprzedaży</p>
+
+                    <!-- ENGLISH -->
+                    <div data-lang-content="en">
+                        <h2 class="text-3xl font-bold text-white mb-2">Glossary</h2>
+                        <p class="text-slate-400 mb-8 text-lg">Key terms used in this documentation</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-sky-400 mb-4">Business Terms</h3>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">Cutoff Time</h4>
+                                    <p class="text-sm text-slate-400">
+                                        The deadline by which orders can be accepted with a promise of "same-day" shipping. 
+                                        After this time, new orders are processed the next business day.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">Same-Day Delivery</h4>
+                                    <p class="text-sm text-slate-400">
+                                        Delivery on the same day. The percentage of orders shipped on the day they were placed. 
+                                        Key KPI for warehouse operations.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">Workload</h4>
+                                    <p class="text-sm text-slate-400">
+                                        The sum of labor required for all orders waiting to be fulfilled. 
+                                        Expressed in time units or conventional work units.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">Capacity</h4>
+                                    <p class="text-sm text-slate-400">
+                                        Maximum amount of work the warehouse can perform per unit of time. 
+                                        Depends on staff count, process efficiency and resource availability.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">Utilization</h4>
+                                    <p class="text-sm text-slate-400">
+                                        The ratio of current workload to capacity, expressed as a percentage. 
+                                        <code class="bg-slate-800 px-1 rounded">UTILIZATION = WORKLOAD / CAPACITY × 100%</code>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="bg-slate-800/50 rounded p-3">
-                                <code class="text-sky-400 font-bold">VBAP</code>
-                                <p class="text-slate-400 mt-1">Pozycje zlecenia sprzedaży</p>
+                            
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-violet-400 mb-4">Technical Terms</h3>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">SAP S/4HANA</h4>
+                                    <p class="text-sm text-slate-400">
+                                        SAP's integrated ERP system. Source of data on orders, deliveries and warehouse resources.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">SAP BTP</h4>
+                                    <p class="text-sm text-slate-400">
+                                        SAP Business Technology Platform - cloud platform for building and hosting applications.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">CDS Views</h4>
+                                    <p class="text-sm text-slate-400">
+                                        Core Data Services - semantic layer in SAP HANA. 
+                                        Defines data views with business logic.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">C4 Model</h4>
+                                    <p class="text-sm text-slate-400">
+                                        A method for documenting software architecture at 4 levels: 
+                                        Context, Container, Component, Code.
+                                    </p>
+                                </div>
+                                
+                                <div class="glossary-term">
+                                    <h4 class="font-semibold text-white">ERD (Entity Relationship Diagram)</h4>
+                                    <p class="text-sm text-slate-400">
+                                        A diagram showing entities (tables) and relationships between them.
+                                    </p>
+                                </div>
                             </div>
-                            <div class="bg-slate-800/50 rounded p-3">
-                                <code class="text-sky-400 font-bold">LIKP</code>
-                                <p class="text-slate-400 mt-1">Nagłówek dostawy</p>
-                            </div>
-                            <div class="bg-slate-800/50 rounded p-3">
-                                <code class="text-sky-400 font-bold">LIPS</code>
-                                <p class="text-slate-400 mt-1">Pozycje dostawy</p>
-                            </div>
-                            <div class="bg-slate-800/50 rounded p-3">
-                                <code class="text-sky-400 font-bold">LTAP</code>
-                                <p class="text-slate-400 mt-1">Zlecenie przeniesienia (WM)</p>
-                            </div>
-                            <div class="bg-slate-800/50 rounded p-3">
-                                <code class="text-sky-400 font-bold">MARA</code>
-                                <p class="text-slate-400 mt-1">Dane podstawowe materiału</p>
-                            </div>
-                            <div class="bg-slate-800/50 rounded p-3">
-                                <code class="text-sky-400 font-bold">KNA1</code>
-                                <p class="text-slate-400 mt-1">Dane podstawowe klienta</p>
-                            </div>
-                            <div class="bg-slate-800/50 rounded p-3">
-                                <code class="text-sky-400 font-bold">T001W</code>
-                                <p class="text-slate-400 mt-1">Zakłady (magazyny)</p>
+                        </div>
+                        
+                        <div class="card p-6 mt-8">
+                            <h3 class="text-lg font-semibold text-emerald-400 mb-4">SAP Tables - Quick Reference</h3>
+                            <div class="grid md:grid-cols-4 gap-4 text-sm">
+                                <div class="bg-slate-800/50 rounded p-3">
+                                    <code class="text-sky-400 font-bold">VBAK</code>
+                                    <p class="text-slate-400 mt-1">Sales order header</p>
+                                </div>
+                                <div class="bg-slate-800/50 rounded p-3">
+                                    <code class="text-sky-400 font-bold">VBAP</code>
+                                    <p class="text-slate-400 mt-1">Sales order items</p>
+                                </div>
+                                <div class="bg-slate-800/50 rounded p-3">
+                                    <code class="text-sky-400 font-bold">LIKP</code>
+                                    <p class="text-slate-400 mt-1">Delivery header</p>
+                                </div>
+                                <div class="bg-slate-800/50 rounded p-3">
+                                    <code class="text-sky-400 font-bold">LTAP</code>
+                                    <p class="text-slate-400 mt-1">Transfer order (WM)</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -768,32 +1221,64 @@ flowchart LR
 
                 <!-- ========== SECTION: Overview ========== -->
                 <section id="overview" class="section">
-                    <h2 class="text-3xl font-bold text-white mb-6">Executive Summary</h2>
-                    <p class="text-slate-400 mb-8 text-lg">System Oceny Obciążenia Magazynu - Real-time Cutoff Time Engine</p>
-                    
-                    <div class="grid md:grid-cols-3 gap-6 mb-8">
-                        <div class="card p-6">
-                            <div class="text-4xl mb-4">🎯</div>
-                            <h3 class="font-semibold text-white mb-2">Problem</h3>
-                            <p class="text-sm text-slate-400">Brak automatycznego mechanizmu określającego, do kiedy można przyjmować zamówienia z wysyłką "na dziś"</p>
+                    <!-- POLISH -->
+                    <div data-lang-content="pl">
+                        <h2 class="text-3xl font-bold text-white mb-6">Executive Summary</h2>
+                        <p class="text-slate-400 mb-8 text-lg">System Oceny Obciążenia Magazynu - Real-time Cutoff Time Engine</p>
+                        
+                        <div class="grid md:grid-cols-3 gap-6 mb-8">
+                            <div class="card p-6">
+                                <div class="text-4xl mb-4">🎯</div>
+                                <h3 class="font-semibold text-white mb-2">Problem</h3>
+                                <p class="text-sm text-slate-400">Brak automatycznego mechanizmu określającego, do kiedy można przyjmować zamówienia z wysyłką "na dziś"</p>
+                            </div>
+                            <div class="card p-6">
+                                <div class="text-4xl mb-4">💡</div>
+                                <h3 class="font-semibold text-white mb-2">Rozwiązanie</h3>
+                                <p class="text-sm text-slate-400">Algorytm Real-Time obliczający dynamiczny Cutoff Time na podstawie obciążenia i przepustowości</p>
+                            </div>
+                            <div class="card p-6">
+                                <div class="text-4xl mb-4">🚀</div>
+                                <h3 class="font-semibold text-white mb-2">Wartość</h3>
+                                <p class="text-sm text-slate-400">+20% Same-Day Delivery, -60% reklamacji dot. terminów, eliminacja nadgodzin</p>
+                            </div>
                         </div>
-                        <div class="card p-6">
-                            <div class="text-4xl mb-4">💡</div>
-                            <h3 class="font-semibold text-white mb-2">Rozwiązanie</h3>
-                            <p class="text-sm text-slate-400">Algorytm Real-Time obliczający dynamiczny Cutoff Time na podstawie obciążenia i przepustowości</p>
-                        </div>
-                        <div class="card p-6">
-                            <div class="text-4xl mb-4">🚀</div>
-                            <h3 class="font-semibold text-white mb-2">Wartość</h3>
-                            <p class="text-sm text-slate-400">+20% Same-Day Delivery, -60% reklamacji dot. terminów, eliminacja nadgodzin</p>
+                    </div>
+
+                    <!-- ENGLISH -->
+                    <div data-lang-content="en">
+                        <h2 class="text-3xl font-bold text-white mb-6">Executive Summary</h2>
+                        <p class="text-slate-400 mb-8 text-lg">Warehouse Workload Assessment System - Real-time Cutoff Time Engine</p>
+                        
+                        <div class="grid md:grid-cols-3 gap-6 mb-8">
+                            <div class="card p-6">
+                                <div class="text-4xl mb-4">🎯</div>
+                                <h3 class="font-semibold text-white mb-2">Problem</h3>
+                                <p class="text-sm text-slate-400">No automated mechanism to determine until when orders can be accepted for "same-day" shipping</p>
+                            </div>
+                            <div class="card p-6">
+                                <div class="text-4xl mb-4">💡</div>
+                                <h3 class="font-semibold text-white mb-2">Solution</h3>
+                                <p class="text-sm text-slate-400">Real-time algorithm calculating dynamic Cutoff Time based on workload and capacity</p>
+                            </div>
+                            <div class="card p-6">
+                                <div class="text-4xl mb-4">🚀</div>
+                                <h3 class="font-semibold text-white mb-2">Value</h3>
+                                <p class="text-sm text-slate-400">+20% Same-Day Delivery, -60% deadline complaints, overtime elimination</p>
+                            </div>
                         </div>
                     </div>
 
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Koncepcja Rozwiązania</h3>
+                            <h3 class="font-semibold text-white">
+                                <span data-lang-content="pl">Koncepcja Rozwiązania</span>
+                                <span data-lang-content="en">Solution Concept</span>
+                            </h3>
                         </div>
-                        <pre class="mermaid">
+                        <!-- PL Diagram -->
+                        <div data-lang-content="pl">
+                            <pre class="mermaid">
 graph LR
     subgraph INPUT[WEJSCIE]
         A[Zlecenie Sprzedazy]
@@ -821,17 +1306,56 @@ graph LR
     style D fill:#0ea5e9,stroke:#38bdf8,stroke-width:2px
     style F fill:#22c55e,stroke:#4ade80
     style G fill:#ef4444,stroke:#f87171
-                        </pre>
+                            </pre>
+                        </div>
+                        <!-- EN Diagram -->
+                        <div data-lang-content="en">
+                            <pre class="mermaid">
+graph LR
+    subgraph INPUT[INPUT]
+        A[Sales Order]
+        B[Warehouse Status]
+        C[Available Resources]
+    end
+    
+    subgraph PROCESSING[PROCESSING]
+        D[Cutoff Time Algorithm]
+    end
+    
+    subgraph OUTPUT[OUTPUT]
+        E{Decision}
+        F[Ship TODAY]
+        G[Ship TOMORROW]
+    end
+    
+    A --> D
+    B --> D
+    C --> D
+    D --> E
+    E -->|capacity OK| F
+    E -->|exceeded| G
+    
+    style D fill:#0ea5e9,stroke:#38bdf8,stroke-width:2px
+    style F fill:#22c55e,stroke:#4ade80
+    style G fill:#ef4444,stroke:#f87171
+                            </pre>
+                        </div>
                     </div>
 
                     <div class="mt-8 grid md:grid-cols-4 gap-4">
                         <div class="card p-4 text-center">
                             <div class="text-2xl font-bold text-sky-400">3</div>
-                            <div class="text-xs text-slate-400">Fazy Projektu</div>
+                            <div class="text-xs text-slate-400">
+                                <span data-lang-content="pl">Fazy Projektu</span>
+                                <span data-lang-content="en">Project Phases</span>
+                            </div>
                         </div>
                         <div class="card p-4 text-center">
                             <div class="text-2xl font-bold text-sky-400">~18</div>
-                            <div class="text-xs text-slate-400">Tygodni Realizacji</div>
+                            <div class="text-xs text-slate-400">
+                                <span data-lang-content="pl">Tygodni Realizacji</span>
+                                <span data-lang-content="en">Weeks to Deliver</span>
+                            </div>
                         </div>
                         <div class="card p-4 text-center">
                             <div class="text-2xl font-bold text-sky-400">SAP</div>
@@ -846,13 +1370,15 @@ graph LR
 
                 <!-- ========== SECTION: Problem ========== -->
                 <section id="problem" class="section">
-                    <h2 class="text-3xl font-bold text-white mb-6">Problem Biznesowy</h2>
-                    
-                    <div class="diagram-container mb-8">
-                        <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Obecny Stan AS-IS</h3>
-                        </div>
-                        <pre class="mermaid">
+                    <!-- POLISH -->
+                    <div data-lang-content="pl">
+                        <h2 class="text-3xl font-bold text-white mb-6">Problem Biznesowy</h2>
+                        
+                        <div class="diagram-container mb-8">
+                            <div class="p-4 border-b border-slate-700">
+                                <h3 class="font-semibold text-white">Obecny Stan AS-IS</h3>
+                            </div>
+                            <pre class="mermaid">
 graph TB
     subgraph PROBLEM[OBECNE PROBLEMY]
         P1[Brak wiedzy o obciazeniu]
@@ -877,53 +1403,64 @@ graph TB
     style P2 fill:#dc2626,stroke:#ef4444
     style P3 fill:#dc2626,stroke:#ef4444
     style P4 fill:#dc2626,stroke:#ef4444
-                        </pre>
+                            </pre>
+                        </div>
                     </div>
 
-                    <div class="diagram-container">
-                        <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Wymagania - Rozwiazanie</h3>
+                    <!-- ENGLISH -->
+                    <div data-lang-content="en">
+                        <h2 class="text-3xl font-bold text-white mb-6">Business Problem</h2>
+                        
+                        <div class="diagram-container mb-8">
+                            <div class="p-4 border-b border-slate-700">
+                                <h3 class="font-semibold text-white">Current State AS-IS</h3>
+                            </div>
+                            <pre class="mermaid">
+graph TB
+    subgraph PROBLEM[CURRENT PROBLEMS]
+        P1[No workload visibility]
+        P2[Manual Cutoff setting]
+        P3[Customer complaints]
+        P4[Overtime and chaos]
+    end
+    
+    subgraph IMPACT[BUSINESS IMPACT]
+        I1[72 percent Same-Day]
+        I2[15 complaints per week]
+        I3[40h overtime per week]
+        I4[Team frustration]
+    end
+    
+    P1 --> I1
+    P2 --> I2
+    P3 --> I3
+    P4 --> I4
+    
+    style P1 fill:#dc2626,stroke:#ef4444
+    style P2 fill:#dc2626,stroke:#ef4444
+    style P3 fill:#dc2626,stroke:#ef4444
+    style P4 fill:#dc2626,stroke:#ef4444
+                            </pre>
                         </div>
-                        <pre class="mermaid">
-graph LR
-    subgraph REQ[WYMAGANIA]
-        R1[Ocenic obciazenie]
-        R2[Wskazac Cutoff]
-        R3[Uwzglednic zasoby]
-        R4[Transparentnosc]
-    end
-    
-    subgraph SOL[ROZWIAZANIE]
-        S1[Algorytm HANA]
-        S2[API BTP]
-        S3[CDS Views]
-        S4[Grafana]
-    end
-    
-    R1 --> S1
-    R2 --> S2
-    R3 --> S3
-    R4 --> S4
-    
-    style S1 fill:#0ea5e9,stroke:#38bdf8
-    style S2 fill:#0ea5e9,stroke:#38bdf8
-    style S3 fill:#0ea5e9,stroke:#38bdf8
-    style S4 fill:#0ea5e9,stroke:#38bdf8
-                        </pre>
                     </div>
                 </section>
 
                 <!-- ========== SECTION: C4 Context ========== -->
                 <section id="c4-context" class="section">
                     <h2 class="text-3xl font-bold text-white mb-2">C4 Model: System Context</h2>
-                    <p class="text-slate-400 mb-6">Poziom 1 - Widok z lotu ptaka</p>
+                    <p class="text-slate-400 mb-6">
+                        <span data-lang-content="pl">Poziom 1 - Widok z lotu ptaka</span>
+                        <span data-lang-content="en">Level 1 - Bird's eye view</span>
+                    </p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700 flex items-center justify-between">
                             <h3 class="font-semibold text-white">System Context Diagram</h3>
                             <span class="badge">C4 Level 1</span>
                         </div>
-                        <pre class="mermaid">
+                        <!-- PL -->
+                        <div data-lang-content="pl">
+                            <pre class="mermaid">
 graph TB
     subgraph USERS[UZYTKOWNICY]
         U1[Handlowiec]
@@ -950,25 +1487,38 @@ graph TB
     SYS -->|alerty| E4
     
     style SYS fill:#0ea5e9,stroke:#38bdf8,stroke-width:3px
-                        </pre>
-                    </div>
-
-                    <div class="mt-6 grid md:grid-cols-2 gap-4">
-                        <div class="card p-4">
-                            <h4 class="font-semibold text-white mb-2">👥 Aktorzy</h4>
-                            <ul class="text-sm text-slate-400 space-y-1">
-                                <li>• <strong>Handlowiec</strong> - sprawdza czy zamówienie zdąży</li>
-                                <li>• <strong>Kierownik Magazynu</strong> - monitoruje obciążenie</li>
-                                <li>• <strong>Dyrektor Operacji</strong> - analizuje trendy</li>
-                            </ul>
+                            </pre>
                         </div>
-                        <div class="card p-4">
-                            <h4 class="font-semibold text-white mb-2">🔗 Integracje</h4>
-                            <ul class="text-sm text-slate-400 space-y-1">
-                                <li>• <strong>SAP S/4HANA</strong> - źródło danych</li>
-                                <li>• <strong>SAP BTP</strong> - hosting API</li>
-                                <li>• <strong>Grafana</strong> - monitoring</li>
-                            </ul>
+                        <!-- EN -->
+                        <div data-lang-content="en">
+                            <pre class="mermaid">
+graph TB
+    subgraph USERS[USERS]
+        U1[Sales Rep]
+        U2[Warehouse Manager]
+        U3[Operations Director]
+    end
+    
+    SYS[CUTOFF TIME ENGINE]
+    
+    subgraph EXTERNAL[EXTERNAL SYSTEMS]
+        E1[SAP S4HANA]
+        E2[SAP BTP]
+        E3[Grafana]
+        E4[Email SMS]
+    end
+    
+    U1 -->|checks| SYS
+    U2 -->|monitors| SYS
+    U3 -->|analyzes| SYS
+    
+    SYS <-->|data| E1
+    SYS <-->|hosting| E2
+    SYS -->|metrics| E3
+    SYS -->|alerts| E4
+    
+    style SYS fill:#0ea5e9,stroke:#38bdf8,stroke-width:3px
+                            </pre>
                         </div>
                     </div>
                 </section>
@@ -976,7 +1526,10 @@ graph TB
                 <!-- ========== SECTION: C4 Container ========== -->
                 <section id="c4-container" class="section">
                     <h2 class="text-3xl font-bold text-white mb-2">C4 Model: Container Diagram</h2>
-                    <p class="text-slate-400 mb-6">Poziom 2 - Komponenty systemu</p>
+                    <p class="text-slate-400 mb-6">
+                        <span data-lang-content="pl">Poziom 2 - Komponenty systemu</span>
+                        <span data-lang-content="en">Level 2 - System components</span>
+                    </p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700 flex items-center justify-between">
@@ -1051,22 +1604,28 @@ graph TB
                 <!-- ========== SECTION: Data Flow ========== -->
                 <section id="dataflow" class="section">
                     <h2 class="text-3xl font-bold text-white mb-2">Data Flow Diagram</h2>
-                    <p class="text-slate-400 mb-6">Przepływ danych przez system</p>
+                    <p class="text-slate-400 mb-6">
+                        <span data-lang-content="pl">Przepływ danych przez system</span>
+                        <span data-lang-content="en">Data flow through the system</span>
+                    </p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Przepływ Danych</h3>
+                            <h3 class="font-semibold text-white">
+                                <span data-lang-content="pl">Przepływ Danych</span>
+                                <span data-lang-content="en">Data Flow</span>
+                            </h3>
                         </div>
                         <pre class="mermaid">
 flowchart LR
-    subgraph SOURCE[ZRODLA]
+    subgraph SOURCE[SOURCES]
         SO[Sales Orders]
         DL[Deliveries]
         WH[Warehouse Tasks]
         RS[Resources]
     end
     
-    subgraph TRANSFORM[TRANSFORMACJA]
+    subgraph TRANSFORM[TRANSFORMATION]
         V1[V_ORDER_WORKLOAD]
         V2[V_CAPACITY]
         V3[V_CUTOFF_CALC]
@@ -1078,7 +1637,7 @@ flowchart LR
         EP3[status]
     end
     
-    subgraph OUTPUT[KONSUMENCI]
+    subgraph OUTPUT[CONSUMERS]
         UI[SAP Fiori]
         DASH[Grafana]
         NOTIF[Notifications]
@@ -1107,14 +1666,25 @@ flowchart LR
 
                 <!-- ========== SECTION: Algorithm ========== -->
                 <section id="algorithm" class="section">
-                    <h2 class="text-3xl font-bold text-white mb-2">Logika Decyzyjna</h2>
-                    <p class="text-slate-400 mb-6">Algorytm podejmowania decyzji</p>
+                    <h2 class="text-3xl font-bold text-white mb-2">
+                        <span data-lang-content="pl">Logika Decyzyjna</span>
+                        <span data-lang-content="en">Decision Logic</span>
+                    </h2>
+                    <p class="text-slate-400 mb-6">
+                        <span data-lang-content="pl">Algorytm podejmowania decyzji</span>
+                        <span data-lang-content="en">Decision-making algorithm</span>
+                    </p>
                     
                     <div class="diagram-container mb-8">
                         <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Flowchart Decyzyjny</h3>
+                            <h3 class="font-semibold text-white">
+                                <span data-lang-content="pl">Flowchart Decyzyjny</span>
+                                <span data-lang-content="en">Decision Flowchart</span>
+                            </h3>
                         </div>
-                        <pre class="mermaid">
+                        <!-- PL -->
+                        <div data-lang-content="pl">
+                            <pre class="mermaid">
 flowchart TD
     START([Nowe Zlecenie]) --> CALC[Oblicz W_new]
     CALC --> STATE[Pobierz stan]
@@ -1140,32 +1710,72 @@ flowchart TD
     style NO2 fill:#ef4444,stroke:#f87171,stroke-width:2px
     style NO3 fill:#ef4444,stroke:#f87171,stroke-width:2px
     style CHECK fill:#f59e0b,stroke:#fbbf24,stroke-width:2px
-                        </pre>
+                            </pre>
+                        </div>
+                        <!-- EN -->
+                        <div data-lang-content="en">
+                            <pre class="mermaid">
+flowchart TD
+    START([New Order]) --> CALC[Calculate W_new]
+    CALC --> STATE[Get state]
+    STATE --> UTIL[Calculate Utilization]
+    UTIL --> CHECK{U less than 85}
+    
+    CHECK -->|YES| TIME[Calculate time]
+    CHECK -->|NO| VIP{VIP?}
+    
+    TIME --> DEADLINE{Before Deadline?}
+    DEADLINE -->|YES| OK[SHIP TODAY]
+    DEADLINE -->|NO| NO1[TOMORROW TIME]
+    
+    VIP -->|YES| RESERVE{Reserve?}
+    VIP -->|NO| NO2[TOMORROW CAPACITY]
+    
+    RESERVE -->|YES| OK2[TODAY VIP]
+    RESERVE -->|NO| NO3[TOMORROW VIP FULL]
+    
+    style OK fill:#22c55e,stroke:#4ade80,stroke-width:2px
+    style OK2 fill:#22c55e,stroke:#4ade80,stroke-width:2px
+    style NO1 fill:#ef4444,stroke:#f87171,stroke-width:2px
+    style NO2 fill:#ef4444,stroke:#f87171,stroke-width:2px
+    style NO3 fill:#ef4444,stroke:#f87171,stroke-width:2px
+    style CHECK fill:#f59e0b,stroke:#fbbf24,stroke-width:2px
+                            </pre>
+                        </div>
                     </div>
 
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Model Matematyczny</h3>
+                            <h3 class="font-semibold text-white">
+                                <span data-lang-content="pl">Model Matematyczny</span>
+                                <span data-lang-content="en">Mathematical Model</span>
+                            </h3>
                         </div>
                         <div class="p-6 bg-slate-900 font-mono text-sm">
                             <div class="space-y-4">
                                 <div>
-                                    <span class="text-sky-400">// Pracochłonność</span><br>
+                                    <span class="text-sky-400">// Workload</span><br>
                                     <span class="text-white">W = Σ(qty × weight × location) + setup + packing</span>
                                 </div>
                                 <div>
-                                    <span class="text-sky-400">// Obciążenie</span><br>
+                                    <span class="text-sky-400">// Total Workload</span><br>
                                     <span class="text-white">WORKLOAD(t) = Σ Wi × progress_factor</span>
                                 </div>
                                 <div>
-                                    <span class="text-sky-400">// Przepustowość</span><br>
+                                    <span class="text-sky-400">// Capacity</span><br>
                                     <span class="text-white">CAPACITY = MIN(pickers, packers, loaders) × efficiency</span>
                                 </div>
                                 <div class="pt-4 border-t border-slate-700">
-                                    <span class="text-emerald-400">// Decyzja</span><br>
+                                    <span class="text-emerald-400">// Decision</span><br>
                                     <span class="text-white">IF UTIL &lt; 85% AND completion &lt; deadline</span><br>
-                                    <span class="text-emerald-400 ml-4">THEN Wysyłka dziś ✓</span><br>
-                                    <span class="text-red-400 ml-4">ELSE Wysyłka jutro ✗</span>
+                                    <span data-lang-content="pl">
+                                        <span class="text-emerald-400 ml-4">THEN Wysyłka dziś ✓</span><br>
+                                        <span class="text-red-400 ml-4">ELSE Wysyłka jutro ✗</span>
+                                    </span>
+                                    <span data-lang-content="en">
+                                        <span class="text-emerald-400 ml-4">THEN Ship today ✓</span><br>
+                                        <span class="text-red-400 ml-4">ELSE Ship tomorrow ✗</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -1175,41 +1785,47 @@ flowchart TD
                 <!-- ========== SECTION: Sequence ========== -->
                 <section id="sequence" class="section">
                     <h2 class="text-3xl font-bold text-white mb-2">Sequence Diagram</h2>
-                    <p class="text-slate-400 mb-6">Interakcje między komponentami</p>
+                    <p class="text-slate-400 mb-6">
+                        <span data-lang-content="pl">Interakcje między komponentami</span>
+                        <span data-lang-content="en">Interactions between components</span>
+                    </p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Sprawdzenie Dostępności Wysyłki</h3>
+                            <h3 class="font-semibold text-white">
+                                <span data-lang-content="pl">Sprawdzenie Dostępności Wysyłki</span>
+                                <span data-lang-content="en">Shipping Availability Check</span>
+                            </h3>
                         </div>
                         <pre class="mermaid">
 sequenceDiagram
     autonumber
-    participant H as Handlowiec
+    participant H as Sales Rep
     participant UI as SAP Fiori
     participant API as Cutoff API
     participant CACHE as Redis
     participant HANA as SAP HANA
     
-    H->>UI: Wprowadza zlecenie
+    H->>UI: Enter order
     UI->>API: POST /capacity/check
-    API->>CACHE: Sprawdz cache
+    API->>CACHE: Check cache
     
     alt Cache HIT
         CACHE-->>API: Cached result
     else Cache MISS
         API->>HANA: SELECT V_CUTOFF
-        HANA-->>API: Wynik
-        API->>CACHE: Zapisz TTL 60s
+        HANA-->>API: Result
+        API->>CACHE: Save TTL 60s
     end
     
-    API->>API: Algorytm decyzyjny
+    API->>API: Decision algorithm
     
-    alt Mozliwa
+    alt Possible
         API-->>UI: can_ship_today true
-        UI-->>H: Wysylka dzis
-    else Niemozliwa
+        UI-->>H: Ship today
+    else Not possible
         API-->>UI: can_ship_today false
-        UI-->>H: Wysylka jutro
+        UI-->>H: Ship tomorrow
     end
                         </pre>
                     </div>
@@ -1218,11 +1834,17 @@ sequenceDiagram
                 <!-- ========== SECTION: State ========== -->
                 <section id="state" class="section">
                     <h2 class="text-3xl font-bold text-white mb-2">State Machine</h2>
-                    <p class="text-slate-400 mb-6">Stany systemu w ciągu dnia</p>
+                    <p class="text-slate-400 mb-6">
+                        <span data-lang-content="pl">Stany systemu w ciągu dnia</span>
+                        <span data-lang-content="en">System states during the day</span>
+                    </p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Stany Operacyjne Magazynu</h3>
+                            <h3 class="font-semibold text-white">
+                                <span data-lang-content="pl">Stany Operacyjne Magazynu</span>
+                                <span data-lang-content="en">Warehouse Operational States</span>
+                            </h3>
                         </div>
                         <pre class="mermaid">
 stateDiagram-v2
@@ -1243,7 +1865,10 @@ stateDiagram-v2
                         <div class="card p-4 border-l-4 border-emerald-500">
                             <div class="font-semibold text-emerald-400">ACCEPTING</div>
                             <div class="text-xs text-slate-400 mt-1">Util &lt; 70%</div>
-                            <div class="text-sm text-slate-300 mt-2">Normalna praca</div>
+                            <div class="text-sm text-slate-300 mt-2">
+                                <span data-lang-content="pl">Normalna praca</span>
+                                <span data-lang-content="en">Normal operations</span>
+                            </div>
                         </div>
                         <div class="card p-4 border-l-4 border-yellow-500">
                             <div class="font-semibold text-yellow-400">WARNING</div>
@@ -1253,24 +1878,36 @@ stateDiagram-v2
                         <div class="card p-4 border-l-4 border-orange-500">
                             <div class="font-semibold text-orange-400">CRITICAL</div>
                             <div class="text-xs text-slate-400 mt-1">85-95%</div>
-                            <div class="text-sm text-slate-300 mt-2">Tylko VIP</div>
+                            <div class="text-sm text-slate-300 mt-2">
+                                <span data-lang-content="pl">Tylko VIP</span>
+                                <span data-lang-content="en">VIP only</span>
+                            </div>
                         </div>
                         <div class="card p-4 border-l-4 border-red-500">
                             <div class="font-semibold text-red-400">CLOSED</div>
                             <div class="text-xs text-slate-400 mt-1">&gt;95%</div>
-                            <div class="text-sm text-slate-300 mt-2">Na jutro</div>
+                            <div class="text-sm text-slate-300 mt-2">
+                                <span data-lang-content="pl">Na jutro</span>
+                                <span data-lang-content="en">Tomorrow</span>
+                            </div>
                         </div>
                     </div>
                 </section>
 
                 <!-- ========== SECTION: ERD ========== -->
                 <section id="erd" class="section">
-                    <h2 class="text-3xl font-bold text-white mb-2">Model Danych ERD</h2>
+                    <h2 class="text-3xl font-bold text-white mb-2">
+                        <span data-lang-content="pl">Model Danych ERD</span>
+                        <span data-lang-content="en">Data Model ERD</span>
+                    </h2>
                     <p class="text-slate-400 mb-6">Entity Relationship Diagram</p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Diagram Encji</h3>
+                            <h3 class="font-semibold text-white">
+                                <span data-lang-content="pl">Diagram Encji</span>
+                                <span data-lang-content="en">Entity Diagram</span>
+                            </h3>
                         </div>
                         <pre class="mermaid">
 erDiagram
@@ -1311,16 +1948,25 @@ erDiagram
 
                 <!-- ========== SECTION: SAP Tables ========== -->
                 <section id="sap-tables" class="section">
-                    <h2 class="text-3xl font-bold text-white mb-2">Mapowanie na Tabele SAP</h2>
-                    <p class="text-slate-400 mb-6">Encje logiczne vs tabele SAP</p>
+                    <h2 class="text-3xl font-bold text-white mb-2">
+                        <span data-lang-content="pl">Mapowanie na Tabele SAP</span>
+                        <span data-lang-content="en">SAP Tables Mapping</span>
+                    </h2>
+                    <p class="text-slate-400 mb-6">
+                        <span data-lang-content="pl">Encje logiczne vs tabele SAP</span>
+                        <span data-lang-content="en">Logical entities vs SAP tables</span>
+                    </p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Encje - Tabele SAP</h3>
+                            <h3 class="font-semibold text-white">
+                                <span data-lang-content="pl">Encje - Tabele SAP</span>
+                                <span data-lang-content="en">Entities - SAP Tables</span>
+                            </h3>
                         </div>
                         <pre class="mermaid">
 flowchart LR
-    subgraph LOGICAL[ENCJE]
+    subgraph LOGICAL[ENTITIES]
         E1[Sales Order]
         E2[Order Item]
         E3[Delivery]
@@ -1344,35 +1990,65 @@ flowchart LR
                     </div>
 
                     <div class="mt-6 card p-4">
-                        <h4 class="font-semibold text-white mb-4">Kluczowe Tabele</h4>
+                        <h4 class="font-semibold text-white mb-4">
+                            <span data-lang-content="pl">Kluczowe Tabele</span>
+                            <span data-lang-content="en">Key Tables</span>
+                        </h4>
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="border-b border-slate-700">
-                                    <th class="text-left py-2 text-slate-400">Tabela</th>
-                                    <th class="text-left py-2 text-slate-400">Opis</th>
-                                    <th class="text-left py-2 text-slate-400">Użycie</th>
+                                    <th class="text-left py-2 text-slate-400">
+                                        <span data-lang-content="pl">Tabela</span>
+                                        <span data-lang-content="en">Table</span>
+                                    </th>
+                                    <th class="text-left py-2 text-slate-400">
+                                        <span data-lang-content="pl">Opis</span>
+                                        <span data-lang-content="en">Description</span>
+                                    </th>
+                                    <th class="text-left py-2 text-slate-400">
+                                        <span data-lang-content="pl">Użycie</span>
+                                        <span data-lang-content="en">Usage</span>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="text-slate-300">
                                 <tr class="border-b border-slate-800">
                                     <td class="py-2 font-mono text-sky-400">VBAK</td>
-                                    <td>Nagłówek zlecenia</td>
-                                    <td>Identyfikacja</td>
+                                    <td>
+                                        <span data-lang-content="pl">Nagłówek zlecenia</span>
+                                        <span data-lang-content="en">Order header</span>
+                                    </td>
+                                    <td>
+                                        <span data-lang-content="pl">Identyfikacja</span>
+                                        <span data-lang-content="en">Identification</span>
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-800">
                                     <td class="py-2 font-mono text-sky-400">VBAP</td>
-                                    <td>Pozycje zlecenia</td>
+                                    <td>
+                                        <span data-lang-content="pl">Pozycje zlecenia</span>
+                                        <span data-lang-content="en">Order items</span>
+                                    </td>
                                     <td>Workload</td>
                                 </tr>
                                 <tr class="border-b border-slate-800">
                                     <td class="py-2 font-mono text-sky-400">LIKP</td>
-                                    <td>Nagłówek dostawy</td>
+                                    <td>
+                                        <span data-lang-content="pl">Nagłówek dostawy</span>
+                                        <span data-lang-content="en">Delivery header</span>
+                                    </td>
                                     <td>Status</td>
                                 </tr>
                                 <tr class="border-b border-slate-800">
                                     <td class="py-2 font-mono text-sky-400">LTAP</td>
-                                    <td>Zlecenie WH</td>
-                                    <td>Zadania</td>
+                                    <td>
+                                        <span data-lang-content="pl">Zlecenie WH</span>
+                                        <span data-lang-content="en">WH order</span>
+                                    </td>
+                                    <td>
+                                        <span data-lang-content="pl">Zadania</span>
+                                        <span data-lang-content="en">Tasks</span>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1381,8 +2057,14 @@ flowchart LR
 
                 <!-- ========== SECTION: Timeline ========== -->
                 <section id="timeline" class="section">
-                    <h2 class="text-3xl font-bold text-white mb-2">Harmonogram Projektu</h2>
-                    <p class="text-slate-400 mb-6">Plan realizacji w 3 fazach</p>
+                    <h2 class="text-3xl font-bold text-white mb-2">
+                        <span data-lang-content="pl">Harmonogram Projektu</span>
+                        <span data-lang-content="en">Project Timeline</span>
+                    </h2>
+                    <p class="text-slate-400 mb-6">
+                        <span data-lang-content="pl">Plan realizacji w 3 fazach</span>
+                        <span data-lang-content="en">Implementation plan in 3 phases</span>
+                    </p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
@@ -1390,21 +2072,21 @@ flowchart LR
                         </div>
                         <pre class="mermaid">
 gantt
-    title Harmonogram Cutoff Time
+    title Cutoff Time Project Timeline
     dateFormat YYYY-MM-DD
     
-    section FAZA 1
+    section PHASE 1
     Discovery      :f1, 2024-01-08, 2w
-    Analiza        :f2, after f1, 2w
-    Dokumentacja   :f3, after f2, 2w
+    Analysis       :f2, after f1, 2w
+    Documentation  :f3, after f2, 2w
     
-    section FAZA 2
+    section PHASE 2
     Dev HANA       :f4, after f3, 4w
     Dev API        :f5, after f4, 3w
-    Testy          :f6, after f5, 2w
+    Testing        :f6, after f5, 2w
     
-    section FAZA 3
-    Wdrozenie      :f7, after f6, 2w
+    section PHASE 3
+    Deployment     :f7, after f6, 2w
     Monitoring     :f8, after f7, 1w
     Hypercare      :f9, after f8, 2w
                         </pre>
@@ -1413,22 +2095,31 @@ gantt
                     <div class="mt-6 grid md:grid-cols-3 gap-4">
                         <div class="card p-4 border-t-4 border-sky-500">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="font-semibold text-white">FAZA 1: Discovery</span>
-                                <span class="badge">6 tyg</span>
+                                <span class="font-semibold text-white">
+                                    <span data-lang-content="pl">FAZA 1: Discovery</span>
+                                    <span data-lang-content="en">PHASE 1: Discovery</span>
+                                </span>
+                                <span class="badge">6 <span data-lang-content="pl">tyg</span><span data-lang-content="en">wks</span></span>
                             </div>
                             <div class="text-2xl font-bold text-sky-400 mb-2">25 600 PLN</div>
                         </div>
                         <div class="card p-4 border-t-4 border-violet-500">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="font-semibold text-white">FAZA 2: PoC</span>
-                                <span class="badge">9 tyg</span>
+                                <span class="font-semibold text-white">
+                                    <span data-lang-content="pl">FAZA 2: PoC</span>
+                                    <span data-lang-content="en">PHASE 2: PoC</span>
+                                </span>
+                                <span class="badge">9 <span data-lang-content="pl">tyg</span><span data-lang-content="en">wks</span></span>
                             </div>
                             <div class="text-2xl font-bold text-violet-400 mb-2">38-51k PLN</div>
                         </div>
                         <div class="card p-4 border-t-4 border-emerald-500">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="font-semibold text-white">FAZA 3: PROD</span>
-                                <span class="badge">5 tyg</span>
+                                <span class="font-semibold text-white">
+                                    <span data-lang-content="pl">FAZA 3: PROD</span>
+                                    <span data-lang-content="en">PHASE 3: PROD</span>
+                                </span>
+                                <span class="badge">5 <span data-lang-content="pl">tyg</span><span data-lang-content="en">wks</span></span>
                             </div>
                             <div class="text-2xl font-bold text-emerald-400 mb-2">T&M</div>
                         </div>
@@ -1437,8 +2128,14 @@ gantt
 
                 <!-- ========== SECTION: Risks ========== -->
                 <section id="risks" class="section">
-                    <h2 class="text-3xl font-bold text-white mb-2">Analiza Ryzyk</h2>
-                    <p class="text-slate-400 mb-6">Identyfikacja i mitygacja</p>
+                    <h2 class="text-3xl font-bold text-white mb-2">
+                        <span data-lang-content="pl">Analiza Ryzyk</span>
+                        <span data-lang-content="en">Risk Analysis</span>
+                    </h2>
+                    <p class="text-slate-400 mb-6">
+                        <span data-lang-content="pl">Identyfikacja i mitygacja</span>
+                        <span data-lang-content="en">Identification and mitigation</span>
+                    </p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
@@ -1465,8 +2162,14 @@ quadrantChart
                         <div class="card p-4 border-l-4 border-red-500">
                             <div class="flex items-start justify-between">
                                 <div>
-                                    <span class="font-semibold text-white">R1: Brak dokumentacji SAP</span>
-                                    <p class="text-sm text-slate-400 mt-1">Nieznane tabele źródłowe</p>
+                                    <span class="font-semibold text-white">
+                                        <span data-lang-content="pl">R1: Brak dokumentacji SAP</span>
+                                        <span data-lang-content="en">R1: Missing SAP documentation</span>
+                                    </span>
+                                    <p class="text-sm text-slate-400 mt-1">
+                                        <span data-lang-content="pl">Nieznane tabele źródłowe</span>
+                                        <span data-lang-content="en">Unknown source tables</span>
+                                    </p>
                                 </div>
                                 <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded text-xs">HIGH</span>
                             </div>
@@ -1474,8 +2177,14 @@ quadrantChart
                         <div class="card p-4 border-l-4 border-red-500">
                             <div class="flex items-start justify-between">
                                 <div>
-                                    <span class="font-semibold text-white">R2: Nieokreślona definicja obciążenia</span>
-                                    <p class="text-sm text-slate-400 mt-1">Brak wzoru od biznesu</p>
+                                    <span class="font-semibold text-white">
+                                        <span data-lang-content="pl">R2: Nieokreślona definicja obciążenia</span>
+                                        <span data-lang-content="en">R2: Undefined workload definition</span>
+                                    </span>
+                                    <p class="text-sm text-slate-400 mt-1">
+                                        <span data-lang-content="pl">Brak wzoru od biznesu</span>
+                                        <span data-lang-content="en">No formula from business</span>
+                                    </p>
                                 </div>
                                 <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded text-xs">HIGH</span>
                             </div>
@@ -1483,8 +2192,14 @@ quadrantChart
                         <div class="card p-4 border-l-4 border-yellow-500">
                             <div class="flex items-start justify-between">
                                 <div>
-                                    <span class="font-semibold text-white">R3: Opóźnienia środowisk SAP</span>
-                                    <p class="text-sm text-slate-400 mt-1">Dostępy do HANA i BTP</p>
+                                    <span class="font-semibold text-white">
+                                        <span data-lang-content="pl">R3: Opóźnienia środowisk SAP</span>
+                                        <span data-lang-content="en">R3: SAP environment delays</span>
+                                    </span>
+                                    <p class="text-sm text-slate-400 mt-1">
+                                        <span data-lang-content="pl">Dostępy do HANA i BTP</span>
+                                        <span data-lang-content="en">HANA and BTP access</span>
+                                    </p>
                                 </div>
                                 <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs">MEDIUM</span>
                             </div>
@@ -1494,12 +2209,17 @@ quadrantChart
 
                 <!-- ========== SECTION: KPIs ========== -->
                 <section id="kpis" class="section">
-                    <h2 class="text-3xl font-bold text-white mb-2">KPIs & Metryki Sukcesu</h2>
-                    <p class="text-slate-400 mb-6">Jak zmierzymy sukces projektu</p>
+                    <h2 class="text-3xl font-bold text-white mb-2">KPIs & <span data-lang-content="pl">Metryki Sukcesu</span><span data-lang-content="en">Success Metrics</span></h2>
+                    <p class="text-slate-400 mb-6">
+                        <span data-lang-content="pl">Jak zmierzymy sukces projektu</span>
+                        <span data-lang-content="en">How we'll measure project success</span>
+                    </p>
                     
                     <div class="grid md:grid-cols-2 gap-6 mb-8">
                         <div class="card p-6">
-                            <h3 class="font-semibold text-white mb-4">📊 Metryki Biznesowe</h3>
+                            <h3 class="font-semibold text-white mb-4">
+                                📊 <span data-lang-content="pl">Metryki Biznesowe</span><span data-lang-content="en">Business Metrics</span>
+                            </h3>
                             <div class="space-y-4">
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
@@ -1523,7 +2243,9 @@ quadrantChart
                         </div>
                         
                         <div class="card p-6">
-                            <h3 class="font-semibold text-white mb-4">⚙️ Metryki Techniczne</h3>
+                            <h3 class="font-semibold text-white mb-4">
+                                ⚙️ <span data-lang-content="pl">Metryki Techniczne</span><span data-lang-content="en">Technical Metrics</span>
+                            </h3>
                             <div class="space-y-4">
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
@@ -1579,6 +2301,42 @@ quadrantChart
     </div>
 
     <script>
+        // Language management
+        let currentLang = 'pl';
+        
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            // Update body class
+            document.body.classList.remove('lang-pl', 'lang-en');
+            if (lang === 'en') {
+                document.body.classList.add('lang-en');
+            }
+            
+            // Update buttons
+            document.getElementById('lang-pl').classList.toggle('active', lang === 'pl');
+            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+            
+            // Store preference
+            localStorage.setItem('preferred-lang', lang);
+            
+            // Re-render Mermaid diagrams for new language
+            rerenderDiagrams();
+        }
+        
+        async function rerenderDiagrams() {
+            // Find all visible mermaid elements and re-render
+            const mermaidElements = document.querySelectorAll('.mermaid');
+            mermaidElements.forEach(el => {
+                // Reset the element for re-rendering
+                const code = el.getAttribute('data-original') || el.textContent;
+                if (!el.getAttribute('data-original')) {
+                    el.setAttribute('data-original', code);
+                }
+            });
+        }
+        
+        // Mermaid configuration
         mermaid.initialize({
             startOnLoad: false,
             theme: 'dark',
@@ -1602,6 +2360,12 @@ quadrantChart
         }
 
         document.addEventListener('DOMContentLoaded', async function() {
+            // Check for stored language preference
+            const storedLang = localStorage.getItem('preferred-lang');
+            if (storedLang) {
+                setLanguage(storedLang);
+            }
+            
             try {
                 await mermaid.run();
                 console.log('Mermaid diagrams rendered successfully');
