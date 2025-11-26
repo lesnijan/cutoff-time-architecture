@@ -44,18 +44,17 @@
             height: auto;
         }
         
-        /* KLUCZOWA ZMIANA: używamy visibility zamiast display */
+        /* Sekcje - domyślnie WIDOCZNE dla renderowania Mermaid */
         .section {
-            position: absolute;
-            visibility: hidden;
-            opacity: 0;
-            width: 100%;
-            transition: opacity 0.3s ease;
+            animation: fadeIn 0.3s ease;
         }
-        .section.active {
-            position: relative;
-            visibility: visible;
-            opacity: 1;
+        /* Po inicjalizacji JS doda tę klasę do ukrytych sekcji */
+        .section.hidden-section {
+            display: none !important;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .card {
@@ -83,8 +82,8 @@
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
         
-        /* Loading state */
-        .loading-overlay {
+        /* Loading overlay */
+        #loading {
             position: fixed;
             top: 0;
             left: 0;
@@ -95,13 +94,11 @@
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: opacity 0.5s ease;
         }
-        .loading-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
+        #loading.done {
+            display: none;
         }
-        .loading-spinner {
+        .spinner {
             width: 50px;
             height: 50px;
             border: 4px solid #1e293b;
@@ -116,10 +113,10 @@
 </head>
 <body class="text-slate-200">
     
-    <!-- Loading overlay -->
-    <div id="loading" class="loading-overlay">
+    <!-- Loading -->
+    <div id="loading">
         <div class="text-center">
-            <div class="loading-spinner mx-auto mb-4"></div>
+            <div class="spinner mx-auto mb-4"></div>
             <p class="text-slate-400">Rendering diagrams...</p>
         </div>
     </div>
@@ -139,7 +136,7 @@
             </div>
             <div class="flex items-center gap-4">
                 <span class="badge">Case Study</span>
-                <span class="text-sm text-slate-400">v1.3</span>
+                <span class="text-sm text-slate-400">v1.4</span>
             </div>
         </div>
     </header>
@@ -200,10 +197,10 @@
         </nav>
 
         <main class="ml-64 flex-1 p-8">
-            <div class="max-w-6xl mx-auto relative">
+            <div class="max-w-6xl mx-auto">
 
                 <!-- SECTION: Overview -->
-                <section id="overview" class="section active">
+                <section id="overview" class="section">
                     <h2 class="text-3xl font-bold text-white mb-6">Executive Summary</h2>
                     <p class="text-slate-400 mb-8 text-lg">System Oceny Obciążenia Magazynu - Real-time Cutoff Time Engine</p>
                     
@@ -286,7 +283,7 @@ graph LR
                     
                     <div class="diagram-container mb-8">
                         <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Obecny Stan (AS-IS)</h3>
+                            <h3 class="font-semibold text-white">Obecny Stan AS-IS</h3>
                         </div>
                         <pre class="mermaid">
 graph TB
@@ -298,7 +295,7 @@ graph TB
     end
     
     subgraph IMPACT[SKUTKI BIZNESOWE]
-        I1[72 procent Same-Day Rate]
+        I1[72 procent Same-Day]
         I2[15 reklamacji tyg]
         I3[40h nadgodzin tyg]
         I4[Frustracja zespolu]
@@ -318,7 +315,7 @@ graph TB
 
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Wymagania Klienta → Rozwiązanie</h3>
+                            <h3 class="font-semibold text-white">Wymagania - Rozwiazanie</h3>
                         </div>
                         <pre class="mermaid">
 graph LR
@@ -352,7 +349,7 @@ graph LR
                 <!-- SECTION: C4 Context -->
                 <section id="c4-context" class="section">
                     <h2 class="text-3xl font-bold text-white mb-2">C4 Model: System Context</h2>
-                    <p class="text-slate-400 mb-6">Poziom 1 - Widok z lotu ptaka: system i jego otoczenie</p>
+                    <p class="text-slate-400 mb-6">Poziom 1 - Widok z lotu ptaka</p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700 flex items-center justify-between">
@@ -393,7 +390,7 @@ graph TB
                         <div class="card p-4">
                             <h4 class="font-semibold text-white mb-2">👥 Aktorzy</h4>
                             <ul class="text-sm text-slate-400 space-y-1">
-                                <li>• <strong>Handlowiec</strong> - sprawdza czy zamówienie zdąży na dziś</li>
+                                <li>• <strong>Handlowiec</strong> - sprawdza czy zamówienie zdąży</li>
                                 <li>• <strong>Kierownik Magazynu</strong> - monitoruje obciążenie</li>
                                 <li>• <strong>Dyrektor Operacji</strong> - analizuje trendy</li>
                             </ul>
@@ -401,9 +398,9 @@ graph TB
                         <div class="card p-4">
                             <h4 class="font-semibold text-white mb-2">🔗 Integracje</h4>
                             <ul class="text-sm text-slate-400 space-y-1">
-                                <li>• <strong>SAP S/4HANA</strong> - źródło danych o zleceniach</li>
-                                <li>• <strong>SAP BTP</strong> - hosting mikroserwisów</li>
-                                <li>• <strong>Grafana</strong> - dashboardy i alerty</li>
+                                <li>• <strong>SAP S/4HANA</strong> - źródło danych</li>
+                                <li>• <strong>SAP BTP</strong> - hosting API</li>
+                                <li>• <strong>Grafana</strong> - monitoring</li>
                             </ul>
                         </div>
                     </div>
@@ -412,7 +409,7 @@ graph TB
                 <!-- SECTION: C4 Container -->
                 <section id="c4-container" class="section">
                     <h2 class="text-3xl font-bold text-white mb-2">C4 Model: Container Diagram</h2>
-                    <p class="text-slate-400 mb-6">Poziom 2 - Komponenty systemu i ich interakcje</p>
+                    <p class="text-slate-400 mb-6">Poziom 2 - Komponenty systemu</p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700 flex items-center justify-between">
@@ -448,11 +445,11 @@ graph TB
     CDS3 --> CDS1
     CDS3 --> CDS2
     
-    VBAK -.->|CDC| CDS1
-    LIKP -.->|CDC| CDS1
-    RES -.->|CDC| CDS2
+    VBAK -.-> CDS1
+    LIKP -.-> CDS1
+    RES -.-> CDS2
     
-    API -->|Metrics| GRAF
+    API --> GRAF
     GRAF --> ALERT
     
     style API fill:#0ea5e9,stroke:#38bdf8,stroke-width:2px
@@ -460,29 +457,26 @@ graph TB
                         </pre>
                     </div>
 
-                    <div class="mt-6">
-                        <h4 class="font-semibold text-white mb-4">Stos Technologiczny</h4>
-                        <div class="grid md:grid-cols-4 gap-4">
-                            <div class="card p-4 text-center">
-                                <div class="text-2xl mb-2">🐍</div>
-                                <div class="font-semibold text-white">Python</div>
-                                <div class="text-xs text-slate-400">FastAPI</div>
-                            </div>
-                            <div class="card p-4 text-center">
-                                <div class="text-2xl mb-2">💾</div>
-                                <div class="font-semibold text-white">SAP HANA</div>
-                                <div class="text-xs text-slate-400">CDS Views</div>
-                            </div>
-                            <div class="card p-4 text-center">
-                                <div class="text-2xl mb-2">☁️</div>
-                                <div class="font-semibold text-white">SAP BTP</div>
-                                <div class="text-xs text-slate-400">Cloud Foundry</div>
-                            </div>
-                            <div class="card p-4 text-center">
-                                <div class="text-2xl mb-2">📈</div>
-                                <div class="font-semibold text-white">Grafana</div>
-                                <div class="text-xs text-slate-400">Monitoring</div>
-                            </div>
+                    <div class="mt-6 grid md:grid-cols-4 gap-4">
+                        <div class="card p-4 text-center">
+                            <div class="text-2xl mb-2">🐍</div>
+                            <div class="font-semibold text-white">Python</div>
+                            <div class="text-xs text-slate-400">FastAPI</div>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <div class="text-2xl mb-2">💾</div>
+                            <div class="font-semibold text-white">SAP HANA</div>
+                            <div class="text-xs text-slate-400">CDS Views</div>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <div class="text-2xl mb-2">☁️</div>
+                            <div class="font-semibold text-white">SAP BTP</div>
+                            <div class="text-xs text-slate-400">Cloud Foundry</div>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <div class="text-2xl mb-2">📈</div>
+                            <div class="font-semibold text-white">Grafana</div>
+                            <div class="text-xs text-slate-400">Monitoring</div>
                         </div>
                     </div>
                 </section>
@@ -511,10 +505,10 @@ flowchart LR
         V3[V_CUTOFF_CALC]
     end
     
-    subgraph API[API]
-        EP1[/capacity/check]
-        EP2[/cutoff/current]
-        EP3[/status]
+    subgraph APIEP[API ENDPOINTS]
+        EP1[capacity check]
+        EP2[cutoff current]
+        EP3[status]
     end
     
     subgraph OUTPUT[KONSUMENCI]
@@ -547,7 +541,7 @@ flowchart LR
                 <!-- SECTION: Algorithm -->
                 <section id="algorithm" class="section">
                     <h2 class="text-3xl font-bold text-white mb-2">Logika Decyzyjna</h2>
-                    <p class="text-slate-400 mb-6">Algorytm podejmowania decyzji o wysyłce</p>
+                    <p class="text-slate-400 mb-6">Algorytm podejmowania decyzji</p>
                     
                     <div class="diagram-container mb-8">
                         <div class="p-4 border-b border-slate-700">
@@ -558,20 +552,20 @@ flowchart TD
     START([Nowe Zlecenie]) --> CALC[Oblicz W_new]
     CALC --> STATE[Pobierz stan]
     STATE --> UTIL[Oblicz Utilization]
-    UTIL --> CHECK{U mniejsze 85}
+    UTIL --> CHECK{U mniej 85}
     
     CHECK -->|TAK| TIME[Oblicz czas]
     CHECK -->|NIE| VIP{VIP?}
     
     TIME --> DEADLINE{Przed Deadline?}
     DEADLINE -->|TAK| OK[WYSYLKA DZIS]
-    DEADLINE -->|NIE| NO1[JUTRO - TIME]
+    DEADLINE -->|NIE| NO1[JUTRO TIME]
     
     VIP -->|TAK| RESERVE{Rezerwa?}
-    VIP -->|NIE| NO2[JUTRO - CAPACITY]
+    VIP -->|NIE| NO2[JUTRO CAPACITY]
     
-    RESERVE -->|TAK| OK2[DZIS - VIP]
-    RESERVE -->|NIE| NO3[JUTRO - VIP FULL]
+    RESERVE -->|TAK| OK2[DZIS VIP]
+    RESERVE -->|NIE| NO3[JUTRO VIP FULL]
     
     style OK fill:#22c55e,stroke:#4ade80,stroke-width:2px
     style OK2 fill:#22c55e,stroke:#4ade80,stroke-width:2px
@@ -589,26 +583,22 @@ flowchart TD
                         <div class="p-6 bg-slate-900 font-mono text-sm">
                             <div class="space-y-4">
                                 <div>
-                                    <span class="text-sky-400">// Pracochłonność zlecenia</span><br>
-                                    <span class="text-white">W = Σ(qty × weight × location) + setup + packing + loading</span>
+                                    <span class="text-sky-400">// Pracochłonność</span><br>
+                                    <span class="text-white">W = Σ(qty × weight × location) + setup + packing</span>
                                 </div>
                                 <div>
-                                    <span class="text-sky-400">// Całkowite obciążenie</span><br>
+                                    <span class="text-sky-400">// Obciążenie</span><br>
                                     <span class="text-white">WORKLOAD(t) = Σ Wi × progress_factor</span>
                                 </div>
                                 <div>
                                     <span class="text-sky-400">// Przepustowość</span><br>
-                                    <span class="text-white">CAPACITY(t) = MIN(pickers, packers, loaders) × efficiency(t)</span>
-                                </div>
-                                <div>
-                                    <span class="text-sky-400">// Wykorzystanie</span><br>
-                                    <span class="text-white">UTILIZATION = WORKLOAD / CAPACITY</span>
+                                    <span class="text-white">CAPACITY = MIN(pickers, packers, loaders) × efficiency</span>
                                 </div>
                                 <div class="pt-4 border-t border-slate-700">
                                     <span class="text-emerald-400">// Decyzja</span><br>
-                                    <span class="text-white">IF (UTIL &lt; 85%) AND (completion &lt; deadline)</span><br>
-                                    <span class="text-emerald-400 ml-4">THEN → Wysyłka dziś ✓</span><br>
-                                    <span class="text-red-400 ml-4">ELSE → Wysyłka jutro ✗</span>
+                                    <span class="text-white">IF UTIL &lt; 85% AND completion &lt; deadline</span><br>
+                                    <span class="text-emerald-400 ml-4">THEN Wysyłka dziś ✓</span><br>
+                                    <span class="text-red-400 ml-4">ELSE Wysyłka jutro ✗</span>
                                 </div>
                             </div>
                         </div>
@@ -618,11 +608,11 @@ flowchart TD
                 <!-- SECTION: Sequence -->
                 <section id="sequence" class="section">
                     <h2 class="text-3xl font-bold text-white mb-2">Sequence Diagram</h2>
-                    <p class="text-slate-400 mb-6">Interakcje między komponentami w czasie</p>
+                    <p class="text-slate-400 mb-6">Interakcje między komponentami</p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Scenariusz: Sprawdzenie Dostępności Wysyłki</h3>
+                            <h3 class="font-semibold text-white">Sprawdzenie Dostępności Wysyłki</h3>
                         </div>
                         <pre class="mermaid">
 sequenceDiagram
@@ -641,8 +631,6 @@ sequenceDiagram
         CACHE-->>API: Cached result
     else Cache MISS
         API->>HANA: SELECT V_CUTOFF
-        HANA->>HANA: Agreguj
-        HANA->>HANA: Oblicz
         HANA-->>API: Wynik
         API->>CACHE: Zapisz TTL 60s
     end
@@ -663,7 +651,7 @@ sequenceDiagram
                 <!-- SECTION: State Machine -->
                 <section id="state" class="section">
                     <h2 class="text-3xl font-bold text-white mb-2">State Machine</h2>
-                    <p class="text-slate-400 mb-6">Stany systemu Cutoff Time w ciągu dnia</p>
+                    <p class="text-slate-400 mb-6">Stany systemu w ciągu dnia</p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
@@ -687,31 +675,31 @@ stateDiagram-v2
                     <div class="mt-6 grid md:grid-cols-4 gap-4">
                         <div class="card p-4 border-l-4 border-emerald-500">
                             <div class="font-semibold text-emerald-400">ACCEPTING</div>
-                            <div class="text-xs text-slate-400 mt-1">Utilization &lt; 70%</div>
-                            <div class="text-sm text-slate-300 mt-2">Normalna praca, wszystkie zlecenia akceptowane</div>
+                            <div class="text-xs text-slate-400 mt-1">Util &lt; 70%</div>
+                            <div class="text-sm text-slate-300 mt-2">Normalna praca</div>
                         </div>
                         <div class="card p-4 border-l-4 border-yellow-500">
                             <div class="font-semibold text-yellow-400">WARNING</div>
-                            <div class="text-xs text-slate-400 mt-1">70% - 85%</div>
-                            <div class="text-sm text-slate-300 mt-2">Alert do kierownika, monitoring</div>
+                            <div class="text-xs text-slate-400 mt-1">70-85%</div>
+                            <div class="text-sm text-slate-300 mt-2">Alert</div>
                         </div>
                         <div class="card p-4 border-l-4 border-orange-500">
                             <div class="font-semibold text-orange-400">CRITICAL</div>
-                            <div class="text-xs text-slate-400 mt-1">85% - 95%</div>
-                            <div class="text-sm text-slate-300 mt-2">Tylko VIP, rozważ nadgodziny</div>
+                            <div class="text-xs text-slate-400 mt-1">85-95%</div>
+                            <div class="text-sm text-slate-300 mt-2">Tylko VIP</div>
                         </div>
                         <div class="card p-4 border-l-4 border-red-500">
                             <div class="font-semibold text-red-400">CLOSED</div>
-                            <div class="text-xs text-slate-400 mt-1">&gt; 95% lub deadline</div>
-                            <div class="text-sm text-slate-300 mt-2">Wszystko na jutro</div>
+                            <div class="text-xs text-slate-400 mt-1">&gt;95%</div>
+                            <div class="text-sm text-slate-300 mt-2">Na jutro</div>
                         </div>
                     </div>
                 </section>
 
                 <!-- SECTION: ERD -->
                 <section id="erd" class="section">
-                    <h2 class="text-3xl font-bold text-white mb-2">Model Danych (ERD)</h2>
-                    <p class="text-slate-400 mb-6">Entity Relationship Diagram - struktura danych</p>
+                    <h2 class="text-3xl font-bold text-white mb-2">Model Danych ERD</h2>
+                    <p class="text-slate-400 mb-6">Entity Relationship Diagram</p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
@@ -736,7 +724,6 @@ erDiagram
     ORDER_ITEM {
         string order_id FK
         int item_number PK
-        string product_id FK
         decimal quantity
     }
     
@@ -744,13 +731,11 @@ erDiagram
         string delivery_id PK
         string order_id FK
         date ship_date
-        string status
     }
     
     WAREHOUSE_TASK {
         string task_id PK
         string delivery_id FK
-        string resource_id FK
         string status
     }
                         </pre>
@@ -760,11 +745,11 @@ erDiagram
                 <!-- SECTION: SAP Tables -->
                 <section id="sap-tables" class="section">
                     <h2 class="text-3xl font-bold text-white mb-2">Mapowanie na Tabele SAP</h2>
-                    <p class="text-slate-400 mb-6">Powiązanie encji logicznych z tabelami SAP</p>
+                    <p class="text-slate-400 mb-6">Encje logiczne vs tabele SAP</p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
-                            <h3 class="font-semibold text-white">Encje → Tabele SAP</h3>
+                            <h3 class="font-semibold text-white">Encje - Tabele SAP</h3>
                         </div>
                         <pre class="mermaid">
 flowchart LR
@@ -791,48 +776,39 @@ flowchart LR
                         </pre>
                     </div>
 
-                    <div class="mt-6">
-                        <div class="card p-4">
-                            <h4 class="font-semibold text-white mb-4">Kluczowe Tabele</h4>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-sm">
-                                    <thead>
-                                        <tr class="border-b border-slate-700">
-                                            <th class="text-left py-2 text-slate-400">Tabela</th>
-                                            <th class="text-left py-2 text-slate-400">Opis</th>
-                                            <th class="text-left py-2 text-slate-400">Kluczowe Pola</th>
-                                            <th class="text-left py-2 text-slate-400">Użycie</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="text-slate-300">
-                                        <tr class="border-b border-slate-800">
-                                            <td class="py-2 font-mono text-sky-400">VBAK</td>
-                                            <td>Nagłówek zlecenia</td>
-                                            <td class="font-mono text-xs">VBELN, ERDAT, KUNNR</td>
-                                            <td>Identyfikacja zleceń</td>
-                                        </tr>
-                                        <tr class="border-b border-slate-800">
-                                            <td class="py-2 font-mono text-sky-400">VBAP</td>
-                                            <td>Pozycje zlecenia</td>
-                                            <td class="font-mono text-xs">VBELN, POSNR, MATNR</td>
-                                            <td>Kalkulacja workload</td>
-                                        </tr>
-                                        <tr class="border-b border-slate-800">
-                                            <td class="py-2 font-mono text-sky-400">LIKP</td>
-                                            <td>Nagłówek dostawy</td>
-                                            <td class="font-mono text-xs">VBELN, WADAT</td>
-                                            <td>Status dostaw</td>
-                                        </tr>
-                                        <tr class="border-b border-slate-800">
-                                            <td class="py-2 font-mono text-sky-400">LTAP</td>
-                                            <td>Zlecenie przeniesienia</td>
-                                            <td class="font-mono text-xs">TANUM, TAPOS</td>
-                                            <td>Status zadań WH</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="mt-6 card p-4">
+                        <h4 class="font-semibold text-white mb-4">Kluczowe Tabele</h4>
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-700">
+                                    <th class="text-left py-2 text-slate-400">Tabela</th>
+                                    <th class="text-left py-2 text-slate-400">Opis</th>
+                                    <th class="text-left py-2 text-slate-400">Użycie</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-slate-300">
+                                <tr class="border-b border-slate-800">
+                                    <td class="py-2 font-mono text-sky-400">VBAK</td>
+                                    <td>Nagłówek zlecenia</td>
+                                    <td>Identyfikacja</td>
+                                </tr>
+                                <tr class="border-b border-slate-800">
+                                    <td class="py-2 font-mono text-sky-400">VBAP</td>
+                                    <td>Pozycje zlecenia</td>
+                                    <td>Workload</td>
+                                </tr>
+                                <tr class="border-b border-slate-800">
+                                    <td class="py-2 font-mono text-sky-400">LIKP</td>
+                                    <td>Nagłówek dostawy</td>
+                                    <td>Status</td>
+                                </tr>
+                                <tr class="border-b border-slate-800">
+                                    <td class="py-2 font-mono text-sky-400">LTAP</td>
+                                    <td>Zlecenie WH</td>
+                                    <td>Zadania</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </section>
 
@@ -874,23 +850,13 @@ gantt
                                 <span class="badge">6 tyg</span>
                             </div>
                             <div class="text-2xl font-bold text-sky-400 mb-2">25 600 PLN</div>
-                            <ul class="text-sm text-slate-400 space-y-1">
-                                <li>• Discovery Workshop</li>
-                                <li>• Specyfikacja algorytmu</li>
-                                <li>• Architektura integracji</li>
-                            </ul>
                         </div>
                         <div class="card p-4 border-t-4 border-violet-500">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="font-semibold text-white">FAZA 2: PoC</span>
                                 <span class="badge">9 tyg</span>
                             </div>
-                            <div class="text-2xl font-bold text-violet-400 mb-2">38 400 - 51 200 PLN</div>
-                            <ul class="text-sm text-slate-400 space-y-1">
-                                <li>• Implementacja HANA</li>
-                                <li>• API w Python/BTP</li>
-                                <li>• Testy w QAS</li>
-                            </ul>
+                            <div class="text-2xl font-bold text-violet-400 mb-2">38-51k PLN</div>
                         </div>
                         <div class="card p-4 border-t-4 border-emerald-500">
                             <div class="flex items-center justify-between mb-2">
@@ -898,11 +864,6 @@ gantt
                                 <span class="badge">5 tyg</span>
                             </div>
                             <div class="text-2xl font-bold text-emerald-400 mb-2">T&M</div>
-                            <ul class="text-sm text-slate-400 space-y-1">
-                                <li>• Wdrożenie produkcyjne</li>
-                                <li>• Dashboardy Grafana</li>
-                                <li>• Hypercare</li>
-                            </ul>
                         </div>
                     </div>
                 </section>
@@ -910,7 +871,7 @@ gantt
                 <!-- SECTION: Risks -->
                 <section id="risks" class="section">
                     <h2 class="text-3xl font-bold text-white mb-2">Analiza Ryzyk</h2>
-                    <p class="text-slate-400 mb-6">Identyfikacja i mitygacja ryzyk projektowych</p>
+                    <p class="text-slate-400 mb-6">Identyfikacja i mitygacja</p>
                     
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
@@ -942,12 +903,7 @@ quadrantChart
                                 </div>
                                 <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded text-xs">HIGH</span>
                             </div>
-                            <div class="mt-3 text-sm">
-                                <span class="text-slate-500">Mitygacja:</span>
-                                <span class="text-slate-300">Deep Dive w Discovery Workshop + RFI</span>
-                            </div>
                         </div>
-                        
                         <div class="card p-4 border-l-4 border-red-500">
                             <div class="flex items-start justify-between">
                                 <div>
@@ -956,12 +912,7 @@ quadrantChart
                                 </div>
                                 <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded text-xs">HIGH</span>
                             </div>
-                            <div class="mt-3 text-sm">
-                                <span class="text-slate-500">Mitygacja:</span>
-                                <span class="text-slate-300">Sesja warsztatowa + zatwierdzenie RES 1</span>
-                            </div>
                         </div>
-                        
                         <div class="card p-4 border-l-4 border-yellow-500">
                             <div class="flex items-start justify-between">
                                 <div>
@@ -969,10 +920,6 @@ quadrantChart
                                     <p class="text-sm text-slate-400 mt-1">Dostępy do HANA i BTP</p>
                                 </div>
                                 <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs">MEDIUM</span>
-                            </div>
-                            <div class="mt-3 text-sm">
-                                <span class="text-slate-500">Mitygacja:</span>
-                                <span class="text-slate-300">RFI + warunek startu Fazy 1</span>
                             </div>
                         </div>
                     </div>
@@ -989,7 +936,7 @@ quadrantChart
                             <div class="space-y-4">
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
-                                        <span class="text-slate-400">Same-Day Delivery Rate</span>
+                                        <span class="text-slate-400">Same-Day Delivery</span>
                                         <span class="text-emerald-400">72% → 85%</span>
                                     </div>
                                     <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
@@ -1005,15 +952,6 @@ quadrantChart
                                         <div class="h-full bg-gradient-to-r from-sky-500 to-emerald-500" style="width: 90%"></div>
                                     </div>
                                 </div>
-                                <div>
-                                    <div class="flex justify-between text-sm mb-1">
-                                        <span class="text-slate-400">Reklamacje (tyg)</span>
-                                        <span class="text-emerald-400">15 → 5</span>
-                                    </div>
-                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
-                                        <div class="h-full bg-gradient-to-r from-red-500 to-emerald-500" style="width: 33%"></div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         
@@ -1022,7 +960,7 @@ quadrantChart
                             <div class="space-y-4">
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
-                                        <span class="text-slate-400">API Response Time</span>
+                                        <span class="text-slate-400">API Response</span>
                                         <span class="text-sky-400">&lt; 500ms</span>
                                     </div>
                                     <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
@@ -1031,20 +969,11 @@ quadrantChart
                                 </div>
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
-                                        <span class="text-slate-400">API Availability</span>
+                                        <span class="text-slate-400">Availability</span>
                                         <span class="text-sky-400">99.5%</span>
                                     </div>
                                     <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
                                         <div class="h-full bg-sky-500" style="width: 99.5%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between text-sm mb-1">
-                                        <span class="text-slate-400">Data Freshness</span>
-                                        <span class="text-sky-400">&lt; 5 min</span>
-                                    </div>
-                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
-                                        <div class="h-full bg-sky-500" style="width: 100%"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1059,11 +988,11 @@ quadrantChart
                             <div class="grid grid-cols-4 gap-4 mb-6">
                                 <div class="bg-slate-800 rounded-lg p-4 text-center">
                                     <div class="text-3xl font-bold text-sky-400">14:30</div>
-                                    <div class="text-xs text-slate-400">CUTOFF TIME</div>
+                                    <div class="text-xs text-slate-400">CUTOFF</div>
                                 </div>
                                 <div class="bg-slate-800 rounded-lg p-4 text-center">
                                     <div class="text-3xl font-bold text-emerald-400">78%</div>
-                                    <div class="text-xs text-slate-400">UTILIZATION</div>
+                                    <div class="text-xs text-slate-400">UTIL</div>
                                 </div>
                                 <div class="bg-slate-800 rounded-lg p-4 text-center">
                                     <div class="text-3xl font-bold text-violet-400">47</div>
@@ -1072,25 +1001,6 @@ quadrantChart
                                 <div class="bg-slate-800 rounded-lg p-4 text-center">
                                     <div class="text-3xl font-bold text-yellow-400">⚠️</div>
                                     <div class="text-xs text-slate-400">WARNING</div>
-                                </div>
-                            </div>
-                            <div class="bg-slate-800 rounded-lg p-4">
-                                <div class="text-sm text-slate-400 mb-2">Utilization Trend</div>
-                                <div class="h-32 flex items-end gap-1">
-                                    <div class="flex-1 bg-emerald-500/30 rounded-t" style="height: 40%"></div>
-                                    <div class="flex-1 bg-emerald-500/30 rounded-t" style="height: 55%"></div>
-                                    <div class="flex-1 bg-emerald-500/30 rounded-t" style="height: 50%"></div>
-                                    <div class="flex-1 bg-emerald-500/30 rounded-t" style="height: 65%"></div>
-                                    <div class="flex-1 bg-yellow-500/30 rounded-t" style="height: 72%"></div>
-                                    <div class="flex-1 bg-yellow-500/30 rounded-t" style="height: 78%"></div>
-                                    <div class="flex-1 bg-yellow-500/50 rounded-t" style="height: 82%"></div>
-                                    <div class="flex-1 bg-orange-500/50 rounded-t animate-pulse" style="height: 78%"></div>
-                                </div>
-                                <div class="flex justify-between text-xs text-slate-500 mt-2">
-                                    <span>06:00</span>
-                                    <span>10:00</span>
-                                    <span>14:00</span>
-                                    <span>NOW</span>
                                 </div>
                             </div>
                         </div>
@@ -1102,7 +1012,7 @@ quadrantChart
     </div>
 
     <script>
-        // KLUCZOWA ZMIANA: Najpierw renderujemy WSZYSTKIE diagramy, potem ukrywamy sekcje
+        // Konfiguracja Mermaid
         mermaid.initialize({
             startOnLoad: false,
             theme: 'dark',
@@ -1111,47 +1021,54 @@ quadrantChart
             sequence: { useMaxWidth: true, mirrorActors: false }
         });
 
-        async function initializeDiagrams() {
-            try {
-                // Tymczasowo pokaż wszystkie sekcje (potrzebne do renderowania)
-                const sections = document.querySelectorAll('.section');
-                sections.forEach(s => {
-                    s.style.visibility = 'visible';
-                    s.style.position = 'relative';
-                    s.style.opacity = '1';
-                });
+        // Aktualna sekcja
+        let currentSection = 'overview';
 
-                // Renderuj wszystkie diagramy Mermaid
-                await mermaid.run();
-
-                // Ukryj wszystkie sekcje oprócz pierwszej
-                sections.forEach(s => {
-                    s.style.visibility = '';
-                    s.style.position = '';
-                    s.style.opacity = '';
-                    s.classList.remove('active');
-                });
-                document.getElementById('overview').classList.add('active');
-
-                // Ukryj loading overlay
-                document.getElementById('loading').classList.add('hidden');
-                
-                console.log('All Mermaid diagrams rendered successfully!');
-            } catch (error) {
-                console.error('Error rendering Mermaid diagrams:', error);
-                document.getElementById('loading').classList.add('hidden');
-            }
-        }
-
+        // Funkcja pokazująca sekcję
         function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
+            // Ukryj wszystkie sekcje
+            document.querySelectorAll('.section').forEach(s => {
+                s.classList.add('hidden-section');
+            });
+            
+            // Pokaż wybraną sekcję
+            document.getElementById(sectionId).classList.remove('hidden-section');
+            
+            // Aktualizuj nawigację
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+            const navBtn = document.querySelector(`[data-section="${sectionId}"]`);
+            if (navBtn) navBtn.classList.add('active');
+            
+            currentSection = sectionId;
         }
 
-        // Start initialization when DOM is ready
-        document.addEventListener('DOMContentLoaded', initializeDiagrams);
+        // Inicjalizacja po załadowaniu DOM
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Wszystkie sekcje są widoczne - renderuj Mermaid
+                await mermaid.run();
+                
+                console.log('Mermaid diagrams rendered successfully');
+                
+                // Po wyrenderowaniu ukryj wszystkie sekcje oprócz pierwszej
+                document.querySelectorAll('.section').forEach(s => {
+                    s.classList.add('hidden-section');
+                });
+                document.getElementById('overview').classList.remove('hidden-section');
+                
+                // Ukryj loading
+                document.getElementById('loading').classList.add('done');
+                
+            } catch (error) {
+                console.error('Mermaid rendering error:', error);
+                // W przypadku błędu i tak ukryj loading i pokaż stronę
+                document.querySelectorAll('.section').forEach(s => {
+                    s.classList.add('hidden-section');
+                });
+                document.getElementById('overview').classList.remove('hidden-section');
+                document.getElementById('loading').classList.add('done');
+            }
+        });
     </script>
 
 </body>
