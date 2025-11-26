@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cutoff Time Architecture - Interactive Visualization</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Navigation */
+        .nav-item {
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(14, 165, 233, 0.1);
+            border-left-color: #0ea5e9;
+        }
+        
+        /* Diagram container */
+        .diagram-container {
+            background: #1e293b;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        /* Mermaid styling */
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+            background: #0f172a;
+        }
+        .mermaid svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Section styling */
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Cards */
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            border-color: rgba(14, 165, 233, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Badge */
+        .badge {
+            background: rgba(14, 165, 233, 0.2);
+            color: #38bdf8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    </style>
+</head>
+<body class="text-slate-200">
+    
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-sm border-b border-slate-700">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-sky-500 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-semibold text-white">Cutoff Time System</h1>
+                    <p class="text-xs text-slate-400">Architecture Visualization</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="badge">Case Study</span>
+                <span class="text-sm text-slate-400">v1.0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="flex pt-16">
+        
+        <!-- Sidebar Navigation -->
+        <nav class="fixed left-0 top-16 bottom-0 w-64 bg-slate-900/50 border-r border-slate-700 overflow-y-auto">
+            <div class="p-4">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Przegląd</p>
+                <button onclick="showSection('overview')" class="nav-item active w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="overview">
+                    🎯 Executive Summary
+                </button>
+                <button onclick="showSection('problem')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="problem">
+                    ❓ Problem Biznesowy
+                </button>
+                
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">Architektura</p>
+                <button onclick="showSection('c4-context')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="c4-context">
+                    🏗️ C4: Context
+                </button>
+                <button onclick="showSection('c4-container')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="c4-container">
+                    📦 C4: Container
+                </button>
+                <button onclick="showSection('dataflow')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="dataflow">
+                    🔀 Data Flow
+                </button>
+                
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">Algorytm</p>
+                <button onclick="showSection('algorithm')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="algorithm">
+                    🧮 Logika Decyzyjna
+                </button>
+                <button onclick="showSection('sequence')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="sequence">
+                    📊 Sequence Diagram
+                </button>
+                <button onclick="showSection('state')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="state">
+                    🔄 State Machine
+                </button>
+                
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">Dane</p>
+                <button onclick="showSection('erd')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="erd">
+                    🗄️ Model Danych (ERD)
+                </button>
+                <button onclick="showSection('sap-tables')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="sap-tables">
+                    📋 Tabele SAP
+                </button>
+                
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">Realizacja</p>
+                <button onclick="showSection('timeline')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="timeline">
+                    📅 Harmonogram
+                </button>
+                <button onclick="showSection('risks')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="risks">
+                    ⚠️ Ryzyka
+                </button>
+                <button onclick="showSection('kpis')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="kpis">
+                    📈 KPIs
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-8">
+            <div class="max-w-6xl mx-auto">
+
+                <!-- SECTION: Overview -->
+                <section id="overview" class="section active">
+                    <h2 class="text-3xl font-bold text-white mb-6">Executive Summary</h2>
+                    <p class="text-slate-400 mb-8 text-lg">
+                        System Oceny Obciążenia Magazynu - Real-time Cutoff Time Engine
+                    </p>
+                    
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+                        <div class="card p-6">
+                            <div class="text-4xl mb-4">🎯</div>
+                            <h3 class="font-semibold text-white mb-2">Problem</h3>
+                            <p class="text-sm text-slate-400">Brak automatycznego mechanizmu określającego, do kiedy można przyjmować zamówienia z wysyłką "na dziś"</p>
+                        </div>
+                        <div class="card p-6">
+                            <div class="text-4xl mb-4">💡</div>
+                            <h3 class="font-semibold text-white mb-2">Rozwiązanie</h3>
+                            <p class="text-sm text-slate-400">Algorytm Real-Time obliczający dynamiczny Cutoff Time na podstawie obciążenia i przepustowości</p>
+                        </div>
+                        <div class="card p-6">
+                            <div class="text-4xl mb-4">🚀</div>
+                            <h3 class="font-semibold text-white mb-2">Wartość</h3>
+                            <p class="text-sm text-slate-400">+20% Same-Day Delivery, -60% reklamacji dot. terminów, eliminacja nadgodzin</p>
+                        </div>
+                    </div>
+
+                    <div class="diagram-container">
+                        <div class="p-4 border-b border-slate-700">
+                            <h3 class="font-semibold text-white">Koncepcja Rozwiązania</h3>
+                        </div>
+                        <div class="mermaid">
+%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#0ea5e9', 'primaryTextColor': '#fff', 'primaryBorderColor': '#38bdf8', 'lineColor': '#64748b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#334155'}}}%%
+graph LR
+    subgraph INPUT["📥 WEJŚCIE"]
+        A[Zlecenie Sprzedaży]
+        B[Stan Magazynu]
+        C[Dostępne Zasoby]
+    end
+    
+    subgraph PROCESSING["⚙️ PRZETWARZANIE"]
+        D[Algorytm<br/>Cutoff Time]
+    end
+    
+    subgraph OUTPUT["📤 WYJŚCIE"]
+        E{Decyzja}
+        F[✅ Wysyłka DZIŚ]
+        G[❌ Wysyłka JUTRO]
+    end
+    
+    A --> D
+    B --> D
+    C --> D
+    D --> E
+    E -->|capacity OK| F
+    E -->|capacity exceeded| G
+    
+    style D fill:#0ea5e9,stroke:#38bdf8,stroke-width:2px
+    style F fill:#22c55e,stroke:#4ade80
+    style G fill:#ef4444,stroke:#f87171
+                        </div>
+                    </div>
+
+                    <div class="mt-8 grid md:grid-cols-4 gap-4">
+                        <div class="card p-4 text-center">
+                            <div class="text-2xl font-bold text-sky-400">3</div>
+                            <div class="text-xs text-slate-400">Fazy Projektu</div>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <div class="text-2xl font-bold text-sky-400">~18</div>
+                            <div class="text-xs text-slate-400">Tygodni Realizacji</div>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <div class="text-2xl font-bold text-sky-400">SAP</div>
+                            <div class="text-xs text-slate-400">HANA + BTP</div>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <div class="text-2xl font-bold text-sky-400">&lt;500ms</div>
+                            <div class="text-xs text-slate-400">Response Time</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: Problem -->
+                <section id="problem" class="section">
+                    <h2 class="text-3xl font-bold text-white mb-6">Problem Biznesowy</h2>
+                    
+                    <div class="diagram-container mb-8">
+                        <div class="p-4 border-b border-slate-700">
+                            <h3 class="font-semibold text-white">Obecny Stan (AS-IS)</h3>
+                        </div>
+                        <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+graph TB
+    subgraph PROBLEM["❌ OBECNE PROBLEMY"]
+        P1["🤷 Brak wiedzy o rzeczywistym<br/>obciążeniu magazynu"]
+        P2["📞 Ręczne ustalanie<br/>Cutoff Time"]
+        P3["😡 Reklamacje klientów<br/>'miało być dziś!'"]
+        P4["💸 Nadgodziny<br/>i chaos"]
+    end
+    
+    subgraph IMPACT["💥 SKUTKI"]
+        I1["📉 72% Same-Day<br/>Delivery Rate"]
+        I2["📋 15 reklamacji<br/>tygodniowo"]
+        I3["⏰ 40h nadgodzin<br/>tygodniowo"]
+        I4["😤 Frustracja<br/>handlowców"]
+    end
+    
+    P1 --> I1
+    P2 --> I2
+    P3 --> I3
+    P4 --> I4
+    
+    style P1 fill:#dc2626,stroke:#ef4444
+    style P2 fill:#dc2626,stroke:#ef4444
+    style P3 fill:#dc2626,stroke:#ef4444
+    style P4 fill:#dc2626,stroke:#ef4444
+                        </div>
+                    </div>
+
+                    <div class="diagram-container">
+                        <div class="p-4 border-b border-slate-700">
+                            <h3 class="font-semibold text-white">Wymagania Klienta → Rozwiązanie</h3>
+                        </div>
+                        <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+graph LR
+    subgraph REQ["📋 WYMAGANIA KLIENTA"]
+        R1["Ocenić dzienne<br/>obciążenie magazynu"]
+        R2["Wskazać<br/>Cutoff Time"]
+        R3["Uwzględniać dostawy,<br/>operacje, zasoby"]
+        R4["Transparentność<br/>procesu"]
+    end
+    
+    subgraph SOL["✅ ROZWIĄZANIE"]
+        S1["Algorytm Real-Time<br/>SAP HANA"]
+        S2["API Decyzyjne<br/>SAP BTP"]
+        S3["Data Engineering<br/>CDS Views"]
+        S4["Monitoring<br/>Grafana"]
+    end
+    
+    R1 --> S1
+    R2 --> S2
+    R3 --> S3
+    R4 --> S4
+    
+    style S1 fill:#0ea5e9,stroke:#38bdf8
+    style S2 fill:#0ea5e9,stroke:#38bdf8
+    style S3 fill:#0ea5e9,stroke:#38bdf8
+    style S4 fill:#0ea5e9,stroke:#38bdf8
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: C4 Context -->
+                <section id="c4-context" class="section">
+                    <h2 class="text-3xl font-bold text-white mb-2">C4 Model: System Context</h2>
+                    <p class="text-slate-400 mb-6">Poziom 1 - Widok z lotu ptaka: system i jego otoczenie</p>
+                    
+                    <div class="diagram-container">
+                        <div class="p-4 border-b border-slate-700 flex items-center justify-between">
+                            <h3 class="font-semibold text-white">System Context Diagram</h3>
+                            <span class="badge">C4 Level 1</span>
+                        </div>
+                        <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+graph TB
+    subgraph USERS["👥 UŻYTKOWNICY"]
+        U1["🧑‍💼 Handlowiec<br/><small>Sprawdza dostępność wysyłki</small>"]
+        U2["👷 Kierownik Magazynu<br/><small>Monitoruje obciążenie</small>"]
+        U3["📊 Dyrektor Operacji<br/><small>Analizuje KPI</small>"]
+    end
+    
+    subgraph SYSTEM["🎯 SYSTEM CUTOFF TIME"]
+        SYS["<b>Cutoff Time Engine</b><br/><br/>• Oblicza obciążenie magazynu<br/>• Wyznacza dynamiczny Cutoff<br/>• Odpowiada na zapytania<br/>• Generuje alerty"]
+    end
+    
+    subgraph EXTERNAL["🔗 SYSTEMY ZEWNĘTRZNE"]
+        E1["📦 SAP S/4HANA<br/><small>Źródło danych</small>"]
+        E2["☁️ SAP BTP<br/><small>Platforma chmurowa</small>"]
+        E3["📈 Grafana<br/><small>Monitoring</small>"]
+        E4["📧 System Powiadomień<br/><small>Email / SMS</small>"]
+    end
+    
+    U1 -->|"Czy zdążymy wysłać?"| SYS
+    U2 -->|"Jaki jest stan?"| SYS
+    U3 -->|"Raport dzienny"| SYS
+    
+    SYS <-->|"Dane zleceń"| E1
+    SYS <-->|"Hosting API"| E2
+    SYS -->|"Metryki"| E3
+    SYS -->|"Alerty"| E4
+    
+    style SYS fill:#0ea5e9,stroke:#38bdf8,stroke-width:3px
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid md:grid-cols-2 gap-4">
+                        <div class="card p-4">
+                            <h4 class="font-semibold text-white mb-2">👥 Aktorzy</h4>
+                            <ul class="text-sm text-slate-400 space-y-1">
+                                <li>• <strong>Handlowiec</strong> - sprawdza czy zamówienie zdąży na dziś</li>
+                                <li>• <strong>Kierownik Magazynu</strong> - monitoruje obciążenie</li>
+                                <li>• <strong>Dyrektor Operacji</strong> - analizuje trendy</li>
+                            </ul>
+                        </div>
+                        <div class="card p-4">
+                            <h4 class="font-semibold text-white mb-2">🔗 Integracje</h4>
+                            <ul class="text-sm text-slate-400 space-y-1">
+                                <li>• <strong>SAP S/4HANA</strong> - źródło danych o zleceniach</li>
+                                <li>• <strong>SAP BTP</strong> - hosting mikroserwisów</li>
+                                <li>• <strong>Grafana</strong> - dashboardy i alerty</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: C4 Container -->
+                <section id="c4-container" class="section">
+                    <h2 class="text-3xl font-bold text-white mb-2">C4 Model: Container Diagram</h2>
+                    <p class="text-slate-400 mb-6">Poziom 2 - Komponenty systemu i ich interakcje</p>
+                    
+                    <div class="diagram-container">
+                        <div class="p-4 border-b border-slate-700 flex items-center justify-between">
+                            <h3 class="font-semibold text-white">Container Diagram</h3>
+                            <span class="badge">C4 Level 2</span>
+                        </div>
+                        <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+graph TB
+    subgraph BTP["☁️ SAP BTP (Cloud Foundry)"]
+        API["🐍 Cutoff API<br/><small>Python / FastAPI</small><br/><br/>REST Endpoints:<br/>• /capacity/check<br/>• /cutoff/current<br/>• /status"]
+        
+        CACHE["⚡ Redis Cache<br/><small>In-Memory</small><br/><br/>• Session data<br/>• Computed results<br/>• Rate limiting"]
+    end
+    
+    subgraph HANA["💾 SAP HANA"]
+        CDS1["📊 V_ORDER_WORKLOAD<br/><small>CDS View</small>"]
+        CDS2["📊 V_WAREHOUSE_CAPACITY<br/><small>CDS View</small>"]
+        CDS3["📊 V_CUTOFF_CALCULATION<br/><small>CDS View</small>"]
+        PROC["⚙️ Calculation Engine<br/><small>In-Memory Processing</small>"]
+    end
+    
+    subgraph S4["📦 SAP S/4HANA"]
+        VBAK["VBAK/VBAP<br/><small>Sales Orders</small>"]
+        LIKP["LIKP/LIPS<br/><small>Deliveries</small>"]
+        RES["Resources<br/><small>Workers</small>"]
+    end
+    
+    subgraph MON["📈 MONITORING"]
+        GRAF["Grafana<br/><small>Dashboards</small>"]
+        ALERT["AlertManager<br/><small>Notifications</small>"]
+    end
+    
+    API <--> CACHE
+    API <--> CDS3
+    CDS3 --> CDS1
+    CDS3 --> CDS2
+    CDS1 --> PROC
+    CDS2 --> PROC
+    
+    VBAK -.->|CDC/Replication| CDS1
+    LIKP -.->|CDC/Replication| CDS1
+    RES -.->|CDC/Replication| CDS2
+    
+    API -->|Metrics| GRAF
+    GRAF --> ALERT
+    
+    style API fill:#0ea5e9,stroke:#38bdf8,stroke-width:2px
+    style CDS3 fill:#8b5cf6,stroke:#a78bfa,stroke-width:2px
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <h4 class="font-semibold text-white mb-4">Stos Technologiczny</h4>
+                        <div class="grid md:grid-cols-4 gap-4">
+                            <div class="card p-4 text-center">
+                                <div class="text-2xl mb-2">🐍</div>
+                                <div class="font-semibold text-white">Python</div>
+                                <div class="text-xs text-slate-400">FastAPI</div>
+                            </div>
+                            <div class="card p-4 text-center">
+                                <div class="text-2xl mb-2">💾</div>
+                                <div class="font-semibold text-white">SAP HANA</div>
+                                <div class="text-xs text-slate-400">CDS Views</div>
+                            </div>
+                            <div class="card p-4 text-center">
+                                <div class="text-2xl mb-2">☁️</div>
+                                <div class="font-semibold text-white">SAP BTP</div>
+                                <div class="text-xs text-slate-400">Cloud Foundry</div>
+                            </div>
+                            <div class="card p-4 text-center">
+                                <div class="text-2xl mb-2">📈</div>
+                                <div class="font-semibold text-white">Grafana</div>
+                                <div class="text-xs text-slate-400">Monitoring</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: Data Flow -->
+                <section id="dataflow" class="section">
+                    <h2 class="text-3xl font-bold text-white mb-2">Data Flow Diagram</h2>
+                    <p class="text-slate-400 mb-6">Przepływ danych przez system</p>
+                    
+                    <div class="diagram-container">
+                        <div class="p-4 border-b border-slate-700">
+                            <h3 class="font-semibold text-white">Przepływ Danych</h3>
+                        </div>
+                        <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+flowchart LR
+    subgraph SOURCE["📥 ŹRÓDŁA DANYCH"]
+        direction TB
+        SO["Sales Orders<br/>VBAK/VBAP"]
+        DL["Deliveries<br/>LIKP/LIPS"]
+        WH["Warehouse Tasks<br/>LTAP"]
+        RS["Resources<br/>Pracownicy"]
+    end
+    
+    subgraph TRANSFORM["⚙️ TRANSFORMACJA"]
+        direction TB
+        V1["CDS View:<br/>V_ORDER_WORKLOAD<br/><small>Oblicz pracochłonność</small>"]
+        V2["CDS View:<br/>V_CAPACITY<br/><small>Oblicz przepustowość</small>"]
+        V3["CDS View:<br/>V_CUTOFF_CALC<br/><small>Oblicz Cutoff Time</small>"]
+    end
+    
+    subgraph API["🔌 API LAYER"]
+        EP1["/capacity/check"]
+        EP2["/cutoff/current"]
+        EP3["/status"]
+    end
+    
+    subgraph OUTPUT["📤 KONSUMENCI"]
+        UI["SAP Fiori<br/>UI"]
+        DASH["Grafana<br/>Dashboard"]
+        NOTIF["Notifications<br/>Email/SMS"]
+    end
+    
+    SO --> V1
+    DL --> V1
+    WH --> V1
+    RS --> V2
+    
+    V1 --> V3
+    V2 --> V3
+    
+    V3 --> EP1
+    V3 --> EP2
+    V3 --> EP3
+    
+    EP1 --> UI
+    EP2 --> UI
+    EP2 --> DASH
+    EP3 --> DASH
+    EP3 --> NOTIF
+    
+    style V3 fill:#0ea5e9,stroke:#38bdf8,stroke-width:2px
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: Algorithm -->
+                <section id="algorithm" class="section">
+                    <h2 class="text-3xl font-bold text-white mb-2">Logika Decyzyjna</h2>
+                    <p class="text-slate-400 mb-6">Algorytm podejmowania decyzji o wysyłce</p>
+                    
+                    <div class="diagram-container mb-8">
+                        <div class="p-4 border-b border-slate-700">
+                            <h3 class="font-semibold text-white">Flowchart Decyzyjny</h3>
+                        </div>
+                        <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+flowchart TD
+    START([🆕 Nowe Zlecenie]) --> CALC_WORK[Oblicz pracochłonność<br/>zlecenia W_new]
+    
+    CALC_WORK --> GET_STATE[Pobierz aktualny stan:<br/>• Obciążenie W_current<br/>• Capacity C<br/>• Czas do deadline]
+    
+    GET_STATE --> CALC_UTIL[Oblicz Utilization:<br/>U = W_current + W_new / C]
+    
+    CALC_UTIL --> CHECK_UTIL{U < 85%?}
+    
+    CHECK_UTIL -->|TAK| CALC_TIME[Oblicz czas ukończenia<br/>T_completion]
+    CHECK_UTIL -->|NIE| CHECK_VIP{Zlecenie VIP?}
+    
+    CALC_TIME --> CHECK_TIME{T_completion<br/>< Deadline?}
+    
+    CHECK_TIME -->|TAK| APPROVE[✅ WYSYŁKA DZIŚ<br/>Confidence: 92%]
+    CHECK_TIME -->|NIE| REJECT[❌ WYSYŁKA JUTRO<br/>Reason: TIME_EXCEEDED]
+    
+    CHECK_VIP -->|TAK| CHECK_VIP_CAP{Rezerwa VIP<br/>dostępna?}
+    CHECK_VIP -->|NIE| REJECT2[❌ WYSYŁKA JUTRO<br/>Reason: CAPACITY_EXCEEDED]
+    
+    CHECK_VIP_CAP -->|TAK| APPROVE_VIP[✅ WYSYŁKA DZIŚ<br/>VIP Override]
+    CHECK_VIP_CAP -->|NIE| REJECT3[❌ WYSYŁKA JUTRO<br/>VIP capacity exhausted]
+    
+    style APPROVE fill:#22c55e,stroke:#4ade80,stroke-width:2px
+    style APPROVE_VIP fill:#22c55e,stroke:#4ade80,stroke-width:2px
+    style REJECT fill:#ef4444,stroke:#f87171,stroke-width:2px
+    style REJECT2 fill:#ef4444,stroke:#f87171,stroke-width:2px
+    style REJECT3 fill:#ef4444,stroke:#f87171,stroke-width:2px
+    style CHECK_UTIL fill:#f59e0b,stroke:#fbbf24,stroke-width:2px
+    style CHECK_TIME fill:#f59e0b,stroke:#fbbf24,stroke-width:2px
+                        </div>
+                    </div>
+
+                    <div class="diagram-container">
+                        <div class="p-4 border-b border-slate-700">
+                            <h3 class="font-semibold text-white">Model Matematyczny</h3>
+                        </div>
+                        <div class="p-6 bg-slate-900 font-mono text-sm">
+                            <div class="space-y-4">
+                                <div>
+                                    <span class="text-sky-400">// Pracochłonność zlecenia</span><br>
+                                    <span class="text-white">W<sub>order</sub> = Σ(quantity × weight_factor × location_factor) + setup + packing + loading</span>
+                                </div>
+                                <div>
+                                    <span class="text-sky-400">// Całkowite obciążenie</span><br>
+                                    <span class="text-white">WORKLOAD(t) = Σ W<sub>i</sub> × progress_factor<sub>i</sub></span>
+                                </div>
+                                <div>
+                                    <span class="text-sky-400">// Przepustowość (bottleneck)</span><br>
+                                    <span class="text-white">CAPACITY(t) = MIN(pickers × rate, packers × rate, loaders × rate) × efficiency(t)</span>
+                                </div>
+                                <div>
+                                    <span class="text-sky-400">// Wykorzystanie</span><br>
+                                    <span class="text-white">UTILIZATION = WORKLOAD / CAPACITY</span>
+                                </div>
+                                <div>
+                                    <span class="text-sky-400">// Efekt kongestii (teoria kolejek)</span><br>
+                                    <span class="text-white">CONGESTION_FACTOR = 1 + α × UTILIZATION²</span>
+                                </div>
+                                <div class="pt-4 border-t border-slate-700">
+                                    <span class="text-emerald-400">// Decyzja</span><br>
+                                    <span class="text-white">IF (UTILIZATION &lt; 85%) AND (completion_time &lt; deadline)</span><br>
+                                    <span class="text-emerald-400 ml-4">THEN → "Wysyłka dziś" ✓</span><br>
+                                    <span class="text-red-400 ml-4">ELSE → "Wysyłka jutro" ✗</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: Sequence Diagram -->
+                <section id="sequence" class="section">
+                    <h2 class="text-3xl font-bold text-white mb-2">Sequence Diagram</h2>
+                    <p class="text-slate-400 mb-6">Interakcje między komponentami w czasie</p>
+                    
+                    <div class="diagram-container">
+                        <div class="p-4 border-b border-slate-700">
+                            <h3 class="font-semibold text-white">Scenariusz: Sprawdzenie Dostępności Wysyłki</h3>
+                        </div>
+                        <div class="mermaid">
+%%{init: {'theme': 'dark', 'sequence': {'mirrorActors': false}}}%%
+sequenceDiagram
+    autonumber
+    participant H as 🧑‍💼 Handlowiec
+    participant UI as 📱 SAP Fiori
+    participant API as 🔌 Cutoff API
+    participant CACHE as ⚡ Redis
+    participant HANA as 💾 SAP HANA
+    
+    H->>UI: Wprowadza zlecenie
+    UI->>API: POST /capacity/check
+    
+    API->>CACHE: Sprawdź cache
+    
+    alt Cache HIT
+        CACHE-->>API: Cached result
+    else Cache MISS
+        API->>HANA: SELECT FROM V_CUTOFF_CALCULATION
+        HANA->>HANA: Agreguj zlecenia
+        HANA->>HANA: Oblicz capacity
+        HANA->>HANA: Wylicz utilization
+        HANA-->>API: Wynik kalkulacji
+        API->>CACHE: Zapisz (TTL: 60s)
+    end
+    
+    API->>API: Zastosuj algorytm decyzyjny
+    
+    alt Wysyłka możliwa
+        API-->>UI: ✅ can_ship_today: true
+        UI-->>H: "Wysyłka dziś możliwa"
+    else Wysyłka niemożliwa
+        API-->>UI: ❌ can_ship_today: false
+        UI-->>H: "Wysyłka jutro"
+    end
+    
+    Note over API,HANA: Całkowity czas: < 500ms
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: State Machine -->
+                <section id="state" class="section">
+                    <h2 class="text-3xl font-bold text-white mb-2">State Machine</h2>
+                    <p class="text-slate-400 mb-6">Stany systemu Cutoff Time w ciągu dnia</p>
+                    
+                    <div class="diagram-container">
+                        <div class="p-4 border-b border-slate-700">
+                            <h3 class="font-semibold text-white">Stany Operacyjne Magazynu</h3>
+                        </div>
+                        <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+stateDiagram-v2
+    [*] --> OPENING: 06:00 Start zmiany
+    
+    OPENING --> ACCEPTING: Zasoby dostępne
+    
+    ACCEPTING --> WARNING: Utilization > 70%
+    WARNING --> ACCEPTING: Utilization < 65%
+    
+    WARNING --> CRITICAL: Utilization > 85%
+    CRITICAL --> WARNING: Utilization < 80%
+    
+    CRITICAL --> CUTOFF_IMMINENT: < 30 min do deadline
+    CUTOFF_IMMINENT --> CLOSED: Cutoff Time reached
+    
+    ACCEPTING --> CLOSED: Hard deadline (16:00)
+    WARNING --> CLOSED: Hard deadline (16:00)
+    
+    CLOSED --> [*]: Koniec dnia
+    
+    note right of ACCEPTING
+        ✅ Przyjmujemy zlecenia
+        Confidence: HIGH
+    end note
+    
+    note right of WARNING
+        ⚠️ Ograniczona pojemność
+        Alert do kierownika
+    end note
+    
+    note right of CRITICAL
+        🔴 Prawie pełne
+        Tylko VIP
+    end note
+    
+    note right of CLOSED
+        ❌ Brak przyjęć
+        "Wysyłka jutro"
+    end note
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid md:grid-cols-4 gap-4">
+                        <div class="card p-4 border-l-4 border-emerald-500">
+                            <div class="font-semibold text-emerald-400">ACCEPTING</div>
+                            <div class="text-xs text-slate-400 mt-1">Utilization &lt; 70%</div>
+                            <div class="text-sm text-slate-300 mt-2">Normalna praca, wszystkie zlecenia akceptowane</div>
+                        </div>
+                        <div class="card p-4 border-l-4 border-yellow-500">
+                            <div class="font-semibold text-yellow-400">WARNING</div>
+                            <div class="text-xs text-slate-400 mt-1">70% - 85%</div>
+                            <div class="text-sm text-slate-300 mt-2">Alert do kierownika, monitoring</div>
+                        </div>
+                        <div class="card p-4 border-l-4 border-orange-500">
+                            <div class="font-semibold text-orange-400">CRITICAL</div>
+                            <div class="text-xs text-slate-400 mt-1">85% - 95%</div>
+                            <div class="text-sm text-slate-300 mt-2">Tylko VIP, rozważ nadgodziny</div>
+                        </div>
+                        <div class="card p-4 border-l-4 border-red-500">
+                            <div class="font-semibold text-red-400">CLOSED</div>
+                            <div class="text-xs text-slate-400 mt-1">&gt; 95% lub deadline</div>
+                            <div class="text-sm text-slate-300 mt-2">Wszystko na jutro</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: ERD -->
+                <section id="erd" class="section">
+                    <h2 class="text-3xl font-bold text-white mb-2">Model Danych (ERD)</h2>
+                    <p class="text-slate-400 mb-6">Entity Relationship Diagram - struktura danych</p>
+                    
+                    <div class="diagram-container">
+                        <div class="p-4 border-b border-slate-700">
+                            <h3 class="font-semibold text-white">Diagram Encji</h3>
+                        </div>
+                        <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+erDiagram
+    SALES_ORDER ||--o{ ORDER_ITEM : contains
+    SALES_ORDER ||--|| CUSTOMER : "placed by"
+    SALES_ORDER ||--o| DELIVERY : generates
+    
+    ORDER_ITEM ||--|| PRODUCT : references
+    PRODUCT ||--o| PRODUCT_WEIGHT : "has weight config"
+    
+    DELIVERY ||--o{ WAREHOUSE_TASK : requires
+    WAREHOUSE_TASK }o--|| RESOURCE : "assigned to"
+    
+    RESOURCE }o--|| RESOURCE_SCHEDULE : "has schedule"
+    
+    SALES_ORDER {
+        string order_id PK
+        string customer_id FK
+        date created_date
+        string order_type
+        string status
+        string priority
+    }
+    
+    ORDER_ITEM {
+        string order_id FK
+        int item_number PK
+        string product_id FK
+        decimal quantity
+    }
+    
+    PRODUCT {
+        string product_id PK
+        string description
+        decimal base_weight
+        string storage_type
+    }
+    
+    PRODUCT_WEIGHT {
+        string product_id FK
+        decimal weight_factor
+        decimal location_factor
+    }
+    
+    DELIVERY {
+        string delivery_id PK
+        string order_id FK
+        date ship_date
+        string status
+    }
+    
+    WAREHOUSE_TASK {
+        string task_id PK
+        string delivery_id FK
+        string resource_id FK
+        string task_type
+        string status
+        timestamp started_at
+        timestamp completed_at
+    }
+    
+    RESOURCE {
+        string resource_id PK
+        string resource_type
+        string name
+        decimal efficiency_rate
+    }
+    
+    RESOURCE_SCHEDULE {
+        string resource_id FK
+        date schedule_date
+        time shift_start
+        time shift_end
+        boolean available
+    }
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: SAP Tables -->
+                <section id="sap-tables" class="section">
+                    <h2 class="text-3xl font-bold text-white mb-2">Mapowanie na Tabele SAP</h2>
+                    <p class="text-slate-400 mb-6">Powiązanie encji logicznych z tabelami SAP</p>
+                    
+                    <div class="diagram-container">
+                        <div class="p-4 border-b border-slate-700">
+                            <h3 class="font-semibold text-white">Encje → Tabele SAP</h3>
+                        </div>
+                        <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+flowchart LR
+    subgraph LOGICAL["📋 ENCJE LOGICZNE"]
+        E1["Sales Order"]
+        E2["Order Item"]
+        E3["Delivery"]
+        E4["Warehouse Task"]
+        E5["Resource"]
+    end
+    
+    subgraph SAP_WM["📦 SAP WM"]
+        T1["VBAK<br/><small>Sales Doc Header</small>"]
+        T2["VBAP<br/><small>Sales Doc Item</small>"]
+        T3["LIKP<br/><small>Delivery Header</small>"]
+        T4["LIPS<br/><small>Delivery Item</small>"]
+        T5["LTAP<br/><small>Transfer Order Item</small>"]
+    end
+    
+    subgraph SAP_EWM["📦 SAP EWM"]
+        T6["/SCWM/ORDIM_O<br/><small>Outbound Order</small>"]
+        T7["/SCWM/DLVH<br/><small>Delivery Header</small>"]
+        T8["/SCWM/WHO<br/><small>Warehouse Order</small>"]
+        T9["/SCWM/RSRC<br/><small>Resource</small>"]
+    end
+    
+    E1 --> T1
+    E2 --> T2
+    E3 --> T3
+    E3 --> T4
+    E4 --> T5
+    
+    E1 -.-> T6
+    E3 -.-> T7
+    E4 -.-> T8
+    E5 -.-> T9
+    
+    style SAP_WM fill:#1e3a5f,stroke:#3b82f6
+    style SAP_EWM fill:#3b1f5f,stroke:#8b5cf6
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <div class="card p-4">
+                            <h4 class="font-semibold text-white mb-4">Kluczowe Tabele</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="border-b border-slate-700">
+                                            <th class="text-left py-2 text-slate-400">Tabela</th>
+                                            <th class="text-left py-2 text-slate-400">Opis</th>
+                                            <th class="text-left py-2 text-slate-400">Kluczowe Pola</th>
+                                            <th class="text-left py-2 text-slate-400">Użycie</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-slate-300">
+                                        <tr class="border-b border-slate-800">
+                                            <td class="py-2 font-mono text-sky-400">VBAK</td>
+                                            <td>Nagłówek zlecenia</td>
+                                            <td class="font-mono text-xs">VBELN, ERDAT, KUNNR, AUART</td>
+                                            <td>Identyfikacja zleceń</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-800">
+                                            <td class="py-2 font-mono text-sky-400">VBAP</td>
+                                            <td>Pozycje zlecenia</td>
+                                            <td class="font-mono text-xs">VBELN, POSNR, MATNR, KWMENG</td>
+                                            <td>Kalkulacja workload</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-800">
+                                            <td class="py-2 font-mono text-sky-400">LIKP</td>
+                                            <td>Nagłówek dostawy</td>
+                                            <td class="font-mono text-xs">VBELN, WADAT, KUNNR</td>
+                                            <td>Status dostaw</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-800">
+                                            <td class="py-2 font-mono text-sky-400">LTAP</td>
+                                            <td>Zlecenie przeniesienia</td>
+                                            <td class="font-mono text-xs">TANUM, TAPOS, PESSION</td>
+                                            <td>Status zadań WH</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: Timeline -->
+                <section id="timeline" class="section">
+                    <h2 class="text-3xl font-bold text-white mb-2">Harmonogram Projektu</h2>
+                    <p class="text-slate-400 mb-6">Plan realizacji w 3 fazach</p>
+                    
+                    <div class="diagram-container">
+                        <div class="p-4 border-b border-slate-700">
+                            <h3 class="font-semibold text-white">Gantt Chart</h3>
+                        </div>
+                        <div class="mermaid">
+%%{init: {'theme': 'dark', 'gantt': {'titleTopMargin': 25, 'barHeight': 30, 'barGap': 8, 'topPadding': 50, 'sidePadding': 75}}}%%
+gantt
+    title Harmonogram Projektu Cutoff Time
+    dateFormat  YYYY-MM-DD
+    
+    section FAZA 1
+    Discovery Workshop     :f1_1, 2024-01-08, 1w
+    Analiza post-workshop  :f1_2, after f1_1, 3w
+    Dokumentacja RES 1-4   :f1_3, after f1_2, 2w
+    Gate Decyzyjny         :milestone, f1_m, after f1_3, 0d
+    
+    section FAZA 2
+    Development HANA       :f2_1, after f1_m, 4w
+    Mid-PoC Review         :milestone, f2_m1, after f2_1, 0d
+    Development BTP API    :f2_2, after f2_m1, 3w
+    Integracja & Testy     :f2_3, after f2_2, 2w
+    Akceptacja PoC         :milestone, f2_m2, after f2_3, 0d
+    
+    section FAZA 3
+    Wdrożenie PROD         :f3_1, after f2_m2, 2w
+    Monitoring Setup       :f3_2, after f3_1, 1w
+    Hypercare              :f3_3, after f3_2, 2w
+    Go-Live                :milestone, f3_m, after f3_3, 0d
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid md:grid-cols-3 gap-4">
+                        <div class="card p-4 border-t-4 border-sky-500">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-semibold text-white">FAZA 1: Discovery</span>
+                                <span class="badge">6 tygodni</span>
+                            </div>
+                            <div class="text-2xl font-bold text-sky-400 mb-2">25 600 PLN</div>
+                            <ul class="text-sm text-slate-400 space-y-1">
+                                <li>• Discovery Workshop</li>
+                                <li>• Specyfikacja algorytmu</li>
+                                <li>• Architektura integracji</li>
+                                <li>• Assessment BI tools</li>
+                            </ul>
+                        </div>
+                        <div class="card p-4 border-t-4 border-violet-500">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-semibold text-white">FAZA 2: PoC</span>
+                                <span class="badge">9 tygodni</span>
+                            </div>
+                            <div class="text-2xl font-bold text-violet-400 mb-2">38 400 - 51 200 PLN</div>
+                            <ul class="text-sm text-slate-400 space-y-1">
+                                <li>• Implementacja HANA</li>
+                                <li>• API w Python/BTP</li>
+                                <li>• Integracja Event Mesh</li>
+                                <li>• Testy w QAS</li>
+                            </ul>
+                        </div>
+                        <div class="card p-4 border-t-4 border-emerald-500">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-semibold text-white">FAZA 3: PROD</span>
+                                <span class="badge">5 tygodni</span>
+                            </div>
+                            <div class="text-2xl font-bold text-emerald-400 mb-2">T&M</div>
+                            <ul class="text-sm text-slate-400 space-y-1">
+                                <li>• Wdrożenie produkcyjne</li>
+                                <li>• Setup monitoringu</li>
+                                <li>• Dashboardy Grafana</li>
+                                <li>• Hypercare</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: Risks -->
+                <section id="risks" class="section">
+                    <h2 class="text-3xl font-bold text-white mb-2">Analiza Ryzyk</h2>
+                    <p class="text-slate-400 mb-6">Identyfikacja i mitygacja ryzyk projektowych</p>
+                    
+                    <div class="diagram-container">
+                        <div class="p-4 border-b border-slate-700">
+                            <h3 class="font-semibold text-white">Risk Matrix</h3>
+                        </div>
+                        <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+quadrantChart
+    title Risk Assessment Matrix
+    x-axis Low Impact --> High Impact
+    y-axis Low Probability --> High Probability
+    quadrant-1 CRITICAL - Immediate Action
+    quadrant-2 HIGH - Plan Mitigation
+    quadrant-3 LOW - Monitor
+    quadrant-4 MEDIUM - Contingency
+    
+    R1 - Missing SAP Docs: [0.7, 0.5]
+    R2 - Undefined Workload: [0.8, 0.5]
+    R3 - Env Delays: [0.5, 0.5]
+    R4 - Cognos Limits: [0.3, 0.5]
+    R5 - Variable Load: [0.5, 0.7]
+                        </div>
+                    </div>
+
+                    <div class="mt-6 space-y-4">
+                        <div class="card p-4 border-l-4 border-red-500">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <span class="font-semibold text-white">R1: Brak dokumentacji modelu danych SAP</span>
+                                    <p class="text-sm text-slate-400 mt-1">Nieznane tabele źródłowe mogą wydłużyć fazę Discovery</p>
+                                </div>
+                                <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded text-xs">HIGH</span>
+                            </div>
+                            <div class="mt-3 text-sm">
+                                <span class="text-slate-500">Mitygacja:</span>
+                                <span class="text-slate-300">Deep Dive w Discovery Workshop + RFI przed startem</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-4 border-l-4 border-red-500">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <span class="font-semibold text-white">R2: Nieokreślona definicja "obciążenia magazynu"</span>
+                                    <p class="text-sm text-slate-400 mt-1">Brak formalnego wzoru od biznesu</p>
+                                </div>
+                                <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded text-xs">HIGH</span>
+                            </div>
+                            <div class="mt-3 text-sm">
+                                <span class="text-slate-500">Mitygacja:</span>
+                                <span class="text-slate-300">Dedykowana sesja warsztatowa + formalne zatwierdzenie RES 1</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-4 border-l-4 border-yellow-500">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <span class="font-semibold text-white">R3: Opóźnienia w udostępnieniu środowisk SAP</span>
+                                    <p class="text-sm text-slate-400 mt-1">Dostępy do HANA DEV/QAS i BTP</p>
+                                </div>
+                                <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs">MEDIUM</span>
+                            </div>
+                            <div class="mt-3 text-sm">
+                                <span class="text-slate-500">Mitygacja:</span>
+                                <span class="text-slate-300">RFI zawiera pytanie o osobę kontaktową; warunek startu Fazy 1</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-4 border-l-4 border-yellow-500">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <span class="font-semibold text-white">R5: Zmienne obciążenie magazynu</span>
+                                    <p class="text-sm text-slate-400 mt-1">Sezonowość, promocje, nieprzewidywalność</p>
+                                </div>
+                                <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs">MEDIUM</span>
+                            </div>
+                            <div class="mt-3 text-sm">
+                                <span class="text-slate-500">Mitygacja:</span>
+                                <span class="text-slate-300">PoC z danymi real-world + iteracyjne dostrajanie w hypercare</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: KPIs -->
+                <section id="kpis" class="section">
+                    <h2 class="text-3xl font-bold text-white mb-2">KPIs & Metryki Sukcesu</h2>
+                    <p class="text-slate-400 mb-6">Jak zmierzymy sukces projektu</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="card p-6">
+                            <h3 class="font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="text-xl">📊</span> Metryki Biznesowe
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-slate-400">Same-Day Delivery Rate</span>
+                                        <span class="text-emerald-400">72% → 85%</span>
+                                    </div>
+                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-sky-500 to-emerald-500" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-slate-400">Promise Accuracy</span>
+                                        <span class="text-emerald-400">65% → 90%</span>
+                                    </div>
+                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-sky-500 to-emerald-500" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-slate-400">Reklamacje (tygodniowo)</span>
+                                        <span class="text-emerald-400">15 → 5</span>
+                                    </div>
+                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-red-500 to-emerald-500" style="width: 33%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-slate-400">Nadgodziny (h/tydzień)</span>
+                                        <span class="text-emerald-400">40h → 20h</span>
+                                    </div>
+                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-red-500 to-emerald-500" style="width: 50%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-6">
+                            <h3 class="font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="text-xl">⚙️</span> Metryki Techniczne
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-slate-400">API Response Time (p95)</span>
+                                        <span class="text-sky-400">&lt; 500ms</span>
+                                    </div>
+                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-sky-500" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-slate-400">API Availability</span>
+                                        <span class="text-sky-400">99.5%</span>
+                                    </div>
+                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-sky-500" style="width: 99.5%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-slate-400">Calculation Accuracy</span>
+                                        <span class="text-sky-400">±10%</span>
+                                    </div>
+                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-sky-500" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-slate-400">Data Freshness</span>
+                                        <span class="text-sky-400">&lt; 5 min</span>
+                                    </div>
+                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-sky-500" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="diagram-container">
+                        <div class="p-4 border-b border-slate-700">
+                            <h3 class="font-semibold text-white">Dashboard Mockup</h3>
+                        </div>
+                        <div class="p-6 bg-slate-900">
+                            <div class="grid grid-cols-4 gap-4 mb-6">
+                                <div class="bg-slate-800 rounded-lg p-4 text-center">
+                                    <div class="text-3xl font-bold text-sky-400">14:30</div>
+                                    <div class="text-xs text-slate-400">CUTOFF TIME</div>
+                                </div>
+                                <div class="bg-slate-800 rounded-lg p-4 text-center">
+                                    <div class="text-3xl font-bold text-emerald-400">78%</div>
+                                    <div class="text-xs text-slate-400">UTILIZATION</div>
+                                </div>
+                                <div class="bg-slate-800 rounded-lg p-4 text-center">
+                                    <div class="text-3xl font-bold text-violet-400">47</div>
+                                    <div class="text-xs text-slate-400">ORDERS IN QUEUE</div>
+                                </div>
+                                <div class="bg-slate-800 rounded-lg p-4 text-center">
+                                    <div class="text-3xl font-bold text-yellow-400">⚠️</div>
+                                    <div class="text-xs text-slate-400">STATUS: WARNING</div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-800 rounded-lg p-4">
+                                <div class="text-sm text-slate-400 mb-2">Utilization Trend (Last 8h)</div>
+                                <div class="h-32 flex items-end gap-1">
+                                    <div class="flex-1 bg-emerald-500/30 rounded-t" style="height: 40%"></div>
+                                    <div class="flex-1 bg-emerald-500/30 rounded-t" style="height: 55%"></div>
+                                    <div class="flex-1 bg-emerald-500/30 rounded-t" style="height: 50%"></div>
+                                    <div class="flex-1 bg-emerald-500/30 rounded-t" style="height: 65%"></div>
+                                    <div class="flex-1 bg-yellow-500/30 rounded-t" style="height: 72%"></div>
+                                    <div class="flex-1 bg-yellow-500/30 rounded-t" style="height: 78%"></div>
+                                    <div class="flex-1 bg-yellow-500/50 rounded-t" style="height: 82%"></div>
+                                    <div class="flex-1 bg-orange-500/50 rounded-t animate-pulse" style="height: 78%"></div>
+                                </div>
+                                <div class="flex justify-between text-xs text-slate-500 mt-2">
+                                    <span>06:00</span>
+                                    <span>08:00</span>
+                                    <span>10:00</span>
+                                    <span>12:00</span>
+                                    <span>14:00</span>
+                                    <span>NOW</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            sequence: {
+                useMaxWidth: true,
+                mirrorActors: false
+            }
+        });
+
+        // Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+            
+            // Re-render mermaid diagrams
+            setTimeout(() => {
+                mermaid.contentLoaded();
+            }, 100);
+        }
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', () => {
+            mermaid.contentLoaded();
+        });
+    </script>
+
+</body>
+</html>
