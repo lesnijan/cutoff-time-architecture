@@ -17,7 +17,6 @@
         }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
         
-						
         .nav-item {
             transition: all 0.2s ease;
             border-left: 3px solid transparent;
@@ -27,7 +26,6 @@
             border-left-color: #0ea5e9;
         }
         
-							   
         .diagram-container {
             background: #1e293b;
             border: 1px solid rgba(148, 163, 184, 0.2);
@@ -35,7 +33,6 @@
             overflow: hidden;
         }
         
-							 
         .mermaid {
             display: flex;
             justify-content: center;
@@ -47,20 +44,20 @@
             height: auto;
         }
         
-							 
+        /* KLUCZOWA ZMIANA: używamy visibility zamiast display */
         .section {
-            display: none;
-            animation: fadeIn 0.3s ease;
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            width: 100%;
+            transition: opacity 0.3s ease;
         }
         .section.active {
-            display: block;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            position: relative;
+            visibility: visible;
+            opacity: 1;
         }
         
-				   
         .card {
             background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(148, 163, 184, 0.1);
@@ -72,7 +69,6 @@
             transform: translateY(-2px);
         }
         
-				   
         .badge {
             background: rgba(14, 165, 233, 0.2);
             color: #38bdf8;
@@ -82,16 +78,52 @@
             font-weight: 600;
         }
         
-							  
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #1e293b; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        
+        /* Loading state */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #1e293b;
+            border-top-color: #0ea5e9;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="text-slate-200">
     
-				   
+    <!-- Loading overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="text-center">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <p class="text-slate-400">Rendering diagrams...</p>
+        </div>
+    </div>
+    
     <header class="fixed top-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-sm border-b border-slate-700">
         <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -107,15 +139,13 @@
             </div>
             <div class="flex items-center gap-4">
                 <span class="badge">Case Study</span>
-                <span class="text-sm text-slate-400">v1.2</span>
+                <span class="text-sm text-slate-400">v1.3</span>
             </div>
         </div>
     </header>
 
-						
     <div class="flex pt-16">
         
-								   
         <nav class="fixed left-0 top-16 bottom-0 w-64 bg-slate-900/50 border-r border-slate-700 overflow-y-auto">
             <div class="p-4">
                 <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Przegląd</p>
@@ -169,16 +199,13 @@
             </div>
         </nav>
 
-							 
         <main class="ml-64 flex-1 p-8">
-            <div class="max-w-6xl mx-auto">
+            <div class="max-w-6xl mx-auto relative">
 
                 <!-- SECTION: Overview -->
                 <section id="overview" class="section active">
                     <h2 class="text-3xl font-bold text-white mb-6">Executive Summary</h2>
-														   
                     <p class="text-slate-400 mb-8 text-lg">System Oceny Obciążenia Magazynu - Real-time Cutoff Time Engine</p>
-						
                     
                     <div class="grid md:grid-cols-3 gap-6 mb-8">
                         <div class="card p-6">
@@ -202,22 +229,22 @@
                         <div class="p-4 border-b border-slate-700">
                             <h3 class="font-semibold text-white">Koncepcja Rozwiązania</h3>
                         </div>
-                        <div class="mermaid">
+                        <pre class="mermaid">
 graph LR
-    subgraph INPUT["WEJSCIE"]
-        A["Zlecenie Sprzedazy"]
-        B["Stan Magazynu"]
-        C["Dostepne Zasoby"]
+    subgraph INPUT[WEJSCIE]
+        A[Zlecenie Sprzedazy]
+        B[Stan Magazynu]
+        C[Dostepne Zasoby]
     end
     
-    subgraph PROCESSING["PRZETWARZANIE"]
-        D["Algorytm Cutoff Time"]
+    subgraph PROCESSING[PRZETWARZANIE]
+        D[Algorytm Cutoff Time]
     end
     
-    subgraph OUTPUT["WYJSCIE"]
-        E{"Decyzja"}
-        F["Wysylka DZIS"]
-        G["Wysylka JUTRO"]
+    subgraph OUTPUT[WYJSCIE]
+        E{Decyzja}
+        F[Wysylka DZIS]
+        G[Wysylka JUTRO]
     end
     
     A --> D
@@ -230,7 +257,7 @@ graph LR
     style D fill:#0ea5e9,stroke:#38bdf8,stroke-width:2px
     style F fill:#22c55e,stroke:#4ade80
     style G fill:#ef4444,stroke:#f87171
-                        </div>
+                        </pre>
                     </div>
 
                     <div class="mt-8 grid md:grid-cols-4 gap-4">
@@ -261,20 +288,20 @@ graph LR
                         <div class="p-4 border-b border-slate-700">
                             <h3 class="font-semibold text-white">Obecny Stan (AS-IS)</h3>
                         </div>
-                        <div class="mermaid">
+                        <pre class="mermaid">
 graph TB
-    subgraph PROBLEM["OBECNE PROBLEMY"]
-        P1["Brak wiedzy o obciazeniu"]
-        P2["Reczne ustalanie Cutoff"]
-        P3["Reklamacje klientow"]
-        P4["Nadgodziny i chaos"]
+    subgraph PROBLEM[OBECNE PROBLEMY]
+        P1[Brak wiedzy o obciazeniu]
+        P2[Reczne ustalanie Cutoff]
+        P3[Reklamacje klientow]
+        P4[Nadgodziny i chaos]
     end
     
-    subgraph IMPACT["SKUTKI BIZNESOWE"]
-        I1["72% Same-Day Rate"]
-        I2["15 reklamacji tyg"]
-        I3["40h nadgodzin tyg"]
-        I4["Frustracja zespolu"]
+    subgraph IMPACT[SKUTKI BIZNESOWE]
+        I1[72 procent Same-Day Rate]
+        I2[15 reklamacji tyg]
+        I3[40h nadgodzin tyg]
+        I4[Frustracja zespolu]
     end
     
     P1 --> I1
@@ -286,27 +313,27 @@ graph TB
     style P2 fill:#dc2626,stroke:#ef4444
     style P3 fill:#dc2626,stroke:#ef4444
     style P4 fill:#dc2626,stroke:#ef4444
-                        </div>
+                        </pre>
                     </div>
 
                     <div class="diagram-container">
                         <div class="p-4 border-b border-slate-700">
                             <h3 class="font-semibold text-white">Wymagania Klienta → Rozwiązanie</h3>
                         </div>
-                        <div class="mermaid">
+                        <pre class="mermaid">
 graph LR
-    subgraph REQ["WYMAGANIA"]
-        R1["Ocenic obciazenie"]
-        R2["Wskazac Cutoff"]
-        R3["Uwzglednic zasoby"]
-        R4["Transparentnosc"]
+    subgraph REQ[WYMAGANIA]
+        R1[Ocenic obciazenie]
+        R2[Wskazac Cutoff]
+        R3[Uwzglednic zasoby]
+        R4[Transparentnosc]
     end
     
-    subgraph SOL["ROZWIAZANIE"]
-        S1["Algorytm HANA"]
-        S2["API BTP"]
-        S3["CDS Views"]
-        S4["Grafana"]
+    subgraph SOL[ROZWIAZANIE]
+        S1[Algorytm HANA]
+        S2[API BTP]
+        S3[CDS Views]
+        S4[Grafana]
     end
     
     R1 --> S1
@@ -318,7 +345,7 @@ graph LR
     style S2 fill:#0ea5e9,stroke:#38bdf8
     style S3 fill:#0ea5e9,stroke:#38bdf8
     style S4 fill:#0ea5e9,stroke:#38bdf8
-                        </div>
+                        </pre>
                     </div>
                 </section>
 
@@ -332,21 +359,21 @@ graph LR
                             <h3 class="font-semibold text-white">System Context Diagram</h3>
                             <span class="badge">C4 Level 1</span>
                         </div>
-                        <div class="mermaid">
+                        <pre class="mermaid">
 graph TB
-    subgraph USERS["UZYTKOWNICY"]
-        U1["Handlowiec"]
-        U2["Kierownik Magazynu"]
-        U3["Dyrektor Operacji"]
+    subgraph USERS[UZYTKOWNICY]
+        U1[Handlowiec]
+        U2[Kierownik Magazynu]
+        U3[Dyrektor Operacji]
     end
     
-    SYS["CUTOFF TIME ENGINE"]
+    SYS[CUTOFF TIME ENGINE]
     
-    subgraph EXTERNAL["SYSTEMY ZEWNETRZNE"]
-        E1["SAP S4HANA"]
-        E2["SAP BTP"]
-        E3["Grafana"]
-        E4["Email SMS"]
+    subgraph EXTERNAL[SYSTEMY ZEWNETRZNE]
+        E1[SAP S4HANA]
+        E2[SAP BTP]
+        E3[Grafana]
+        E4[Email SMS]
     end
     
     U1 -->|sprawdza| SYS
@@ -359,7 +386,7 @@ graph TB
     SYS -->|alerty| E4
     
     style SYS fill:#0ea5e9,stroke:#38bdf8,stroke-width:3px
-                        </div>
+                        </pre>
                     </div>
 
                     <div class="mt-6 grid md:grid-cols-2 gap-4">
@@ -392,28 +419,28 @@ graph TB
                             <h3 class="font-semibold text-white">Container Diagram</h3>
                             <span class="badge">C4 Level 2</span>
                         </div>
-                        <div class="mermaid">
+                        <pre class="mermaid">
 graph TB
-    subgraph BTP["SAP BTP"]
-        API["Cutoff API FastAPI"]
-        CACHE["Redis Cache"]
+    subgraph BTP[SAP BTP]
+        API[Cutoff API FastAPI]
+        CACHE[Redis Cache]
     end
     
-    subgraph HANA["SAP HANA"]
-        CDS1["V_ORDER_WORKLOAD"]
-        CDS2["V_WAREHOUSE_CAPACITY"]
-        CDS3["V_CUTOFF_CALCULATION"]
+    subgraph HANA[SAP HANA]
+        CDS1[V_ORDER_WORKLOAD]
+        CDS2[V_WAREHOUSE_CAPACITY]
+        CDS3[V_CUTOFF_CALCULATION]
     end
     
-    subgraph S4["SAP S4HANA"]
-        VBAK["VBAK VBAP"]
-        LIKP["LIKP LIPS"]
-        RES["Resources"]
+    subgraph S4[SAP S4HANA]
+        VBAK[VBAK VBAP]
+        LIKP[LIKP LIPS]
+        RES[Resources]
     end
     
-    subgraph MON["MONITORING"]
-        GRAF["Grafana"]
-        ALERT["AlertManager"]
+    subgraph MON[MONITORING]
+        GRAF[Grafana]
+        ALERT[AlertManager]
     end
     
     API <--> CACHE
@@ -430,7 +457,7 @@ graph TB
     
     style API fill:#0ea5e9,stroke:#38bdf8,stroke-width:2px
     style CDS3 fill:#8b5cf6,stroke:#a78bfa,stroke-width:2px
-                        </div>
+                        </pre>
                     </div>
 
                     <div class="mt-6">
@@ -469,31 +496,31 @@ graph TB
                         <div class="p-4 border-b border-slate-700">
                             <h3 class="font-semibold text-white">Przepływ Danych</h3>
                         </div>
-                        <div class="mermaid">
+                        <pre class="mermaid">
 flowchart LR
-    subgraph SOURCE["ZRODLA"]
-        SO["Sales Orders"]
-        DL["Deliveries"]
-        WH["Warehouse Tasks"]
-        RS["Resources"]
+    subgraph SOURCE[ZRODLA]
+        SO[Sales Orders]
+        DL[Deliveries]
+        WH[Warehouse Tasks]
+        RS[Resources]
     end
     
-    subgraph TRANSFORM["TRANSFORMACJA"]
-        V1["V_ORDER_WORKLOAD"]
-        V2["V_CAPACITY"]
-        V3["V_CUTOFF_CALC"]
+    subgraph TRANSFORM[TRANSFORMACJA]
+        V1[V_ORDER_WORKLOAD]
+        V2[V_CAPACITY]
+        V3[V_CUTOFF_CALC]
     end
     
-    subgraph API["API"]
-        EP1["/capacity/check"]
-        EP2["/cutoff/current"]
-        EP3["/status"]
+    subgraph API[API]
+        EP1[/capacity/check]
+        EP2[/cutoff/current]
+        EP3[/status]
     end
     
-    subgraph OUTPUT["KONSUMENCI"]
-        UI["SAP Fiori"]
-        DASH["Grafana"]
-        NOTIF["Notifications"]
+    subgraph OUTPUT[KONSUMENCI]
+        UI[SAP Fiori]
+        DASH[Grafana]
+        NOTIF[Notifications]
     end
     
     SO --> V1
@@ -513,7 +540,7 @@ flowchart LR
     EP3 --> NOTIF
     
     style V3 fill:#0ea5e9,stroke:#38bdf8,stroke-width:2px
-                        </div>
+                        </pre>
                     </div>
                 </section>
 
@@ -526,44 +553,33 @@ flowchart LR
                         <div class="p-4 border-b border-slate-700">
                             <h3 class="font-semibold text-white">Flowchart Decyzyjny</h3>
                         </div>
-                        <div class="mermaid">
+                        <pre class="mermaid">
 flowchart TD
-    START(["Nowe Zlecenie"]) --> CALC["Oblicz W_new"]
-    CALC --> STATE["Pobierz stan"]
-    STATE --> UTIL["Oblicz Utilization"]
-    UTIL --> CHECK{"U < 85%?"}
+    START([Nowe Zlecenie]) --> CALC[Oblicz W_new]
+    CALC --> STATE[Pobierz stan]
+    STATE --> UTIL[Oblicz Utilization]
+    UTIL --> CHECK{U mniejsze 85}
     
-    CHECK -->|TAK| TIME["Oblicz czas"]
-    CHECK -->|NIE| VIP{"VIP?"}
+    CHECK -->|TAK| TIME[Oblicz czas]
+    CHECK -->|NIE| VIP{VIP?}
     
-    TIME --> DEADLINE{"< Deadline?"}
-    DEADLINE -->|TAK| OK["WYSYLKA DZIS"]
-    DEADLINE -->|NIE| NO1["JUTRO - TIME"]
+    TIME --> DEADLINE{Przed Deadline?}
+    DEADLINE -->|TAK| OK[WYSYLKA DZIS]
+    DEADLINE -->|NIE| NO1[JUTRO - TIME]
     
-    VIP -->|TAK| RESERVE{"Rezerwa?"}
-    VIP -->|NIE| NO2["JUTRO - CAPACITY"]
+    VIP -->|TAK| RESERVE{Rezerwa?}
+    VIP -->|NIE| NO2[JUTRO - CAPACITY]
     
-    RESERVE -->|TAK| OK2["DZIS - VIP"]
-    RESERVE -->|NIE| NO3["JUTRO - VIP FULL"]
+    RESERVE -->|TAK| OK2[DZIS - VIP]
+    RESERVE -->|NIE| NO3[JUTRO - VIP FULL]
     
-													  
-	
-											   
-													  
-	
-													
-														  
-	
-															
-															  
-	
     style OK fill:#22c55e,stroke:#4ade80,stroke-width:2px
     style OK2 fill:#22c55e,stroke:#4ade80,stroke-width:2px
     style NO1 fill:#ef4444,stroke:#f87171,stroke-width:2px
     style NO2 fill:#ef4444,stroke:#f87171,stroke-width:2px
     style NO3 fill:#ef4444,stroke:#f87171,stroke-width:2px
     style CHECK fill:#f59e0b,stroke:#fbbf24,stroke-width:2px
-                        </div>
+                        </pre>
                     </div>
 
                     <div class="diagram-container">
@@ -588,10 +604,6 @@ flowchart TD
                                     <span class="text-sky-400">// Wykorzystanie</span><br>
                                     <span class="text-white">UTILIZATION = WORKLOAD / CAPACITY</span>
                                 </div>
-									 
-																											 
-																											   
-									  
                                 <div class="pt-4 border-t border-slate-700">
                                     <span class="text-emerald-400">// Decyzja</span><br>
                                     <span class="text-white">IF (UTIL &lt; 85%) AND (completion &lt; deadline)</span><br>
@@ -612,7 +624,7 @@ flowchart TD
                         <div class="p-4 border-b border-slate-700">
                             <h3 class="font-semibold text-white">Scenariusz: Sprawdzenie Dostępności Wysyłki</h3>
                         </div>
-                        <div class="mermaid">
+                        <pre class="mermaid">
 sequenceDiagram
     autonumber
     participant H as Handlowiec
@@ -623,7 +635,6 @@ sequenceDiagram
     
     H->>UI: Wprowadza zlecenie
     UI->>API: POST /capacity/check
-	
     API->>CACHE: Sprawdz cache
     
     alt Cache HIT
@@ -632,7 +643,6 @@ sequenceDiagram
         API->>HANA: SELECT V_CUTOFF
         HANA->>HANA: Agreguj
         HANA->>HANA: Oblicz
-									   
         HANA-->>API: Wynik
         API->>CACHE: Zapisz TTL 60s
     end
@@ -646,9 +656,7 @@ sequenceDiagram
         API-->>UI: can_ship_today false
         UI-->>H: Wysylka jutro
     end
-	
-											  
-                        </div>
+                        </pre>
                     </div>
                 </section>
 
@@ -661,26 +669,19 @@ sequenceDiagram
                         <div class="p-4 border-b border-slate-700">
                             <h3 class="font-semibold text-white">Stany Operacyjne Magazynu</h3>
                         </div>
-                        <div class="mermaid">
+                        <pre class="mermaid">
 stateDiagram-v2
     [*] --> OPENING
-	
     OPENING --> ACCEPTING
-	
     ACCEPTING --> WARNING
     WARNING --> ACCEPTING
-	
     WARNING --> CRITICAL
     CRITICAL --> WARNING
-	
-												   
     CRITICAL --> CLOSED
-	
     ACCEPTING --> CLOSED
     WARNING --> CLOSED
-	
     CLOSED --> [*]
-                        </div>
+                        </pre>
                     </div>
 
                     <div class="mt-6 grid md:grid-cols-4 gap-4">
@@ -716,26 +717,20 @@ stateDiagram-v2
                         <div class="p-4 border-b border-slate-700">
                             <h3 class="font-semibold text-white">Diagram Encji</h3>
                         </div>
-                        <div class="mermaid">
+                        <pre class="mermaid">
 erDiagram
     SALES_ORDER ||--o{ ORDER_ITEM : contains
     SALES_ORDER ||--|| CUSTOMER : placedBy
     SALES_ORDER ||--o| DELIVERY : generates
-	
     ORDER_ITEM ||--|| PRODUCT : references
-											 
-	
     DELIVERY ||--o{ WAREHOUSE_TASK : requires
     WAREHOUSE_TASK }o--|| RESOURCE : assignedTo
     
-												   
-	
     SALES_ORDER {
         string order_id PK
         string customer_id FK
         date created_date
         string status
-					   
     }
     
     ORDER_ITEM {
@@ -745,12 +740,6 @@ erDiagram
         decimal quantity
     }
     
-			 
-							
-						  
-						   
-	 
-	
     DELIVERY {
         string delivery_id PK
         string order_id FK
@@ -764,13 +753,7 @@ erDiagram
         string resource_id FK
         string status
     }
-	
-			  
-							 
-							
-				   
-	 
-                        </div>
+                        </pre>
                     </div>
                 </section>
 
@@ -783,45 +766,29 @@ erDiagram
                         <div class="p-4 border-b border-slate-700">
                             <h3 class="font-semibold text-white">Encje → Tabele SAP</h3>
                         </div>
-                        <div class="mermaid">
+                        <pre class="mermaid">
 flowchart LR
-    subgraph LOGICAL["ENCJE"]
-        E1["Sales Order"]
-        E2["Order Item"]
-        E3["Delivery"]
-        E4["WH Task"]
-					  
+    subgraph LOGICAL[ENCJE]
+        E1[Sales Order]
+        E2[Order Item]
+        E3[Delivery]
+        E4[WH Task]
     end
     
-    subgraph SAP["SAP TABLES"]
-        T1["VBAK"]
-        T2["VBAP"]
-        T3["LIKP"]
-				  
-        T4["LTAP"]
+    subgraph SAP[SAP TABLES]
+        T1[VBAK]
+        T2[VBAP]
+        T3[LIKP]
+        T4[LTAP]
     end
     
-							   
-						  
-					   
-					  
-					   
-	   
-	
     E1 --> T1
     E2 --> T2
     E3 --> T3
     E4 --> T4
-			 
     
-			  
-			  
-			  
-			  
-	
     style SAP fill:#1e3a5f,stroke:#3b82f6
-											 
-                        </div>
+                        </pre>
                     </div>
 
                     <div class="mt-6">
@@ -878,7 +845,7 @@ flowchart LR
                         <div class="p-4 border-b border-slate-700">
                             <h3 class="font-semibold text-white">Gantt Chart</h3>
                         </div>
-                        <div class="mermaid">
+                        <pre class="mermaid">
 gantt
     title Harmonogram Cutoff Time
     dateFormat YYYY-MM-DD
@@ -887,21 +854,17 @@ gantt
     Discovery      :f1, 2024-01-08, 2w
     Analiza        :f2, after f1, 2w
     Dokumentacja   :f3, after f2, 2w
-														   
     
     section FAZA 2
     Dev HANA       :f4, after f3, 4w
-															
     Dev API        :f5, after f4, 3w
     Testy          :f6, after f5, 2w
-															
     
     section FAZA 3
     Wdrozenie      :f7, after f6, 2w
     Monitoring     :f8, after f7, 1w
     Hypercare      :f9, after f8, 2w
-														   
-                        </div>
+                        </pre>
                     </div>
 
                     <div class="mt-6 grid md:grid-cols-3 gap-4">
@@ -915,7 +878,6 @@ gantt
                                 <li>• Discovery Workshop</li>
                                 <li>• Specyfikacja algorytmu</li>
                                 <li>• Architektura integracji</li>
-																
                             </ul>
                         </div>
                         <div class="card p-4 border-t-4 border-violet-500">
@@ -927,7 +889,6 @@ gantt
                             <ul class="text-sm text-slate-400 space-y-1">
                                 <li>• Implementacja HANA</li>
                                 <li>• API w Python/BTP</li>
-																  
                                 <li>• Testy w QAS</li>
                             </ul>
                         </div>
@@ -939,7 +900,6 @@ gantt
                             <div class="text-2xl font-bold text-emerald-400 mb-2">T&M</div>
                             <ul class="text-sm text-slate-400 space-y-1">
                                 <li>• Wdrożenie produkcyjne</li>
-															  
                                 <li>• Dashboardy Grafana</li>
                                 <li>• Hypercare</li>
                             </ul>
@@ -956,7 +916,7 @@ gantt
                         <div class="p-4 border-b border-slate-700">
                             <h3 class="font-semibold text-white">Risk Matrix</h3>
                         </div>
-                        <div class="mermaid">
+                        <pre class="mermaid">
 quadrantChart
     title Risk Assessment Matrix
     x-axis Low Impact --> High Impact
@@ -969,9 +929,8 @@ quadrantChart
     R1 Missing Docs: [0.7, 0.5]
     R2 Undefined Workload: [0.8, 0.5]
     R3 Env Delays: [0.5, 0.5]
-								  
     R5 Variable Load: [0.5, 0.7]
-                        </div>
+                        </pre>
                     </div>
 
                     <div class="mt-6 space-y-4">
@@ -1014,21 +973,7 @@ quadrantChart
                             <div class="mt-3 text-sm">
                                 <span class="text-slate-500">Mitygacja:</span>
                                 <span class="text-slate-300">RFI + warunek startu Fazy 1</span>
-								  
-							  
-						
-																		   
-																		  
-									 
-																												   
-																														   
-									  
-																													  
                             </div>
-													  
-																			  
-																																
-								  
                         </div>
                     </div>
                 </section>
@@ -1041,8 +986,6 @@ quadrantChart
                     <div class="grid md:grid-cols-2 gap-6 mb-8">
                         <div class="card p-6">
                             <h3 class="font-semibold text-white mb-4">📊 Metryki Biznesowe</h3>
-																				   
-								 
                             <div class="space-y-4">
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
@@ -1071,22 +1014,11 @@ quadrantChart
                                         <div class="h-full bg-gradient-to-r from-red-500 to-emerald-500" style="width: 33%"></div>
                                     </div>
                                 </div>
-									 
-																				   
-																								   
-																						 
-										  
-																							   
-																																  
-										  
-									  
                             </div>
                         </div>
                         
                         <div class="card p-6">
                             <h3 class="font-semibold text-white mb-4">⚙️ Metryki Techniczne</h3>
-																					  
-								 
                             <div class="space-y-4">
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
@@ -1108,15 +1040,6 @@ quadrantChart
                                 </div>
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
-																								
-																			   
-										  
-																							   
-																								
-										  
-									  
-									 
-																				   
                                         <span class="text-slate-400">Data Freshness</span>
                                         <span class="text-sky-400">&lt; 5 min</span>
                                     </div>
@@ -1165,9 +1088,7 @@ quadrantChart
                                 </div>
                                 <div class="flex justify-between text-xs text-slate-500 mt-2">
                                     <span>06:00</span>
-													  
                                     <span>10:00</span>
-													  
                                     <span>14:00</span>
                                     <span>NOW</span>
                                 </div>
@@ -1181,43 +1102,56 @@ quadrantChart
     </div>
 
     <script>
-							 
+        // KLUCZOWA ZMIANA: Najpierw renderujemy WSZYSTKIE diagramy, potem ukrywamy sekcje
         mermaid.initialize({
-            startOnLoad: true,
+            startOnLoad: false,
             theme: 'dark',
             securityLevel: 'loose',
             flowchart: { useMaxWidth: true, htmlLabels: false, curve: 'basis' },
-								  
-								  
-							  
-			  
-					   
-								  
             sequence: { useMaxWidth: true, mirrorActors: false }
-			 
         });
 
-					 
-        function showSection(sectionId) {
-								
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-									
-            document.getElementById(sectionId).classList.add('active');
-			
-						 
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
-			
-										 
-							  
-            setTimeout(() => { mermaid.contentLoaded(); }, 100);
-					
+        async function initializeDiagrams() {
+            try {
+                // Tymczasowo pokaż wszystkie sekcje (potrzebne do renderowania)
+                const sections = document.querySelectorAll('.section');
+                sections.forEach(s => {
+                    s.style.visibility = 'visible';
+                    s.style.position = 'relative';
+                    s.style.opacity = '1';
+                });
+
+                // Renderuj wszystkie diagramy Mermaid
+                await mermaid.run();
+
+                // Ukryj wszystkie sekcje oprócz pierwszej
+                sections.forEach(s => {
+                    s.style.visibility = '';
+                    s.style.position = '';
+                    s.style.opacity = '';
+                    s.classList.remove('active');
+                });
+                document.getElementById('overview').classList.add('active');
+
+                // Ukryj loading overlay
+                document.getElementById('loading').classList.add('hidden');
+                
+                console.log('All Mermaid diagrams rendered successfully!');
+            } catch (error) {
+                console.error('Error rendering Mermaid diagrams:', error);
+                document.getElementById('loading').classList.add('hidden');
+            }
         }
 
-						 
-        document.addEventListener('DOMContentLoaded', () => { mermaid.contentLoaded(); });
-									
-		   
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+        }
+
+        // Start initialization when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeDiagrams);
     </script>
 
 </body>
