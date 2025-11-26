@@ -107,7 +107,7 @@
             </div>
             <div class="flex items-center gap-4">
                 <span class="badge">Case Study</span>
-                <span class="text-sm text-slate-400">v1.0</span>
+                <span class="text-sm text-slate-400">v1.1</span>
             </div>
         </div>
     </header>
@@ -150,7 +150,7 @@
                 
                 <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6">Dane</p>
                 <button onclick="showSection('erd')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="erd">
-                    🗄️ Model Danych (ERD)
+                    🗄️ Model Danych ERD
                 </button>
                 <button onclick="showSection('sap-tables')" class="nav-item w-full text-left px-4 py-2 rounded-r-lg text-sm" data-section="sap-tables">
                     📋 Tabele SAP
@@ -203,22 +203,21 @@
                             <h3 class="font-semibold text-white">Koncepcja Rozwiązania</h3>
                         </div>
                         <div class="mermaid">
-%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#0ea5e9', 'primaryTextColor': '#fff', 'primaryBorderColor': '#38bdf8', 'lineColor': '#64748b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#334155'}}}%%
 graph LR
-    subgraph INPUT["📥 WEJŚCIE"]
-        A[Zlecenie Sprzedaży]
-        B[Stan Magazynu]
-        C[Dostępne Zasoby]
+    subgraph INPUT["WEJSCIE"]
+        A["Zlecenie Sprzedazy"]
+        B["Stan Magazynu"]
+        C["Dostepne Zasoby"]
     end
     
-    subgraph PROCESSING["⚙️ PRZETWARZANIE"]
-        D[Algorytm<br/>Cutoff Time]
+    subgraph PROCESSING["PRZETWARZANIE"]
+        D["Algorytm Cutoff Time"]
     end
     
-    subgraph OUTPUT["📤 WYJŚCIE"]
-        E{Decyzja}
-        F[✅ Wysyłka DZIŚ]
-        G[❌ Wysyłka JUTRO]
+    subgraph OUTPUT["WYJSCIE"]
+        E{"Decyzja"}
+        F["Wysylka DZIS"]
+        G["Wysylka JUTRO"]
     end
     
     A --> D
@@ -226,7 +225,7 @@ graph LR
     C --> D
     D --> E
     E -->|capacity OK| F
-    E -->|capacity exceeded| G
+    E -->|exceeded| G
     
     style D fill:#0ea5e9,stroke:#38bdf8,stroke-width:2px
     style F fill:#22c55e,stroke:#4ade80
@@ -263,20 +262,19 @@ graph LR
                             <h3 class="font-semibold text-white">Obecny Stan (AS-IS)</h3>
                         </div>
                         <div class="mermaid">
-%%{init: {'theme': 'dark'}}%%
 graph TB
-    subgraph PROBLEM["❌ OBECNE PROBLEMY"]
-        P1["🤷 Brak wiedzy o rzeczywistym<br/>obciążeniu magazynu"]
-        P2["📞 Ręczne ustalanie<br/>Cutoff Time"]
-        P3["😡 Reklamacje klientów<br/>'miało być dziś!'"]
-        P4["💸 Nadgodziny<br/>i chaos"]
+    subgraph PROBLEM["OBECNE PROBLEMY"]
+        P1["Brak wiedzy o obciazeniu magazynu"]
+        P2["Reczne ustalanie Cutoff Time"]
+        P3["Reklamacje klientow"]
+        P4["Nadgodziny i chaos"]
     end
     
-    subgraph IMPACT["💥 SKUTKI"]
-        I1["📉 72% Same-Day<br/>Delivery Rate"]
-        I2["📋 15 reklamacji<br/>tygodniowo"]
-        I3["⏰ 40h nadgodzin<br/>tygodniowo"]
-        I4["😤 Frustracja<br/>handlowców"]
+    subgraph IMPACT["SKUTKI BIZNESOWE"]
+        I1["72% Same-Day Rate"]
+        I2["15 reklamacji tygodniowo"]
+        I3["40h nadgodzin tygodniowo"]
+        I4["Frustracja handlowcow"]
     end
     
     P1 --> I1
@@ -296,20 +294,19 @@ graph TB
                             <h3 class="font-semibold text-white">Wymagania Klienta → Rozwiązanie</h3>
                         </div>
                         <div class="mermaid">
-%%{init: {'theme': 'dark'}}%%
 graph LR
-    subgraph REQ["📋 WYMAGANIA KLIENTA"]
-        R1["Ocenić dzienne<br/>obciążenie magazynu"]
-        R2["Wskazać<br/>Cutoff Time"]
-        R3["Uwzględniać dostawy,<br/>operacje, zasoby"]
-        R4["Transparentność<br/>procesu"]
+    subgraph REQ["WYMAGANIA KLIENTA"]
+        R1["Ocenic obciazenie magazynu"]
+        R2["Wskazac Cutoff Time"]
+        R3["Uwzglednic zasoby"]
+        R4["Transparentnosc procesu"]
     end
     
-    subgraph SOL["✅ ROZWIĄZANIE"]
-        S1["Algorytm Real-Time<br/>SAP HANA"]
-        S2["API Decyzyjne<br/>SAP BTP"]
-        S3["Data Engineering<br/>CDS Views"]
-        S4["Monitoring<br/>Grafana"]
+    subgraph SOL["ROZWIAZANIE"]
+        S1["Algorytm Real-Time SAP HANA"]
+        S2["API Decyzyjne SAP BTP"]
+        S3["Data Engineering CDS Views"]
+        S4["Monitoring Grafana"]
     end
     
     R1 --> S1
@@ -336,30 +333,27 @@ graph LR
                             <span class="badge">C4 Level 1</span>
                         </div>
                         <div class="mermaid">
-%%{init: {'theme': 'dark'}}%%
 graph TB
-    subgraph USERS["👥 UŻYTKOWNICY"]
-        U1["🧑‍💼 Handlowiec<br/><small>Sprawdza dostępność wysyłki</small>"]
-        U2["👷 Kierownik Magazynu<br/><small>Monitoruje obciążenie</small>"]
-        U3["📊 Dyrektor Operacji<br/><small>Analizuje KPI</small>"]
+    subgraph USERS["UZYTKOWNICY"]
+        U1["Handlowiec"]
+        U2["Kierownik Magazynu"]
+        U3["Dyrektor Operacji"]
     end
     
-    subgraph SYSTEM["🎯 SYSTEM CUTOFF TIME"]
-        SYS["<b>Cutoff Time Engine</b><br/><br/>• Oblicza obciążenie magazynu<br/>• Wyznacza dynamiczny Cutoff<br/>• Odpowiada na zapytania<br/>• Generuje alerty"]
+    SYS["CUTOFF TIME ENGINE<br/>Oblicza obciazenie<br/>Wyznacza Cutoff<br/>Generuje alerty"]
+    
+    subgraph EXTERNAL["SYSTEMY ZEWNETRZNE"]
+        E1["SAP S/4HANA"]
+        E2["SAP BTP"]
+        E3["Grafana"]
+        E4["Email/SMS"]
     end
     
-    subgraph EXTERNAL["🔗 SYSTEMY ZEWNĘTRZNE"]
-        E1["📦 SAP S/4HANA<br/><small>Źródło danych</small>"]
-        E2["☁️ SAP BTP<br/><small>Platforma chmurowa</small>"]
-        E3["📈 Grafana<br/><small>Monitoring</small>"]
-        E4["📧 System Powiadomień<br/><small>Email / SMS</small>"]
-    end
-    
-    U1 -->|"Czy zdążymy wysłać?"| SYS
+    U1 -->|"Czy zdazymy wyslac?"| SYS
     U2 -->|"Jaki jest stan?"| SYS
     U3 -->|"Raport dzienny"| SYS
     
-    SYS <-->|"Dane zleceń"| E1
+    SYS <-->|"Dane zlecen"| E1
     SYS <-->|"Hosting API"| E2
     SYS -->|"Metryki"| E3
     SYS -->|"Alerty"| E4
@@ -399,42 +393,37 @@ graph TB
                             <span class="badge">C4 Level 2</span>
                         </div>
                         <div class="mermaid">
-%%{init: {'theme': 'dark'}}%%
 graph TB
-    subgraph BTP["☁️ SAP BTP (Cloud Foundry)"]
-        API["🐍 Cutoff API<br/><small>Python / FastAPI</small><br/><br/>REST Endpoints:<br/>• /capacity/check<br/>• /cutoff/current<br/>• /status"]
-        
-        CACHE["⚡ Redis Cache<br/><small>In-Memory</small><br/><br/>• Session data<br/>• Computed results<br/>• Rate limiting"]
+    subgraph BTP["SAP BTP Cloud Foundry"]
+        API["Cutoff API<br/>Python FastAPI"]
+        CACHE["Redis Cache"]
     end
     
-    subgraph HANA["💾 SAP HANA"]
-        CDS1["📊 V_ORDER_WORKLOAD<br/><small>CDS View</small>"]
-        CDS2["📊 V_WAREHOUSE_CAPACITY<br/><small>CDS View</small>"]
-        CDS3["📊 V_CUTOFF_CALCULATION<br/><small>CDS View</small>"]
-        PROC["⚙️ Calculation Engine<br/><small>In-Memory Processing</small>"]
+    subgraph HANA["SAP HANA"]
+        CDS1["V_ORDER_WORKLOAD"]
+        CDS2["V_WAREHOUSE_CAPACITY"]
+        CDS3["V_CUTOFF_CALCULATION"]
     end
     
-    subgraph S4["📦 SAP S/4HANA"]
-        VBAK["VBAK/VBAP<br/><small>Sales Orders</small>"]
-        LIKP["LIKP/LIPS<br/><small>Deliveries</small>"]
-        RES["Resources<br/><small>Workers</small>"]
+    subgraph S4["SAP S/4HANA"]
+        VBAK["VBAK/VBAP Sales Orders"]
+        LIKP["LIKP/LIPS Deliveries"]
+        RES["Resources Workers"]
     end
     
-    subgraph MON["📈 MONITORING"]
-        GRAF["Grafana<br/><small>Dashboards</small>"]
-        ALERT["AlertManager<br/><small>Notifications</small>"]
+    subgraph MON["MONITORING"]
+        GRAF["Grafana Dashboards"]
+        ALERT["AlertManager"]
     end
     
     API <--> CACHE
     API <--> CDS3
     CDS3 --> CDS1
     CDS3 --> CDS2
-    CDS1 --> PROC
-    CDS2 --> PROC
     
-    VBAK -.->|CDC/Replication| CDS1
-    LIKP -.->|CDC/Replication| CDS1
-    RES -.->|CDC/Replication| CDS2
+    VBAK -.->|CDC| CDS1
+    LIKP -.->|CDC| CDS1
+    RES -.->|CDC| CDS2
     
     API -->|Metrics| GRAF
     GRAF --> ALERT
@@ -481,33 +470,30 @@ graph TB
                             <h3 class="font-semibold text-white">Przepływ Danych</h3>
                         </div>
                         <div class="mermaid">
-%%{init: {'theme': 'dark'}}%%
 flowchart LR
-    subgraph SOURCE["📥 ŹRÓDŁA DANYCH"]
-        direction TB
-        SO["Sales Orders<br/>VBAK/VBAP"]
-        DL["Deliveries<br/>LIKP/LIPS"]
-        WH["Warehouse Tasks<br/>LTAP"]
-        RS["Resources<br/>Pracownicy"]
+    subgraph SOURCE["ZRODLA DANYCH"]
+        SO["Sales Orders VBAK/VBAP"]
+        DL["Deliveries LIKP/LIPS"]
+        WH["Warehouse Tasks LTAP"]
+        RS["Resources"]
     end
     
-    subgraph TRANSFORM["⚙️ TRANSFORMACJA"]
-        direction TB
-        V1["CDS View:<br/>V_ORDER_WORKLOAD<br/><small>Oblicz pracochłonność</small>"]
-        V2["CDS View:<br/>V_CAPACITY<br/><small>Oblicz przepustowość</small>"]
-        V3["CDS View:<br/>V_CUTOFF_CALC<br/><small>Oblicz Cutoff Time</small>"]
+    subgraph TRANSFORM["TRANSFORMACJA"]
+        V1["V_ORDER_WORKLOAD"]
+        V2["V_CAPACITY"]
+        V3["V_CUTOFF_CALC"]
     end
     
-    subgraph API["🔌 API LAYER"]
+    subgraph API["API LAYER"]
         EP1["/capacity/check"]
         EP2["/cutoff/current"]
         EP3["/status"]
     end
     
-    subgraph OUTPUT["📤 KONSUMENCI"]
-        UI["SAP Fiori<br/>UI"]
-        DASH["Grafana<br/>Dashboard"]
-        NOTIF["Notifications<br/>Email/SMS"]
+    subgraph OUTPUT["KONSUMENCI"]
+        UI["SAP Fiori UI"]
+        DASH["Grafana Dashboard"]
+        NOTIF["Notifications"]
     end
     
     SO --> V1
@@ -523,9 +509,7 @@ flowchart LR
     V3 --> EP3
     
     EP1 --> UI
-    EP2 --> UI
     EP2 --> DASH
-    EP3 --> DASH
     EP3 --> NOTIF
     
     style V3 fill:#0ea5e9,stroke:#38bdf8,stroke-width:2px
@@ -543,29 +527,28 @@ flowchart LR
                             <h3 class="font-semibold text-white">Flowchart Decyzyjny</h3>
                         </div>
                         <div class="mermaid">
-%%{init: {'theme': 'dark'}}%%
 flowchart TD
-    START([🆕 Nowe Zlecenie]) --> CALC_WORK[Oblicz pracochłonność<br/>zlecenia W_new]
+    START(["Nowe Zlecenie"]) --> CALC_WORK["Oblicz pracochlonnosc W_new"]
     
-    CALC_WORK --> GET_STATE[Pobierz aktualny stan:<br/>• Obciążenie W_current<br/>• Capacity C<br/>• Czas do deadline]
+    CALC_WORK --> GET_STATE["Pobierz aktualny stan"]
     
-    GET_STATE --> CALC_UTIL[Oblicz Utilization:<br/>U = W_current + W_new / C]
+    GET_STATE --> CALC_UTIL["Oblicz Utilization U"]
     
-    CALC_UTIL --> CHECK_UTIL{U < 85%?}
+    CALC_UTIL --> CHECK_UTIL{"U < 85%?"}
     
-    CHECK_UTIL -->|TAK| CALC_TIME[Oblicz czas ukończenia<br/>T_completion]
-    CHECK_UTIL -->|NIE| CHECK_VIP{Zlecenie VIP?}
+    CHECK_UTIL -->|TAK| CALC_TIME["Oblicz czas ukonczenia"]
+    CHECK_UTIL -->|NIE| CHECK_VIP{"Zlecenie VIP?"}
     
-    CALC_TIME --> CHECK_TIME{T_completion<br/>< Deadline?}
+    CALC_TIME --> CHECK_TIME{"Completion < Deadline?"}
     
-    CHECK_TIME -->|TAK| APPROVE[✅ WYSYŁKA DZIŚ<br/>Confidence: 92%]
-    CHECK_TIME -->|NIE| REJECT[❌ WYSYŁKA JUTRO<br/>Reason: TIME_EXCEEDED]
+    CHECK_TIME -->|TAK| APPROVE["WYSYLKA DZIS"]
+    CHECK_TIME -->|NIE| REJECT["WYSYLKA JUTRO - TIME"]
     
-    CHECK_VIP -->|TAK| CHECK_VIP_CAP{Rezerwa VIP<br/>dostępna?}
-    CHECK_VIP -->|NIE| REJECT2[❌ WYSYŁKA JUTRO<br/>Reason: CAPACITY_EXCEEDED]
+    CHECK_VIP -->|TAK| CHECK_VIP_CAP{"Rezerwa VIP?"}
+    CHECK_VIP -->|NIE| REJECT2["WYSYLKA JUTRO - CAPACITY"]
     
-    CHECK_VIP_CAP -->|TAK| APPROVE_VIP[✅ WYSYŁKA DZIŚ<br/>VIP Override]
-    CHECK_VIP_CAP -->|NIE| REJECT3[❌ WYSYŁKA JUTRO<br/>VIP capacity exhausted]
+    CHECK_VIP_CAP -->|TAK| APPROVE_VIP["WYSYLKA DZIS - VIP"]
+    CHECK_VIP_CAP -->|NIE| REJECT3["WYSYLKA JUTRO - VIP FULL"]
     
     style APPROVE fill:#22c55e,stroke:#4ade80,stroke-width:2px
     style APPROVE_VIP fill:#22c55e,stroke:#4ade80,stroke-width:2px
@@ -573,7 +556,6 @@ flowchart TD
     style REJECT2 fill:#ef4444,stroke:#f87171,stroke-width:2px
     style REJECT3 fill:#ef4444,stroke:#f87171,stroke-width:2px
     style CHECK_UTIL fill:#f59e0b,stroke:#fbbf24,stroke-width:2px
-    style CHECK_TIME fill:#f59e0b,stroke:#fbbf24,stroke-width:2px
                         </div>
                     </div>
 
@@ -624,19 +606,18 @@ flowchart TD
                             <h3 class="font-semibold text-white">Scenariusz: Sprawdzenie Dostępności Wysyłki</h3>
                         </div>
                         <div class="mermaid">
-%%{init: {'theme': 'dark', 'sequence': {'mirrorActors': false}}}%%
 sequenceDiagram
     autonumber
-    participant H as 🧑‍💼 Handlowiec
-    participant UI as 📱 SAP Fiori
-    participant API as 🔌 Cutoff API
-    participant CACHE as ⚡ Redis
-    participant HANA as 💾 SAP HANA
+    participant H as Handlowiec
+    participant UI as SAP Fiori
+    participant API as Cutoff API
+    participant CACHE as Redis
+    participant HANA as SAP HANA
     
     H->>UI: Wprowadza zlecenie
     UI->>API: POST /capacity/check
     
-    API->>CACHE: Sprawdź cache
+    API->>CACHE: Sprawdz cache
     
     alt Cache HIT
         CACHE-->>API: Cached result
@@ -646,20 +627,20 @@ sequenceDiagram
         HANA->>HANA: Oblicz capacity
         HANA->>HANA: Wylicz utilization
         HANA-->>API: Wynik kalkulacji
-        API->>CACHE: Zapisz (TTL: 60s)
+        API->>CACHE: Zapisz TTL 60s
     end
     
     API->>API: Zastosuj algorytm decyzyjny
     
-    alt Wysyłka możliwa
-        API-->>UI: ✅ can_ship_today: true
-        UI-->>H: "Wysyłka dziś możliwa"
-    else Wysyłka niemożliwa
-        API-->>UI: ❌ can_ship_today: false
-        UI-->>H: "Wysyłka jutro"
+    alt Wysylka mozliwa
+        API-->>UI: can_ship_today true
+        UI-->>H: Wysylka dzis mozliwa
+    else Wysylka niemozliwa
+        API-->>UI: can_ship_today false
+        UI-->>H: Wysylka jutro
     end
     
-    Note over API,HANA: Całkowity czas: < 500ms
+    Note over API,HANA: Calkowity czas < 500ms
                         </div>
                     </div>
                 </section>
@@ -674,45 +655,24 @@ sequenceDiagram
                             <h3 class="font-semibold text-white">Stany Operacyjne Magazynu</h3>
                         </div>
                         <div class="mermaid">
-%%{init: {'theme': 'dark'}}%%
 stateDiagram-v2
-    [*] --> OPENING: 06:00 Start zmiany
+    [*] --> OPENING: 06:00 Start
     
-    OPENING --> ACCEPTING: Zasoby dostępne
+    OPENING --> ACCEPTING: Zasoby ready
     
-    ACCEPTING --> WARNING: Utilization > 70%
-    WARNING --> ACCEPTING: Utilization < 65%
+    ACCEPTING --> WARNING: Util > 70%
+    WARNING --> ACCEPTING: Util < 65%
     
-    WARNING --> CRITICAL: Utilization > 85%
-    CRITICAL --> WARNING: Utilization < 80%
+    WARNING --> CRITICAL: Util > 85%
+    CRITICAL --> WARNING: Util < 80%
     
-    CRITICAL --> CUTOFF_IMMINENT: < 30 min do deadline
-    CUTOFF_IMMINENT --> CLOSED: Cutoff Time reached
+    CRITICAL --> CUTOFF_IMMINENT: 30min do deadline
+    CUTOFF_IMMINENT --> CLOSED: Cutoff reached
     
-    ACCEPTING --> CLOSED: Hard deadline (16:00)
-    WARNING --> CLOSED: Hard deadline (16:00)
+    ACCEPTING --> CLOSED: Hard deadline 16:00
+    WARNING --> CLOSED: Hard deadline 16:00
     
     CLOSED --> [*]: Koniec dnia
-    
-    note right of ACCEPTING
-        ✅ Przyjmujemy zlecenia
-        Confidence: HIGH
-    end note
-    
-    note right of WARNING
-        ⚠️ Ograniczona pojemność
-        Alert do kierownika
-    end note
-    
-    note right of CRITICAL
-        🔴 Prawie pełne
-        Tylko VIP
-    end note
-    
-    note right of CLOSED
-        ❌ Brak przyjęć
-        "Wysyłka jutro"
-    end note
                         </div>
                     </div>
 
@@ -750,25 +710,23 @@ stateDiagram-v2
                             <h3 class="font-semibold text-white">Diagram Encji</h3>
                         </div>
                         <div class="mermaid">
-%%{init: {'theme': 'dark'}}%%
 erDiagram
     SALES_ORDER ||--o{ ORDER_ITEM : contains
-    SALES_ORDER ||--|| CUSTOMER : "placed by"
+    SALES_ORDER ||--|| CUSTOMER : placedBy
     SALES_ORDER ||--o| DELIVERY : generates
     
     ORDER_ITEM ||--|| PRODUCT : references
-    PRODUCT ||--o| PRODUCT_WEIGHT : "has weight config"
+    PRODUCT ||--o| PRODUCT_WEIGHT : hasConfig
     
     DELIVERY ||--o{ WAREHOUSE_TASK : requires
-    WAREHOUSE_TASK }o--|| RESOURCE : "assigned to"
+    WAREHOUSE_TASK }o--|| RESOURCE : assignedTo
     
-    RESOURCE }o--|| RESOURCE_SCHEDULE : "has schedule"
+    RESOURCE }o--|| RESOURCE_SCHEDULE : hasSchedule
     
     SALES_ORDER {
         string order_id PK
         string customer_id FK
         date created_date
-        string order_type
         string status
         string priority
     }
@@ -783,14 +741,7 @@ erDiagram
     PRODUCT {
         string product_id PK
         string description
-        decimal base_weight
         string storage_type
-    }
-    
-    PRODUCT_WEIGHT {
-        string product_id FK
-        decimal weight_factor
-        decimal location_factor
     }
     
     DELIVERY {
@@ -804,25 +755,13 @@ erDiagram
         string task_id PK
         string delivery_id FK
         string resource_id FK
-        string task_type
         string status
-        timestamp started_at
-        timestamp completed_at
     }
     
     RESOURCE {
         string resource_id PK
         string resource_type
         string name
-        decimal efficiency_rate
-    }
-    
-    RESOURCE_SCHEDULE {
-        string resource_id FK
-        date schedule_date
-        time shift_start
-        time shift_end
-        boolean available
     }
                         </div>
                     </div>
@@ -838,9 +777,8 @@ erDiagram
                             <h3 class="font-semibold text-white">Encje → Tabele SAP</h3>
                         </div>
                         <div class="mermaid">
-%%{init: {'theme': 'dark'}}%%
 flowchart LR
-    subgraph LOGICAL["📋 ENCJE LOGICZNE"]
+    subgraph LOGICAL["ENCJE LOGICZNE"]
         E1["Sales Order"]
         E2["Order Item"]
         E3["Delivery"]
@@ -848,19 +786,19 @@ flowchart LR
         E5["Resource"]
     end
     
-    subgraph SAP_WM["📦 SAP WM"]
-        T1["VBAK<br/><small>Sales Doc Header</small>"]
-        T2["VBAP<br/><small>Sales Doc Item</small>"]
-        T3["LIKP<br/><small>Delivery Header</small>"]
-        T4["LIPS<br/><small>Delivery Item</small>"]
-        T5["LTAP<br/><small>Transfer Order Item</small>"]
+    subgraph SAP_WM["SAP WM"]
+        T1["VBAK"]
+        T2["VBAP"]
+        T3["LIKP"]
+        T4["LIPS"]
+        T5["LTAP"]
     end
     
-    subgraph SAP_EWM["📦 SAP EWM"]
-        T6["/SCWM/ORDIM_O<br/><small>Outbound Order</small>"]
-        T7["/SCWM/DLVH<br/><small>Delivery Header</small>"]
-        T8["/SCWM/WHO<br/><small>Warehouse Order</small>"]
-        T9["/SCWM/RSRC<br/><small>Resource</small>"]
+    subgraph SAP_EWM["SAP EWM"]
+        T6["SCWM_ORDIM_O"]
+        T7["SCWM_DLVH"]
+        T8["SCWM_WHO"]
+        T9["SCWM_RSRC"]
     end
     
     E1 --> T1
@@ -934,10 +872,9 @@ flowchart LR
                             <h3 class="font-semibold text-white">Gantt Chart</h3>
                         </div>
                         <div class="mermaid">
-%%{init: {'theme': 'dark', 'gantt': {'titleTopMargin': 25, 'barHeight': 30, 'barGap': 8, 'topPadding': 50, 'sidePadding': 75}}}%%
 gantt
     title Harmonogram Projektu Cutoff Time
-    dateFormat  YYYY-MM-DD
+    dateFormat YYYY-MM-DD
     
     section FAZA 1
     Discovery Workshop     :f1_1, 2024-01-08, 1w
@@ -949,11 +886,11 @@ gantt
     Development HANA       :f2_1, after f1_m, 4w
     Mid-PoC Review         :milestone, f2_m1, after f2_1, 0d
     Development BTP API    :f2_2, after f2_m1, 3w
-    Integracja & Testy     :f2_3, after f2_2, 2w
+    Integracja Testy       :f2_3, after f2_2, 2w
     Akceptacja PoC         :milestone, f2_m2, after f2_3, 0d
     
     section FAZA 3
-    Wdrożenie PROD         :f3_1, after f2_m2, 2w
+    Wdrozenie PROD         :f3_1, after f2_m2, 2w
     Monitoring Setup       :f3_2, after f3_1, 1w
     Hypercare              :f3_3, after f3_2, 2w
     Go-Live                :milestone, f3_m, after f3_3, 0d
@@ -1013,7 +950,6 @@ gantt
                             <h3 class="font-semibold text-white">Risk Matrix</h3>
                         </div>
                         <div class="mermaid">
-%%{init: {'theme': 'dark'}}%%
 quadrantChart
     title Risk Assessment Matrix
     x-axis Low Impact --> High Impact
@@ -1245,7 +1181,7 @@ quadrantChart
             securityLevel: 'loose',
             flowchart: {
                 useMaxWidth: true,
-                htmlLabels: true,
+                htmlLabels: false,
                 curve: 'basis'
             },
             sequence: {
