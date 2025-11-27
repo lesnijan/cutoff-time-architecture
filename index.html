@@ -130,6 +130,17 @@
             padding-left: 1rem;
             margin-bottom: 1rem;
         }
+        
+        .requirement-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .requirement-card.covered {
+            border-color: rgba(34, 197, 94, 0.5);
+            background: rgba(34, 197, 94, 0.05);
+        }
     </style>
 </head>
 <body class="text-slate-200">
@@ -169,7 +180,7 @@
                     <span class="lang-pl">Faza: Koncepcja</span>
                     <span class="lang-en">Phase: Concept</span>
                 </span>
-                <span class="text-sm text-slate-400">v1.7</span>
+                <span class="text-sm text-slate-400">v1.8</span>
             </div>
         </div>
     </header>
@@ -257,10 +268,11 @@
                         <span class="lang-en">About This Project</span>
                     </h2>
                     <p class="text-slate-400 mb-8 text-lg">
-                        <span class="lang-pl">Czym jest ten dokument i jak z niego korzystać</span>
-                        <span class="lang-en">What this document is and how to use it</span>
+                        <span class="lang-pl">Czym jest ten dokument, jak działa magazyn i co system rozwiązuje</span>
+                        <span class="lang-en">What this document is, how the warehouse works and what the system solves</span>
                     </p>
                     
+                    <!-- CZYM JEST TEN DOKUMENT -->
                     <div class="card p-6 mb-8">
                         <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                             <span class="text-2xl">📄</span>
@@ -296,6 +308,445 @@
                         </div>
                     </div>
 
+                    <!-- JAK DZIAŁA MAGAZYN - NOWA SEKCJA -->
+                    <div class="card p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                            <span class="text-2xl">🏭</span>
+                            <span class="lang-pl">Jak działa magazyn? Kontekst biznesowy</span>
+                            <span class="lang-en">How does the warehouse work? Business context</span>
+                        </h3>
+                        
+                        <div class="diagram-container mb-6">
+                            <div class="p-4 border-b border-slate-700">
+                                <h4 class="font-semibold text-white">
+                                    <span class="lang-pl">Proces: Od zamówienia do wysyłki</span>
+                                    <span class="lang-en">Process: From order to shipment</span>
+                                </h4>
+                            </div>
+                            <pre class="mermaid">
+flowchart LR
+    subgraph SALES[SALES DEPARTMENT]
+        A[Customer Order]
+        B[Sales Order in SAP]
+    end
+    
+    subgraph WAREHOUSE[WAREHOUSE]
+        C[Delivery Creation]
+        D[Picking Tasks]
+        E[Packing]
+        F[Loading]
+    end
+    
+    subgraph SHIPPING[SHIPPING]
+        G[Courier Pickup]
+        H[Delivery to Customer]
+    end
+    
+    A -->|enters| B
+    B -->|generates| C
+    C -->|creates| D
+    D -->|then| E
+    E -->|then| F
+    F -->|picked by| G
+    G -->|delivers| H
+    
+    style C fill:#f59e0b,stroke:#fbbf24,stroke-width:2px
+    style D fill:#f59e0b,stroke:#fbbf24,stroke-width:2px
+    style E fill:#f59e0b,stroke:#fbbf24,stroke-width:2px
+    style F fill:#f59e0b,stroke:#fbbf24,stroke-width:2px
+                            </pre>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-slate-800/50 rounded-lg p-5 border border-slate-700">
+                                <h4 class="font-semibold text-sky-400 mb-3">
+                                    <span class="lang-pl">📦 Co się dzieje w magazynie?</span>
+                                    <span class="lang-en">📦 What happens in the warehouse?</span>
+                                </h4>
+                                <ol class="text-sm text-slate-300 space-y-2 list-decimal list-inside">
+                                    <li>
+                                        <span class="lang-pl"><strong>Zamówienie wchodzi</strong> - handlowiec wprowadza zlecenie do SAP</span>
+                                        <span class="lang-en"><strong>Order comes in</strong> - sales rep enters order into SAP</span>
+                                    </li>
+                                    <li>
+                                        <span class="lang-pl"><strong>Tworzy się dostawa</strong> - SAP generuje dokument dostawy (Delivery)</span>
+                                        <span class="lang-en"><strong>Delivery is created</strong> - SAP generates delivery document</span>
+                                    </li>
+                                    <li>
+                                        <span class="lang-pl"><strong>Kompletacja (Picking)</strong> - magazynier zbiera produkty z półek</span>
+                                        <span class="lang-en"><strong>Picking</strong> - warehouse worker collects products from shelves</span>
+                                    </li>
+                                    <li>
+                                        <span class="lang-pl"><strong>Pakowanie</strong> - produkty są pakowane do kartonów</span>
+                                        <span class="lang-en"><strong>Packing</strong> - products are packed into boxes</span>
+                                    </li>
+                                    <li>
+                                        <span class="lang-pl"><strong>Załadunek</strong> - paczki trafiają na samochód kuriera</span>
+                                        <span class="lang-en"><strong>Loading</strong> - packages are loaded onto courier truck</span>
+                                    </li>
+                                </ol>
+                            </div>
+                            
+                            <div class="bg-slate-800/50 rounded-lg p-5 border border-slate-700">
+                                <h4 class="font-semibold text-amber-400 mb-3">
+                                    <span class="lang-pl">⏰ Gdzie jest problem?</span>
+                                    <span class="lang-en">⏰ Where is the problem?</span>
+                                </h4>
+                                <div class="text-sm text-slate-300 space-y-3">
+                                    <p>
+                                        <span class="lang-pl">
+                                            <strong>Kurier przyjeżdża o stałej godzinie</strong> (np. 16:00). 
+                                            Wszystkie zamówienia muszą być spakowane i gotowe do załadunku PRZED tą godziną.
+                                        </span>
+                                        <span class="lang-en">
+                                            <strong>Courier arrives at a fixed time</strong> (e.g., 4:00 PM). 
+                                            All orders must be packed and ready for loading BEFORE that time.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span class="lang-pl">
+                                            Jeśli handlowiec przyjmie zamówienie o 14:00, a magazyn jest już przeciążony 
+                                            - zamówienie NIE zdąży na kuriera. Klient dostaje paczkę dzień później niż obiecano.
+                                        </span>
+                                        <span class="lang-en">
+                                            If sales rep accepts order at 2:00 PM, but warehouse is already overloaded 
+                                            - order WON'T make it to courier. Customer receives package a day later than promised.
+                                        </span>
+                                    </p>
+                                    <div class="bg-red-500/10 border border-red-500/30 rounded p-3 mt-3">
+                                        <span class="lang-pl">
+                                            ❌ <strong>Dziś:</strong> Handlowiec nie wie, czy magazyn da radę. Obiecuje "na dziś" na ślepo.
+                                        </span>
+                                        <span class="lang-en">
+                                            ❌ <strong>Today:</strong> Sales rep doesn't know if warehouse can handle it. Promises "today" blindly.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-emerald-500/10 to-sky-500/10 rounded-lg p-5 border border-emerald-500/30">
+                            <h4 class="font-semibold text-emerald-400 mb-3">
+                                <span class="lang-pl">✅ Co robi nasz system?</span>
+                                <span class="lang-en">✅ What does our system do?</span>
+                            </h4>
+                            <div class="text-slate-300">
+                                <p class="mb-3">
+                                    <span class="lang-pl">
+                                        System <strong>Cutoff Time</strong> w czasie rzeczywistym analizuje:
+                                    </span>
+                                    <span class="lang-en">
+                                        The <strong>Cutoff Time</strong> system analyzes in real-time:
+                                    </span>
+                                </p>
+                                <ul class="grid md:grid-cols-2 gap-2 text-sm">
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-emerald-400">→</span>
+                                        <span class="lang-pl">Ile zamówień już czeka w kolejce</span>
+                                        <span class="lang-en">How many orders are already waiting in queue</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-emerald-400">→</span>
+                                        <span class="lang-pl">Ile pracy wymaga każde zamówienie</span>
+                                        <span class="lang-en">How much work each order requires</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-emerald-400">→</span>
+                                        <span class="lang-pl">Ilu pracowników jest dostępnych</span>
+                                        <span class="lang-en">How many workers are available</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-emerald-400">→</span>
+                                        <span class="lang-pl">Ile czasu zostało do kuriera</span>
+                                        <span class="lang-en">How much time is left until courier arrives</span>
+                                    </li>
+                                </ul>
+                                <div class="mt-4 p-3 bg-slate-800/50 rounded-lg">
+                                    <span class="lang-pl">
+                                        📢 <strong>Rezultat:</strong> Handlowiec widzi jasny komunikat: 
+                                        <span class="text-emerald-400">"Można wysłać dziś"</span> lub 
+                                        <span class="text-red-400">"Wysyłka jutro - magazyn pełny"</span>
+                                    </span>
+                                    <span class="lang-en">
+                                        📢 <strong>Result:</strong> Sales rep sees clear message: 
+                                        <span class="text-emerald-400">"Can ship today"</span> or 
+                                        <span class="text-red-400">"Ships tomorrow - warehouse full"</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MAPOWANIE WYMAGAŃ KLIENTA - NOWA SEKCJA -->
+                    <div class="card p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                            <span class="text-2xl">✅</span>
+                            <span class="lang-pl">Pokrycie wymagań klienta</span>
+                            <span class="lang-en">Client Requirements Coverage</span>
+                        </h3>
+                        <p class="text-slate-400 mb-6">
+                            <span class="lang-pl">Jak koncepcja adresuje poszczególne wymagania:</span>
+                            <span class="lang-en">How the concept addresses each requirement:</span>
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <!-- Wymaganie 1 -->
+                            <div class="requirement-card covered">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-emerald-400 text-xl">✓</span>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-white mb-1">
+                                            <span class="lang-pl">Określenie aktualnego obciążenia magazynu</span>
+                                            <span class="lang-en">Determine current warehouse workload</span>
+                                        </h4>
+                                        <p class="text-sm text-slate-400 mb-2">
+                                            <span class="lang-pl">"na podstawie danych operacyjnych magazynu"</span>
+                                            <span class="lang-en">"based on warehouse operational data"</span>
+                                        </p>
+                                        <div class="bg-slate-800/50 rounded p-3 text-sm">
+                                            <span class="text-sky-400 font-medium">
+                                                <span class="lang-pl">Realizacja:</span>
+                                                <span class="lang-en">Implementation:</span>
+                                            </span>
+                                            <span class="text-slate-300">
+                                                <span class="lang-pl">
+                                                    CDS View <code class="bg-slate-700 px-1 rounded">V_ORDER_WORKLOAD</code> agreguje dane z tabel SAP 
+                                                    (VBAK, VBAP, LIKP, LTAP) i oblicza sumaryczną pracochłonność wszystkich otwartych dostaw.
+                                                </span>
+                                                <span class="lang-en">
+                                                    CDS View <code class="bg-slate-700 px-1 rounded">V_ORDER_WORKLOAD</code> aggregates data from SAP tables 
+                                                    (VBAK, VBAP, LIKP, LTAP) and calculates total workload of all open deliveries.
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Wymaganie 2 -->
+                            <div class="requirement-card covered">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-emerald-400 text-xl">✓</span>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-white mb-1">
+                                            <span class="lang-pl">Bieżąca liczba otwartych dostaw w przygotowaniu</span>
+                                            <span class="lang-en">Current number of open deliveries in preparation</span>
+                                        </h4>
+                                        <div class="bg-slate-800/50 rounded p-3 text-sm">
+                                            <span class="text-sky-400 font-medium">
+                                                <span class="lang-pl">Realizacja:</span>
+                                                <span class="lang-en">Implementation:</span>
+                                            </span>
+                                            <span class="text-slate-300">
+                                                <span class="lang-pl">
+                                                    Tabela LIKP (nagłówki dostaw) + status dostawy. System zlicza dostawy ze statusem 
+                                                    "w przygotowaniu" (A/B/C) dla danego magazynu.
+                                                </span>
+                                                <span class="lang-en">
+                                                    Table LIKP (delivery headers) + delivery status. System counts deliveries with status 
+                                                    "in preparation" (A/B/C) for given warehouse.
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Wymaganie 3 -->
+                            <div class="requirement-card covered">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-emerald-400 text-xl">✓</span>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-white mb-1">
+                                            <span class="lang-pl">Planowana liczba operacji potrzebnych do obsługi</span>
+                                            <span class="lang-en">Planned number of operations needed for processing</span>
+                                        </h4>
+                                        <div class="bg-slate-800/50 rounded p-3 text-sm">
+                                            <span class="text-sky-400 font-medium">
+                                                <span class="lang-pl">Realizacja:</span>
+                                                <span class="lang-en">Implementation:</span>
+                                            </span>
+                                            <span class="text-slate-300">
+                                                <span class="lang-pl">
+                                                    Tabela LTAP (zlecenia magazynowe) zawiera szczegóły operacji picking. 
+                                                    Algorytm szacuje pracochłonność na podstawie: liczby pozycji × waga × odległość lokalizacji.
+                                                </span>
+                                                <span class="lang-en">
+                                                    Table LTAP (warehouse orders) contains picking operation details. 
+                                                    Algorithm estimates workload based on: item count × weight × location distance.
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Wymaganie 4 -->
+                            <div class="requirement-card covered">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-emerald-400 text-xl">✓</span>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-white mb-1">
+                                            <span class="lang-pl">Dzienna przepustowość magazynu oraz dostępność zasobów</span>
+                                            <span class="lang-en">Daily warehouse capacity and resource availability</span>
+                                        </h4>
+                                        <div class="bg-slate-800/50 rounded p-3 text-sm">
+                                            <span class="text-sky-400 font-medium">
+                                                <span class="lang-pl">Realizacja:</span>
+                                                <span class="lang-en">Implementation:</span>
+                                            </span>
+                                            <span class="text-slate-300">
+                                                <span class="lang-pl">
+                                                    CDS View <code class="bg-slate-700 px-1 rounded">V_WAREHOUSE_CAPACITY</code> oblicza przepustowość: 
+                                                    MIN(pickerzy, pakerzy, załadunek) × wydajność. Dane o zasobach z tabel HR lub konfiguracji.
+                                                </span>
+                                                <span class="lang-en">
+                                                    CDS View <code class="bg-slate-700 px-1 rounded">V_WAREHOUSE_CAPACITY</code> calculates capacity: 
+                                                    MIN(pickers, packers, loaders) × efficiency. Resource data from HR tables or configuration.
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Wymaganie 5 -->
+                            <div class="requirement-card covered">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-emerald-400 text-xl">✓</span>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-white mb-1">
+                                            <span class="lang-pl">Wpływ nowych zleceń na możliwość dotrzymania terminu</span>
+                                            <span class="lang-en">Impact of new orders on ability to meet deadline</span>
+                                        </h4>
+                                        <div class="bg-slate-800/50 rounded p-3 text-sm">
+                                            <span class="text-sky-400 font-medium">
+                                                <span class="lang-pl">Realizacja:</span>
+                                                <span class="lang-en">Implementation:</span>
+                                            </span>
+                                            <span class="text-slate-300">
+                                                <span class="lang-pl">
+                                                    Endpoint API <code class="bg-slate-700 px-1 rounded">POST /capacity/check</code> przyjmuje parametry nowego zlecenia 
+                                                    i symuluje wpływ na obciążenie. Zwraca: czy zlecenie "zmieści się" przed cutoff.
+                                                </span>
+                                                <span class="lang-en">
+                                                    API endpoint <code class="bg-slate-700 px-1 rounded">POST /capacity/check</code> accepts new order parameters 
+                                                    and simulates impact on workload. Returns: whether order "fits" before cutoff.
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Wymaganie 6 -->
+                            <div class="requirement-card covered">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-emerald-400 text-xl">✓</span>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-white mb-1">
+                                            <span class="lang-pl">Wskazanie do kiedy można przyjmować zamówienia "na dziś"</span>
+                                            <span class="lang-en">Indicate until when orders can be accepted for "today"</span>
+                                        </h4>
+                                        <div class="bg-slate-800/50 rounded p-3 text-sm">
+                                            <span class="text-sky-400 font-medium">
+                                                <span class="lang-pl">Realizacja:</span>
+                                                <span class="lang-en">Implementation:</span>
+                                            </span>
+                                            <span class="text-slate-300">
+                                                <span class="lang-pl">
+                                                    Endpoint <code class="bg-slate-700 px-1 rounded">GET /cutoff/current</code> zwraca dynamicznie obliczony czas graniczny. 
+                                                    Algorytm: (pozostała przepustowość / tempo napływu zleceń) = ile czasu zostało.
+                                                </span>
+                                                <span class="lang-en">
+                                                    Endpoint <code class="bg-slate-700 px-1 rounded">GET /cutoff/current</code> returns dynamically calculated cutoff time. 
+                                                    Algorithm: (remaining capacity / order arrival rate) = time remaining.
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Wymaganie 7 -->
+                            <div class="requirement-card covered">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-emerald-400 text-xl">✓</span>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-white mb-1">
+                                            <span class="lang-pl">Komunikat dla działu handlowego o braku dostępności</span>
+                                            <span class="lang-en">Message for sales department about unavailability</span>
+                                        </h4>
+                                        <div class="bg-slate-800/50 rounded p-3 text-sm">
+                                            <span class="text-sky-400 font-medium">
+                                                <span class="lang-pl">Realizacja:</span>
+                                                <span class="lang-en">Implementation:</span>
+                                            </span>
+                                            <span class="text-slate-300">
+                                                <span class="lang-pl">
+                                                    API zwraca strukturę: <code class="bg-slate-700 px-1 rounded">{"can_ship_today": false, "reason": "CAPACITY_EXCEEDED", "next_available": "tomorrow 08:00"}</code>. 
+                                                    Integracja z SAP Fiori wyświetla komunikat w UI.
+                                                </span>
+                                                <span class="lang-en">
+                                                    API returns structure: <code class="bg-slate-700 px-1 rounded">{"can_ship_today": false, "reason": "CAPACITY_EXCEEDED", "next_available": "tomorrow 08:00"}</code>. 
+                                                    SAP Fiori integration displays message in UI.
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Wymaganie 8 -->
+                            <div class="requirement-card covered">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-emerald-400 text-xl">✓</span>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-white mb-1">
+                                            <span class="lang-pl">Transparentność procesu</span>
+                                            <span class="lang-en">Process transparency</span>
+                                        </h4>
+                                        <div class="bg-slate-800/50 rounded p-3 text-sm">
+                                            <span class="text-sky-400 font-medium">
+                                                <span class="lang-pl">Realizacja:</span>
+                                                <span class="lang-en">Implementation:</span>
+                                            </span>
+                                            <span class="text-slate-300">
+                                                <span class="lang-pl">
+                                                    Dashboard Grafana pokazuje w czasie rzeczywistym: aktualne obciążenie (%), czas do cutoff, 
+                                                    liczbę zamówień w kolejce, trend. Handlowcy widzą "dlaczego" a nie tylko "nie".
+                                                </span>
+                                                <span class="lang-en">
+                                                    Grafana dashboard shows in real-time: current utilization (%), time to cutoff, 
+                                                    orders in queue, trend. Sales reps see "why" not just "no".
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                            <div class="flex items-center gap-2 text-emerald-400 font-semibold mb-2">
+                                <span class="text-xl">✅</span>
+                                <span class="lang-pl">Podsumowanie: 8/8 wymagań adresowanych</span>
+                                <span class="lang-en">Summary: 8/8 requirements addressed</span>
+                            </div>
+                            <p class="text-sm text-slate-300">
+                                <span class="lang-pl">
+                                    Wszystkie wymagania klienta mają zaplanowane rozwiązanie w koncepcji. 
+                                    Szczegóły implementacji zostaną doprecyzowane w fazie Discovery Workshop.
+                                </span>
+                                <span class="lang-en">
+                                    All client requirements have planned solutions in the concept. 
+                                    Implementation details will be refined during Discovery Workshop phase.
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- GDZIE JESTEŚMY W CYKLU -->
                     <div class="card p-6 mb-8">
                         <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                             <span class="text-2xl">🗺️</span>
@@ -343,11 +794,10 @@ flowchart LR
                                     <span class="font-semibold text-white">Discovery + Design</span>
                                 </div>
                                 <ul class="text-sm text-slate-300 space-y-1">
-                                    <li>✅ <span class="lang-pl">Analiza wymagań biznesowych</span><span class="lang-en">Business requirements analysis</span></li>
-                                    <li>✅ <span class="lang-pl">Specyfikacja algorytmu</span><span class="lang-en">Algorithm specification</span></li>
-                                    <li>✅ <span class="lang-pl">Architektura rozwiązania</span><span class="lang-en">Solution architecture</span></li>
+                                    <li>✅ <span class="lang-pl">Analiza wymagań</span><span class="lang-en">Requirements analysis</span></li>
+                                    <li>✅ <span class="lang-pl">Koncepcja algorytmu</span><span class="lang-en">Algorithm concept</span></li>
+                                    <li>✅ <span class="lang-pl">Architektura</span><span class="lang-en">Architecture</span></li>
                                     <li>✅ <span class="lang-pl">Model danych</span><span class="lang-en">Data model</span></li>
-                                    <li>✅ <span class="lang-pl">Plan wdrożenia</span><span class="lang-en">Implementation plan</span></li>
                                 </ul>
                             </div>
                             <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-600">
@@ -356,11 +806,10 @@ flowchart LR
                                     <span class="font-semibold text-white">Build + Test</span>
                                 </div>
                                 <ul class="text-sm text-slate-400 space-y-1">
-                                    <li>○ <span class="lang-pl">Implementacja CDS Views</span><span class="lang-en">CDS Views implementation</span></li>
-                                    <li>○ <span class="lang-pl">Rozwój API</span><span class="lang-en">API development</span></li>
-                                    <li>○ <span class="lang-pl">Integracja SAP BTP</span><span class="lang-en">SAP BTP integration</span></li>
+                                    <li>○ CDS Views</li>
+                                    <li>○ API (Python/FastAPI)</li>
+                                    <li>○ SAP BTP</li>
                                     <li>○ <span class="lang-pl">Testy</span><span class="lang-en">Testing</span></li>
-                                    <li>○ UAT</li>
                                 </ul>
                             </div>
                             <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-600">
@@ -369,16 +818,16 @@ flowchart LR
                                     <span class="font-semibold text-white">Deploy + Operate</span>
                                 </div>
                                 <ul class="text-sm text-slate-400 space-y-1">
-                                    <li>○ <span class="lang-pl">Wdrożenie PROD</span><span class="lang-en">PROD deployment</span></li>
-                                    <li>○ <span class="lang-pl">Konfiguracja monitoringu</span><span class="lang-en">Monitoring setup</span></li>
+                                    <li>○ PROD</li>
+                                    <li>○ Grafana</li>
                                     <li>○ <span class="lang-pl">Szkolenia</span><span class="lang-en">Training</span></li>
                                     <li>○ Hypercare</li>
-                                    <li>○ <span class="lang-pl">Ciągłe doskonalenie</span><span class="lang-en">Continuous improvement</span></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
 
+                    <!-- CZEMU SŁUŻY -->
                     <div class="card p-6 mb-8">
                         <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                             <span class="text-2xl">🎯</span>
@@ -390,7 +839,7 @@ flowchart LR
                             <div class="bg-slate-800/50 rounded-lg p-5 border border-slate-700">
                                 <div class="text-3xl mb-3">💼</div>
                                 <h4 class="font-semibold text-white mb-2">Pre-sales</h4>
-                                <p class="text-sm text-slate-400 mb-3">
+                                <p class="text-sm text-slate-400">
                                     <span class="lang-pl">Prezentacja dla klienta pokazująca jak rozwiązanie będzie wyglądać <strong>zanim zostanie zbudowane</strong>.</span>
                                     <span class="lang-en">Client presentation showing how the solution will look <strong>before it's built</strong>.</span>
                                 </p>
@@ -401,7 +850,7 @@ flowchart LR
                                     <span class="lang-pl">Podstawa do implementacji</span>
                                     <span class="lang-en">Implementation Basis</span>
                                 </h4>
-                                <p class="text-sm text-slate-400 mb-3">
+                                <p class="text-sm text-slate-400">
                                     <span class="lang-pl">Developer może z tej dokumentacji <strong>rozpocząć kodowanie</strong>.</span>
                                     <span class="lang-en">Developers can <strong>start coding</strong> from this documentation.</span>
                                 </p>
@@ -409,7 +858,7 @@ flowchart LR
                             <div class="bg-slate-800/50 rounded-lg p-5 border border-slate-700">
                                 <div class="text-3xl mb-3">🤝</div>
                                 <h4 class="font-semibold text-white mb-2">Discovery Workshop</h4>
-                                <p class="text-sm text-slate-400 mb-3">
+                                <p class="text-sm text-slate-400">
                                     <span class="lang-pl">Materiał do <strong>warsztatów z klientem</strong> - wspólne doprecyzowanie wymagań.</span>
                                     <span class="lang-en">Material for <strong>client workshops</strong> - joint requirements refinement.</span>
                                 </p>
@@ -417,6 +866,7 @@ flowchart LR
                         </div>
                     </div>
 
+                    <!-- PRZEWODNIK PO ZAKŁADKACH -->
                     <div class="card p-6 mb-8">
                         <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                             <span class="text-2xl">📑</span>
@@ -431,15 +881,15 @@ flowchart LR
                                     <div class="bg-slate-800/30 rounded p-3">
                                         <span class="font-medium text-white">📖 <span class="lang-pl">O Projekcie</span><span class="lang-en">About</span></span>
                                         <p class="text-slate-400 mt-1">
-                                            <span class="lang-pl">Wprowadzenie, kontekst, jak czytać dokumentację</span>
-                                            <span class="lang-en">Introduction, context, how to read the documentation</span>
+                                            <span class="lang-pl">Kontekst, jak działa magazyn, mapowanie wymagań</span>
+                                            <span class="lang-en">Context, how warehouse works, requirements mapping</span>
                                         </p>
                                     </div>
                                     <div class="bg-slate-800/30 rounded p-3">
                                         <span class="font-medium text-white">📚 <span class="lang-pl">Słownik</span><span class="lang-en">Glossary</span></span>
                                         <p class="text-slate-400 mt-1">
-                                            <span class="lang-pl">Definicje terminów</span>
-                                            <span class="lang-en">Term definitions</span>
+                                            <span class="lang-pl">Definicje terminów biznesowych i technicznych</span>
+                                            <span class="lang-en">Business and technical term definitions</span>
                                         </p>
                                     </div>
                                 </div>
@@ -453,8 +903,8 @@ flowchart LR
                                     <div class="bg-slate-800/30 rounded p-3">
                                         <span class="font-medium text-white">🎯 Executive Summary</span>
                                         <p class="text-slate-400 mt-1">
-                                            <span class="lang-pl">Problem, rozwiązanie, wartość</span>
-                                            <span class="lang-en">Problem, solution, value</span>
+                                            <span class="lang-pl">Problem → Rozwiązanie → Wartość</span>
+                                            <span class="lang-en">Problem → Solution → Value</span>
                                         </p>
                                     </div>
                                     <div class="bg-slate-800/30 rounded p-3">
@@ -471,12 +921,24 @@ flowchart LR
                                 <div class="grid md:grid-cols-3 gap-3 text-sm">
                                     <div class="bg-slate-800/30 rounded p-3">
                                         <span class="font-medium text-white">🏗️ C4: Context</span>
+                                        <p class="text-slate-400 mt-1">
+                                            <span class="lang-pl">Kto używa systemu</span>
+                                            <span class="lang-en">Who uses the system</span>
+                                        </p>
                                     </div>
                                     <div class="bg-slate-800/30 rounded p-3">
                                         <span class="font-medium text-white">📦 C4: Container</span>
+                                        <p class="text-slate-400 mt-1">
+                                            <span class="lang-pl">Komponenty techniczne</span>
+                                            <span class="lang-en">Technical components</span>
+                                        </p>
                                     </div>
                                     <div class="bg-slate-800/30 rounded p-3">
                                         <span class="font-medium text-white">🔀 Data Flow</span>
+                                        <p class="text-slate-400 mt-1">
+                                            <span class="lang-pl">Przepływ danych</span>
+                                            <span class="lang-en">Data flow</span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -488,12 +950,24 @@ flowchart LR
                                 <div class="grid md:grid-cols-3 gap-3 text-sm">
                                     <div class="bg-slate-800/30 rounded p-3">
                                         <span class="font-medium text-white">🧮 <span class="lang-pl">Logika</span><span class="lang-en">Logic</span></span>
+                                        <p class="text-slate-400 mt-1">
+                                            <span class="lang-pl">Flowchart + wzory</span>
+                                            <span class="lang-en">Flowchart + formulas</span>
+                                        </p>
                                     </div>
                                     <div class="bg-slate-800/30 rounded p-3">
                                         <span class="font-medium text-white">📊 Sequence</span>
+                                        <p class="text-slate-400 mt-1">
+                                            <span class="lang-pl">Interakcje</span>
+                                            <span class="lang-en">Interactions</span>
+                                        </p>
                                     </div>
                                     <div class="bg-slate-800/30 rounded p-3">
-                                        <span class="font-medium text-white">🔄 State Machine</span>
+                                        <span class="font-medium text-white">🔄 State</span>
+                                        <p class="text-slate-400 mt-1">
+                                            <span class="lang-pl">Stany magazynu</span>
+                                            <span class="lang-en">Warehouse states</span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -505,9 +979,14 @@ flowchart LR
                                 <div class="grid md:grid-cols-2 gap-3 text-sm">
                                     <div class="bg-slate-800/30 rounded p-3">
                                         <span class="font-medium text-white">🗄️ ERD</span>
+                                        <p class="text-slate-400 mt-1">
+                                            <span class="lang-pl">Model encji</span>
+                                            <span class="lang-en">Entity model</span>
+                                        </p>
                                     </div>
                                     <div class="bg-slate-800/30 rounded p-3">
                                         <span class="font-medium text-white">📋 SAP Tables</span>
+                                        <p class="text-slate-400 mt-1">VBAK, LIKP, LTAP...</p>
                                     </div>
                                 </div>
                             </div>
@@ -531,45 +1010,47 @@ flowchart LR
                         </div>
                     </div>
 
+                    <!-- CO DALEJ -->
                     <div class="card p-6">
                         <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                             <span class="text-2xl">🚀</span>
-                            <span class="lang-pl">Co dalej? Plan kolejnych faz</span>
-                            <span class="lang-en">What's next? Upcoming phases plan</span>
+                            <span class="lang-pl">Co dalej?</span>
+                            <span class="lang-en">What's next?</span>
                         </h3>
                         
-                        <div class="space-y-6">
-                            <div class="bg-gradient-to-r from-sky-500/10 to-transparent rounded-lg p-5 border-l-4 border-sky-500">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <span class="bg-sky-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                                        <span class="lang-pl">FAZA 1</span><span class="lang-en">PHASE 1</span>
-                                    </span>
-                                    <span class="font-semibold text-white">Discovery & Design</span>
-                                    <span class="badge">6 <span class="lang-pl">tyg</span><span class="lang-en">wks</span></span>
-                                    <span class="badge badge-green"><span class="lang-pl">W TRAKCIE</span><span class="lang-en">IN PROGRESS</span></span>
+                        <div class="space-y-4">
+                            <div class="bg-gradient-to-r from-sky-500/10 to-transparent rounded-lg p-4 border-l-4 border-sky-500">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="bg-sky-500 text-white px-3 py-1 rounded-full text-sm font-bold">1</span>
+                                    <span class="font-semibold text-white">Discovery Workshop</span>
+                                    <span class="badge badge-green"><span class="lang-pl">NASTĘPNY KROK</span><span class="lang-en">NEXT STEP</span></span>
                                 </div>
+                                <p class="text-sm text-slate-400 ml-10">
+                                    <span class="lang-pl">Spotkanie z klientem - walidacja koncepcji, doprecyzowanie wymagań, ustalenie priorytetów.</span>
+                                    <span class="lang-en">Client meeting - concept validation, requirements refinement, priority setting.</span>
+                                </p>
                             </div>
                             
-                            <div class="bg-gradient-to-r from-violet-500/10 to-transparent rounded-lg p-5 border-l-4 border-violet-500">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <span class="bg-violet-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                                        <span class="lang-pl">FAZA 2</span><span class="lang-en">PHASE 2</span>
-                                    </span>
-                                    <span class="font-semibold text-white">Proof of Concept (PoC)</span>
-                                    <span class="badge">9 <span class="lang-pl">tyg</span><span class="lang-en">wks</span></span>
-                                    <span class="badge badge-orange"><span class="lang-pl">PLANOWANA</span><span class="lang-en">PLANNED</span></span>
+                            <div class="bg-gradient-to-r from-violet-500/10 to-transparent rounded-lg p-4 border-l-4 border-violet-500">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="bg-violet-500 text-white px-3 py-1 rounded-full text-sm font-bold">2</span>
+                                    <span class="font-semibold text-white">Proof of Concept</span>
                                 </div>
+                                <p class="text-sm text-slate-400 ml-10">
+                                    <span class="lang-pl">Implementacja prototypu w środowisku QAS - weryfikacja założeń technicznych.</span>
+                                    <span class="lang-en">Prototype implementation in QAS environment - technical assumptions verification.</span>
+                                </p>
                             </div>
                             
-                            <div class="bg-gradient-to-r from-emerald-500/10 to-transparent rounded-lg p-5 border-l-4 border-emerald-500">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <span class="bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                                        <span class="lang-pl">FAZA 3</span><span class="lang-en">PHASE 3</span>
-                                    </span>
-                                    <span class="font-semibold text-white">Production & Go-Live</span>
-                                    <span class="badge">5 <span class="lang-pl">tyg</span><span class="lang-en">wks</span></span>
-                                    <span class="badge badge-orange"><span class="lang-pl">PLANOWANA</span><span class="lang-en">PLANNED</span></span>
+                            <div class="bg-gradient-to-r from-emerald-500/10 to-transparent rounded-lg p-4 border-l-4 border-emerald-500">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-bold">3</span>
+                                    <span class="font-semibold text-white">Production Go-Live</span>
                                 </div>
+                                <p class="text-sm text-slate-400 ml-10">
+                                    <span class="lang-pl">Wdrożenie produkcyjne, szkolenia, hypercare.</span>
+                                    <span class="lang-en">Production deployment, training, hypercare.</span>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -596,41 +1077,41 @@ flowchart LR
                             <div class="glossary-term">
                                 <h4 class="font-semibold text-white">Cutoff Time</h4>
                                 <p class="text-sm text-slate-400">
-                                    <span class="lang-pl">Godzina graniczna, do której można przyjmować zamówienia z obietnicą wysyłki "na dziś".</span>
-                                    <span class="lang-en">The deadline by which orders can be accepted with a promise of "same-day" shipping.</span>
+                                    <span class="lang-pl">Godzina graniczna, do której można przyjmować zamówienia z obietnicą wysyłki "na dziś". Po tej godzinie zamówienia idą na następny dzień.</span>
+                                    <span class="lang-en">The deadline by which orders can be accepted with a promise of "same-day" shipping. After this time, orders go to the next day.</span>
                                 </p>
                             </div>
                             
                             <div class="glossary-term">
-                                <h4 class="font-semibold text-white">Same-Day Delivery</h4>
+                                <h4 class="font-semibold text-white">Workload (<span class="lang-pl">Obciążenie</span><span class="lang-en">Workload</span>)</h4>
                                 <p class="text-sm text-slate-400">
-                                    <span class="lang-pl">Dostawa tego samego dnia. Kluczowy KPI dla operacji magazynowych.</span>
-                                    <span class="lang-en">Delivery on the same day. Key KPI for warehouse operations.</span>
+                                    <span class="lang-pl">Suma pracochłonności wszystkich zamówień oczekujących na realizację. Mierzone w jednostkach pracy (np. roboczogodziny).</span>
+                                    <span class="lang-en">The sum of labor required for all orders waiting to be fulfilled. Measured in work units (e.g., man-hours).</span>
                                 </p>
                             </div>
                             
                             <div class="glossary-term">
-                                <h4 class="font-semibold text-white">Workload</h4>
+                                <h4 class="font-semibold text-white">Capacity (<span class="lang-pl">Przepustowość</span><span class="lang-en">Capacity</span>)</h4>
                                 <p class="text-sm text-slate-400">
-                                    <span class="lang-pl">Suma pracochłonności wszystkich zamówień oczekujących na realizację.</span>
-                                    <span class="lang-en">The sum of labor required for all orders waiting to be fulfilled.</span>
+                                    <span class="lang-pl">Maksymalna ilość pracy, którą magazyn może wykonać w jednostce czasu. Zależy od liczby pracowników i efektywności.</span>
+                                    <span class="lang-en">Maximum amount of work the warehouse can perform per unit of time. Depends on number of workers and efficiency.</span>
                                 </p>
                             </div>
                             
                             <div class="glossary-term">
-                                <h4 class="font-semibold text-white">Capacity</h4>
-                                <p class="text-sm text-slate-400">
-                                    <span class="lang-pl">Maksymalna ilość pracy, którą magazyn może wykonać w jednostce czasu.</span>
-                                    <span class="lang-en">Maximum amount of work the warehouse can perform per unit of time.</span>
-                                </p>
-                            </div>
-                            
-                            <div class="glossary-term">
-                                <h4 class="font-semibold text-white">Utilization</h4>
+                                <h4 class="font-semibold text-white">Utilization (<span class="lang-pl">Wykorzystanie</span><span class="lang-en">Utilization</span>)</h4>
                                 <p class="text-sm text-slate-400">
                                     <span class="lang-pl">Stosunek aktualnego obciążenia do przepustowości.</span>
                                     <span class="lang-en">The ratio of current workload to capacity.</span>
                                     <code class="bg-slate-800 px-1 rounded ml-2">WORKLOAD / CAPACITY × 100%</code>
+                                </p>
+                            </div>
+                            
+                            <div class="glossary-term">
+                                <h4 class="font-semibold text-white">Picking (<span class="lang-pl">Kompletacja</span><span class="lang-en">Picking</span>)</h4>
+                                <p class="text-sm text-slate-400">
+                                    <span class="lang-pl">Proces zbierania produktów z półek magazynowych według listy zamówienia.</span>
+                                    <span class="lang-en">Process of collecting products from warehouse shelves according to order list.</span>
                                 </p>
                             </div>
                         </div>
@@ -644,40 +1125,40 @@ flowchart LR
                             <div class="glossary-term">
                                 <h4 class="font-semibold text-white">SAP S/4HANA</h4>
                                 <p class="text-sm text-slate-400">
-                                    <span class="lang-pl">Zintegrowany system ERP firmy SAP.</span>
-                                    <span class="lang-en">SAP's integrated ERP system.</span>
+                                    <span class="lang-pl">Zintegrowany system ERP firmy SAP działający na bazie danych HANA.</span>
+                                    <span class="lang-en">SAP's integrated ERP system running on HANA database.</span>
                                 </p>
                             </div>
                             
                             <div class="glossary-term">
                                 <h4 class="font-semibold text-white">SAP BTP</h4>
                                 <p class="text-sm text-slate-400">
-                                    <span class="lang-pl">SAP Business Technology Platform - platforma chmurowa.</span>
-                                    <span class="lang-en">SAP Business Technology Platform - cloud platform.</span>
+                                    <span class="lang-pl">SAP Business Technology Platform - platforma chmurowa do rozszerzania SAP.</span>
+                                    <span class="lang-en">SAP Business Technology Platform - cloud platform for extending SAP.</span>
                                 </p>
                             </div>
                             
                             <div class="glossary-term">
                                 <h4 class="font-semibold text-white">CDS Views</h4>
                                 <p class="text-sm text-slate-400">
-                                    <span class="lang-pl">Core Data Services - warstwa semantyczna w SAP HANA.</span>
-                                    <span class="lang-en">Core Data Services - semantic layer in SAP HANA.</span>
+                                    <span class="lang-pl">Core Data Services - warstwa semantyczna w SAP HANA do definiowania widoków danych.</span>
+                                    <span class="lang-en">Core Data Services - semantic layer in SAP HANA for defining data views.</span>
                                 </p>
                             </div>
                             
                             <div class="glossary-term">
                                 <h4 class="font-semibold text-white">C4 Model</h4>
                                 <p class="text-sm text-slate-400">
-                                    <span class="lang-pl">Metoda dokumentowania architektury na 4 poziomach.</span>
-                                    <span class="lang-en">A method for documenting architecture at 4 levels.</span>
+                                    <span class="lang-pl">Metoda dokumentowania architektury na 4 poziomach: Context, Container, Component, Code.</span>
+                                    <span class="lang-en">A method for documenting architecture at 4 levels: Context, Container, Component, Code.</span>
                                 </p>
                             </div>
                             
                             <div class="glossary-term">
-                                <h4 class="font-semibold text-white">ERD</h4>
+                                <h4 class="font-semibold text-white">FastAPI</h4>
                                 <p class="text-sm text-slate-400">
-                                    <span class="lang-pl">Entity Relationship Diagram - diagram encji.</span>
-                                    <span class="lang-en">Entity Relationship Diagram - entity diagram.</span>
+                                    <span class="lang-pl">Nowoczesny framework Python do budowy API REST. Szybki i z automatyczną dokumentacją.</span>
+                                    <span class="lang-en">Modern Python framework for building REST APIs. Fast and with automatic documentation.</span>
                                 </p>
                             </div>
                         </div>
@@ -692,8 +1173,8 @@ flowchart LR
                             <div class="bg-slate-800/50 rounded p-3">
                                 <code class="text-sky-400 font-bold">VBAK</code>
                                 <p class="text-slate-400 mt-1">
-                                    <span class="lang-pl">Nagłówek zlecenia</span>
-                                    <span class="lang-en">Order header</span>
+                                    <span class="lang-pl">Nagłówek zlecenia sprzedaży</span>
+                                    <span class="lang-en">Sales order header</span>
                                 </p>
                             </div>
                             <div class="bg-slate-800/50 rounded p-3">
@@ -713,8 +1194,8 @@ flowchart LR
                             <div class="bg-slate-800/50 rounded p-3">
                                 <code class="text-sky-400 font-bold">LTAP</code>
                                 <p class="text-slate-400 mt-1">
-                                    <span class="lang-pl">Zlecenie WH</span>
-                                    <span class="lang-en">WH order</span>
+                                    <span class="lang-pl">Zlecenie magazynowe</span>
+                                    <span class="lang-en">Warehouse order</span>
                                 </p>
                             </div>
                         </div>
@@ -734,8 +1215,8 @@ flowchart LR
                             <div class="text-4xl mb-4">🎯</div>
                             <h3 class="font-semibold text-white mb-2">Problem</h3>
                             <p class="text-sm text-slate-400">
-                                <span class="lang-pl">Brak automatycznego mechanizmu określającego, do kiedy można przyjmować zamówienia z wysyłką "na dziś"</span>
-                                <span class="lang-en">No automated mechanism to determine until when orders can be accepted for "same-day" shipping</span>
+                                <span class="lang-pl">Handlowiec nie wie, czy magazyn zdąży zrealizować zamówienie przed wyjazdem kuriera. Obiecuje "na dziś" bez wiedzy o faktycznym obciążeniu.</span>
+                                <span class="lang-en">Sales rep doesn't know if warehouse can fulfill order before courier departure. Promises "today" without knowing actual workload.</span>
                             </p>
                         </div>
                         <div class="card p-6">
@@ -745,8 +1226,8 @@ flowchart LR
                                 <span class="lang-en">Solution</span>
                             </h3>
                             <p class="text-sm text-slate-400">
-                                <span class="lang-pl">Algorytm Real-Time obliczający dynamiczny Cutoff Time na podstawie obciążenia i przepustowości</span>
-                                <span class="lang-en">Real-time algorithm calculating dynamic Cutoff Time based on workload and capacity</span>
+                                <span class="lang-pl">Algorytm w czasie rzeczywistym oblicza czy nowe zamówienie "zmieści się" w dostępnej przepustowości magazynu przed cutoff time.</span>
+                                <span class="lang-en">Real-time algorithm calculates whether new order "fits" in available warehouse capacity before cutoff time.</span>
                             </p>
                         </div>
                         <div class="card p-6">
@@ -756,8 +1237,8 @@ flowchart LR
                                 <span class="lang-en">Value</span>
                             </h3>
                             <p class="text-sm text-slate-400">
-                                <span class="lang-pl">+20% Same-Day Delivery, -60% reklamacji, eliminacja nadgodzin</span>
-                                <span class="lang-en">+20% Same-Day Delivery, -60% complaints, overtime elimination</span>
+                                <span class="lang-pl">Realistyczne obietnice dla klientów, mniej reklamacji, eliminacja nadgodzin, transparentność procesu.</span>
+                                <span class="lang-en">Realistic promises for customers, fewer complaints, overtime elimination, process transparency.</span>
                             </p>
                         </div>
                     </div>
@@ -953,9 +1434,9 @@ graph TB
                                 👥 <span class="lang-pl">Aktorzy</span><span class="lang-en">Actors</span>
                             </h4>
                             <ul class="text-sm text-slate-400 space-y-1">
-                                <li>• <strong>Sales Rep</strong> - <span class="lang-pl">sprawdza dostępność</span><span class="lang-en">checks availability</span></li>
+                                <li>• <strong>Sales Rep</strong> - <span class="lang-pl">sprawdza czy zamówienie zdąży na dziś</span><span class="lang-en">checks if order can ship today</span></li>
                                 <li>• <strong>Warehouse Manager</strong> - <span class="lang-pl">monitoruje obciążenie</span><span class="lang-en">monitors workload</span></li>
-                                <li>• <strong>Operations Director</strong> - <span class="lang-pl">analizuje trendy</span><span class="lang-en">analyzes trends</span></li>
+                                <li>• <strong>Operations Director</strong> - <span class="lang-pl">analizuje trendy i wydajność</span><span class="lang-en">analyzes trends and efficiency</span></li>
                             </ul>
                         </div>
                         <div class="card p-4">
@@ -963,9 +1444,9 @@ graph TB
                                 🔗 <span class="lang-pl">Integracje</span><span class="lang-en">Integrations</span>
                             </h4>
                             <ul class="text-sm text-slate-400 space-y-1">
-                                <li>• <strong>SAP S/4HANA</strong> - <span class="lang-pl">źródło danych</span><span class="lang-en">data source</span></li>
-                                <li>• <strong>SAP BTP</strong> - hosting API</li>
-                                <li>• <strong>Grafana</strong> - monitoring</li>
+                                <li>• <strong>SAP S/4HANA</strong> - <span class="lang-pl">źródło danych o zamówieniach</span><span class="lang-en">order data source</span></li>
+                                <li>• <strong>SAP BTP</strong> - <span class="lang-pl">hosting API</span><span class="lang-en">API hosting</span></li>
+                                <li>• <strong>Grafana</strong> - <span class="lang-pl">dashboardy i monitoring</span><span class="lang-en">dashboards and monitoring</span></li>
                             </ul>
                         </div>
                     </div>
@@ -1063,23 +1544,23 @@ graph TB
                         </div>
                         <pre class="mermaid">
 flowchart LR
-    subgraph SOURCE[SOURCES]
-        SO[Sales Orders]
-        DL[Deliveries]
-        WH[Warehouse Tasks]
+    subgraph SOURCE[DATA SOURCES]
+        SO[Sales Orders VBAK]
+        DL[Deliveries LIKP]
+        WH[WH Tasks LTAP]
         RS[Resources]
     end
     
-    subgraph TRANSFORM[TRANSFORMATION]
+    subgraph TRANSFORM[CDS VIEWS]
         V1[V_ORDER_WORKLOAD]
         V2[V_CAPACITY]
         V3[V_CUTOFF_CALC]
     end
     
-    subgraph APIEP[API ENDPOINTS]
-        EP1[/capacity/check]
-        EP2[/cutoff/current]
-        EP3[/status]
+    subgraph APIEP[API LAYER]
+        EP1[capacity check]
+        EP2[cutoff current]
+        EP3[status]
     end
     
     subgraph OUTPUT[CONSUMERS]
@@ -1107,6 +1588,43 @@ flowchart LR
     style V3 fill:#0ea5e9,stroke:#38bdf8,stroke-width:2px
                         </pre>
                     </div>
+                    
+                    <div class="mt-6 card p-4">
+                        <h4 class="font-semibold text-white mb-3">
+                            <span class="lang-pl">Opis przepływu</span>
+                            <span class="lang-en">Flow Description</span>
+                        </h4>
+                        <div class="grid md:grid-cols-4 gap-4 text-sm">
+                            <div>
+                                <span class="text-sky-400 font-semibold">1. SOURCE</span>
+                                <p class="text-slate-400 mt-1">
+                                    <span class="lang-pl">Dane z tabel SAP: zlecenia, dostawy, zadania magazynowe, zasoby</span>
+                                    <span class="lang-en">Data from SAP tables: orders, deliveries, warehouse tasks, resources</span>
+                                </p>
+                            </div>
+                            <div>
+                                <span class="text-violet-400 font-semibold">2. TRANSFORM</span>
+                                <p class="text-slate-400 mt-1">
+                                    <span class="lang-pl">CDS Views agregują i obliczają metryki</span>
+                                    <span class="lang-en">CDS Views aggregate and calculate metrics</span>
+                                </p>
+                            </div>
+                            <div>
+                                <span class="text-emerald-400 font-semibold">3. API</span>
+                                <p class="text-slate-400 mt-1">
+                                    <span class="lang-pl">Endpointy REST udostępniają dane</span>
+                                    <span class="lang-en">REST endpoints expose data</span>
+                                </p>
+                            </div>
+                            <div>
+                                <span class="text-amber-400 font-semibold">4. OUTPUT</span>
+                                <p class="text-slate-400 mt-1">
+                                    <span class="lang-pl">UI, dashboardy, powiadomienia</span>
+                                    <span class="lang-en">UI, dashboards, notifications</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
                 <!-- ========== SECTION: Algorithm ========== -->
@@ -1129,15 +1647,15 @@ flowchart LR
                         </div>
                         <pre class="mermaid">
 flowchart TD
-    START([New Order]) --> CALC[Calculate W_new]
-    CALC --> STATE[Get current state]
+    START([New Order]) --> CALC[Calculate Workload]
+    CALC --> STATE[Get warehouse state]
     STATE --> UTIL[Calculate Utilization]
-    UTIL --> CHECK{U less than 85%}
+    UTIL --> CHECK{Util below 85%?}
     
-    CHECK -->|YES| TIME[Calculate time]
+    CHECK -->|YES| TIME[Calculate completion time]
     CHECK -->|NO| VIP{VIP order?}
     
-    TIME --> DEADLINE{Before Deadline?}
+    TIME --> DEADLINE{Before courier?}
     DEADLINE -->|YES| OK[SHIP TODAY]
     DEADLINE -->|NO| NO1[TOMORROW - TIME]
     
@@ -1166,22 +1684,26 @@ flowchart TD
                         <div class="p-6 bg-slate-900 font-mono text-sm">
                             <div class="space-y-4">
                                 <div>
-                                    <span class="text-sky-400">// Workload</span><br>
-                                    <span class="text-white">W = Σ(qty × weight × location) + setup + packing</span>
+                                    <span class="text-sky-400">// <span class="lang-pl">Pracochłonność pojedynczego zamówienia</span><span class="lang-en">Single order workload</span></span><br>
+                                    <span class="text-white">W<sub>order</sub> = Σ(qty × weight × location_factor) + setup + packing</span>
                                 </div>
                                 <div>
-                                    <span class="text-sky-400">// Total Workload</span><br>
-                                    <span class="text-white">WORKLOAD(t) = Σ Wi × progress_factor</span>
+                                    <span class="text-sky-400">// <span class="lang-pl">Całkowite obciążenie magazynu</span><span class="lang-en">Total warehouse workload</span></span><br>
+                                    <span class="text-white">WORKLOAD(t) = Σ W<sub>i</sub> × (1 - progress<sub>i</sub>)</span>
                                 </div>
                                 <div>
-                                    <span class="text-sky-400">// Capacity</span><br>
+                                    <span class="text-sky-400">// <span class="lang-pl">Przepustowość</span><span class="lang-en">Capacity</span></span><br>
                                     <span class="text-white">CAPACITY = MIN(pickers, packers, loaders) × efficiency</span>
                                 </div>
+                                <div>
+                                    <span class="text-sky-400">// <span class="lang-pl">Wykorzystanie</span><span class="lang-en">Utilization</span></span><br>
+                                    <span class="text-white">UTIL = WORKLOAD / CAPACITY × 100%</span>
+                                </div>
                                 <div class="pt-4 border-t border-slate-700">
-                                    <span class="text-emerald-400">// Decision</span><br>
-                                    <span class="text-white">IF UTIL &lt; 85% AND completion &lt; deadline</span><br>
-                                    <span class="text-emerald-400 ml-4">THEN Ship today ✓</span><br>
-                                    <span class="text-red-400 ml-4">ELSE Ship tomorrow ✗</span>
+                                    <span class="text-emerald-400">// <span class="lang-pl">Decyzja</span><span class="lang-en">Decision</span></span><br>
+                                    <span class="text-white">IF UTIL &lt; 85% AND completion_time &lt; courier_time</span><br>
+                                    <span class="text-emerald-400 ml-4">THEN can_ship_today = TRUE ✓</span><br>
+                                    <span class="text-red-400 ml-4">ELSE can_ship_today = FALSE ✗</span>
                                 </div>
                             </div>
                         </div>
@@ -1220,7 +1742,7 @@ sequenceDiagram
         CACHE-->>API: Cached result
     else Cache MISS
         API->>HANA: SELECT V_CUTOFF
-        HANA-->>API: Result
+        HANA-->>API: Workload + Capacity
         API->>CACHE: Save TTL 60s
     end
     
@@ -1241,8 +1763,8 @@ sequenceDiagram
                 <section id="state" class="section">
                     <h2 class="text-3xl font-bold text-white mb-2">State Machine</h2>
                     <p class="text-slate-400 mb-6">
-                        <span class="lang-pl">Stany systemu w ciągu dnia</span>
-                        <span class="lang-en">System states during the day</span>
+                        <span class="lang-pl">Stany operacyjne magazynu w ciągu dnia</span>
+                        <span class="lang-en">Warehouse operational states during the day</span>
                     </p>
                     
                     <div class="diagram-container">
@@ -1272,29 +1794,32 @@ stateDiagram-v2
                             <div class="font-semibold text-emerald-400">ACCEPTING</div>
                             <div class="text-xs text-slate-400 mt-1">Util &lt; 70%</div>
                             <div class="text-sm text-slate-300 mt-2">
-                                <span class="lang-pl">Normalna praca</span>
-                                <span class="lang-en">Normal operations</span>
+                                <span class="lang-pl">Normalna praca, wszystkie zamówienia akceptowane</span>
+                                <span class="lang-en">Normal operations, all orders accepted</span>
                             </div>
                         </div>
                         <div class="card p-4 border-l-4 border-yellow-500">
                             <div class="font-semibold text-yellow-400">WARNING</div>
                             <div class="text-xs text-slate-400 mt-1">70-85%</div>
-                            <div class="text-sm text-slate-300 mt-2">Alert</div>
+                            <div class="text-sm text-slate-300 mt-2">
+                                <span class="lang-pl">Alert dla managera, zamówienia nadal akceptowane</span>
+                                <span class="lang-en">Manager alert, orders still accepted</span>
+                            </div>
                         </div>
                         <div class="card p-4 border-l-4 border-orange-500">
                             <div class="font-semibold text-orange-400">CRITICAL</div>
                             <div class="text-xs text-slate-400 mt-1">85-95%</div>
                             <div class="text-sm text-slate-300 mt-2">
-                                <span class="lang-pl">Tylko VIP</span>
-                                <span class="lang-en">VIP only</span>
+                                <span class="lang-pl">Tylko zamówienia VIP</span>
+                                <span class="lang-en">VIP orders only</span>
                             </div>
                         </div>
                         <div class="card p-4 border-l-4 border-red-500">
                             <div class="font-semibold text-red-400">CLOSED</div>
                             <div class="text-xs text-slate-400 mt-1">&gt;95%</div>
                             <div class="text-sm text-slate-300 mt-2">
-                                <span class="lang-pl">Na jutro</span>
-                                <span class="lang-en">Tomorrow</span>
+                                <span class="lang-pl">Wszystko na jutro</span>
+                                <span class="lang-en">Everything goes tomorrow</span>
                             </div>
                         </div>
                     </div>
@@ -1369,7 +1894,7 @@ erDiagram
                         </div>
                         <pre class="mermaid">
 flowchart LR
-    subgraph LOGICAL[ENTITIES]
+    subgraph LOGICAL[LOGICAL ENTITIES]
         E1[Sales Order]
         E2[Order Item]
         E3[Delivery]
@@ -1402,29 +1927,32 @@ flowchart LR
                                 <tr class="border-b border-slate-700">
                                     <th class="text-left py-2 text-slate-400">Table</th>
                                     <th class="text-left py-2 text-slate-400">Description</th>
-                                    <th class="text-left py-2 text-slate-400">Usage</th>
+                                    <th class="text-left py-2 text-slate-400">
+                                        <span class="lang-pl">Użycie</span>
+                                        <span class="lang-en">Usage</span>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="text-slate-300">
                                 <tr class="border-b border-slate-800">
                                     <td class="py-2 font-mono text-sky-400">VBAK</td>
-                                    <td><span class="lang-pl">Nagłówek zlecenia</span><span class="lang-en">Order header</span></td>
-                                    <td>Identification</td>
+                                    <td><span class="lang-pl">Nagłówek zlecenia sprzedaży</span><span class="lang-en">Sales order header</span></td>
+                                    <td><span class="lang-pl">Identyfikacja zamówienia</span><span class="lang-en">Order identification</span></td>
                                 </tr>
                                 <tr class="border-b border-slate-800">
                                     <td class="py-2 font-mono text-sky-400">VBAP</td>
                                     <td><span class="lang-pl">Pozycje zlecenia</span><span class="lang-en">Order items</span></td>
-                                    <td>Workload</td>
+                                    <td><span class="lang-pl">Obliczenie pracochłonności</span><span class="lang-en">Workload calculation</span></td>
                                 </tr>
                                 <tr class="border-b border-slate-800">
                                     <td class="py-2 font-mono text-sky-400">LIKP</td>
                                     <td><span class="lang-pl">Nagłówek dostawy</span><span class="lang-en">Delivery header</span></td>
-                                    <td>Status</td>
+                                    <td><span class="lang-pl">Status realizacji</span><span class="lang-en">Fulfillment status</span></td>
                                 </tr>
                                 <tr class="border-b border-slate-800">
                                     <td class="py-2 font-mono text-sky-400">LTAP</td>
-                                    <td><span class="lang-pl">Zlecenie WH</span><span class="lang-en">WH order</span></td>
-                                    <td>Tasks</td>
+                                    <td><span class="lang-pl">Zlecenie magazynowe</span><span class="lang-en">Warehouse order</span></td>
+                                    <td><span class="lang-pl">Zadania picking</span><span class="lang-en">Picking tasks</span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1539,8 +2067,8 @@ quadrantChart
                                         R1: <span class="lang-pl">Brak dokumentacji SAP</span><span class="lang-en">Missing SAP documentation</span>
                                     </span>
                                     <p class="text-sm text-slate-400 mt-1">
-                                        <span class="lang-pl">Nieznane tabele źródłowe</span>
-                                        <span class="lang-en">Unknown source tables</span>
+                                        <span class="lang-pl">Nieznane tabele źródłowe, niestandardowe pola</span>
+                                        <span class="lang-en">Unknown source tables, custom fields</span>
                                     </p>
                                 </div>
                                 <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded text-xs">HIGH</span>
@@ -1553,8 +2081,8 @@ quadrantChart
                                         R2: <span class="lang-pl">Nieokreślona definicja obciążenia</span><span class="lang-en">Undefined workload definition</span>
                                     </span>
                                     <p class="text-sm text-slate-400 mt-1">
-                                        <span class="lang-pl">Brak wzoru od biznesu</span>
-                                        <span class="lang-en">No formula from business</span>
+                                        <span class="lang-pl">Brak wzoru na pracochłonność od biznesu</span>
+                                        <span class="lang-en">No workload formula from business</span>
                                     </p>
                                 </div>
                                 <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded text-xs">HIGH</span>
