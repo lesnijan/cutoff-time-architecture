@@ -1,0 +1,160 @@
+[{
+        "name": "constants",
+        "type": "static",
+        "value": {
+            "threshold": 10000,
+            "threshold2": 0,
+            "severity": 1,
+            "alarm_name": "orm_prod_logs_error",
+            "description": "Container logs with log level error or citical above threshold",
+            "aggs": "count",
+            "noc": "YES",
+            "mail": "YES",
+            "application": "ORM"
+        },
+        "target": "constants"
+    }, {
+        "name": "mysearch",
+        "type": "search",
+        "target": "mysearch",
+        "request": {
+            "indices": [
+                "orm-prod-logs"
+            ],
+            "body": {
+                "size": 0,
+                "query": {
+                    "bool": {
+                        "must_not": [{
+                                "term": {
+                                    "kubernetes.container.name": "cdrcv2"
+                                }
+                            }, {
+                                "terms": {
+                                    "error": [
+                                        "unauthorized Destination",
+                                        "SESSION_NOT_FOUND",
+                                        "END_USER_SERVICE_DENIED",
+                                        "Invalid redis shard name in rdap"
+                                    ]
+                                }
+                            }
+                        ],
+"must_not": [{
+                                "term": {
+                                    "kubernetes.container.name": "smar"
+                                }
+                            }, {
+                                "terms": {
+                                    "error": [
+                                        "Invalid redis shard name in rdap"
+                                    ]
+                                }
+                            }
+                        ],
+                        "must": {
+                            "range": {
+                                "@timestamp": {
+                                    "gte": "now/m-5m",
+                                    "lt": "now/m"
+                                }
+                            }
+                        },
+                        "should": [{
+                                "term": {
+                                    "severity": "ERROR"
+                                }
+                            }, {
+                                "term": {
+                                    "severity": "CRITICAL"
+                                }
+                            }
+                        ],
+                        "minimum_should_match": 1,
+                        "boost": 1,
+                        "filter": [{
+                                "term": {
+                                    "kubernetes.namespace": "prod"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "aggs": {
+                    "mo1": {
+                        "terms": {
+                            "field": "site",
+                            "size": 1000
+                        },
+                        "aggs": {
+                            "mo2": {
+                                "terms": {
+                                    "field": "kubernetes.container.name",
+                                    "size": 1000
+                                },
+                                "aggs": {
+                                    "mo2_aggs": {
+                                        "value_count": {
+                                            "field": "severity"
+                                        }
+                                    },
+                                    "mo2_bucket_filter1": {
+                                        "bucket_selector": {
+                                            "buckets_path": {
+                                                "mo2_aggs": "mo2_aggs"
+                                            },
+                                            "script": "params.mo2_aggs > {{data.constants.threshold}}"
+                                        }
+                                    },
+                                    "mo2_cardinality": {
+                                        "cardinality": {
+                                            "field": "kubernetes.container.name"
+                                        }
+                                    },
+                                    "mo2_bucket_sort": {
+                                        "bucket_sort": {
+                                            "sort": [{
+                                                    "_key": {
+                                                        "order": "asc"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "mo2_over_threshold": {
+                                "sum_bucket": {
+                                    "buckets_path": "mo2>mo2_cardinality"
+                                }
+                            },
+                            "mo2_bucket_filter": {
+                                "bucket_selector": {
+                                    "buckets_path": {
+                                        "mo2_over_threshold": "mo2_over_threshold"
+                                    },
+                                    "script": "params.mo2_over_threshold > 0"
+                                }
+                            }
+                        }
+                    },
+                    "mo1_over_threshold": {
+                        "sum_bucket": {
+                            "buckets_path": "mo1>mo2_over_threshold"
+                        }
+                    }
+                }
+            }
+        }
+    }, {
+        "name": "mycondition",
+        "source": "data.mysearch.aggregations.mo1_over_threshold.value > 0",
+        "type": "condition",
+        "lang": "painless"
+    }, {
+        "name": "data_normalization",
+        "source": "return ['mo1' : data.mysearch.aggregations.mo1.buckets.stream().map(b -> [b.key:b.mo2.buckets.stream().map(c -> [c.key:c.mo2_aggs.value]).collect(Collectors.toList()).join(' | ').replace('}','').replace('{','').replace('=',' value=')]).collect(Collectors.toList()).join('$') ]",
+        "type": "transform",
+        "target": "list"
+    }
+]
